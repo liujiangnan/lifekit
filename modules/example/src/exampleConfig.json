@@ -1,0 +1,6 @@
+{
+    "server":"modules/test/src/QiangPro",
+    "views":"modules/test/web/test.ejs",
+    "styletext":"",
+    "paramtext":""
+}

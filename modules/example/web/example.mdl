@@ -1,0 +1,14 @@
+/*
+ *脚本,模块模型层,负责处理数据及调用展示
+*/
+
+function initPage(){
+    netclient.getData("getInitVal","",function(data){
+        var obj = JSON.parse(data);
+        $("#server").val(obj.server);
+        $("#views").val(obj.views);
+        $("#styletext").val(obj.styletext);
+        $("#paramtext").val(obj.paramtext);
+
+    });
+}

@@ -1,0 +1,57 @@
+<!-- ejs模板,模块展现层,负责展现UI -->
+
+<style>
+    <%- include example.css %>
+</style>
+
+<div class="row-fluid" style="height: 100%;padding-top: 40px;">
+    <div class="span4" style="border: solid 1px #cccccc;padding-top: 40px;">
+        <form id="exampleConfig" action="" class="form-horizontal" onSubmit="return false;">
+            <div class="control-group">
+                <label class="control-label" for="inputServer">server</label>
+                <div class="controls">
+                    <input id="server" name="server" type="text" placeholder="后台服务路径" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="inputView">views</label>
+                <div class="controls">
+                    <input id="views" name="views" type="text" placeholder="入口页面路径" />
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <label class="checkbox"><input type="checkbox" id="closeable" />可关闭</label>
+                    <label class="checkbox"><input type="checkbox" id="maximizeable" />可最大化</label>
+                    <label class="checkbox"><input type="checkbox" id="minimizeable"  />可最小化</label>
+                    <label class="checkbox"><input type="checkbox" id="moveable" />可移动</label>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="styletext">样式</label>
+                <div class="controls">
+                    <textarea id="styletext" name="styletext" placeholder='{"width":"20px","height":"20px"...}'></textarea>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="paramtext">参数</label>
+                <div class="controls">
+                    <textarea id="paramtext" name="paramtext" placeholder="a=123&b=234"></textarea>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <button id="loadTest" type="button" class="btn btn-default">载入</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="exampleContainer" class="span8" style="height: 90%;border: solid 1px #cccccc;position: relative;">
+    </div>
+</div>
+
+<!-- 引用脚本文件 -->
+<script>
+    <%- include example.mdl %>
+    <%- include example.ctl %>
+</script>

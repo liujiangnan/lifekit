@@ -1,0 +1,48 @@
+<!-- ejs模板,模块展现层,负责展现UI -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title><%= title %></title>
+    <script type="text/javascript" src="lib/jquery-1.12.3.min.js"></script>
+    <script type="text/javascript" src="skyframe/lib/skyframe.js"></script>
+</head>
+<!-- 模板正文 -->
+<body style="position: absolute;top:0px;left: 0px;right: 0px;bottom: 0px;">
+    <div id="mainDiv" style="width:100%;height:100%;">
+
+    </div>
+    <div id="permissionDiv" style="display: none;"></div>
+</body>
+
+
+<script>
+    var frame = new skyframe();
+    frame.init({
+        id:"testframe",
+        container:$("#mainDiv"),
+        server:"modules/example/src/QiangPro",
+        views:"modules/example/web/example.ejs",
+        //server:"modules/zhbr3D/src/Build3DServer",
+        //views:"modules/zhbr3D/web/build.ejs",
+        closeable:false,
+        maximizeable:false,
+        minimizeable:false,
+        moveable:false,
+        permission:true,
+        style:{},
+        parms:'a=123&b=234'
+    });
+
+//
+//    var frame = new skyframe();
+//    frame.init({
+//        id:"permission",
+//        container:$("#permissionDiv"),
+//        server:"modules/f1permission/src/F1Permission",
+//        views:"modules/f1permission/web/f1permission.ejs"
+//    });
+
+</script>
+</html>
+

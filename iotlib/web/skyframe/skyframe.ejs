@@ -1,0 +1,51 @@
+<!-- ejs模板,模块展现层,负责展现UI -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script type="text/javascript" src="lib/jquery-1.12.3.min.js"></script>
+    <script src="lib/bootstrap3.3/bootstrap.min.js"></script>
+    <link href="lib/bootstrap3.3/bootstrap-combined.min.css" rel="stylesheet" media="screen">
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="lib/three-v73/Three.js"></script>
+    <script type="text/javascript" src="lib/three-v73/OrbitControls.js"></script>
+    <script type="text/javascript" src="lib/three-v73/Tween.js"></script>
+    <script type="text/javascript" src="lib/three-v73/Stats.js"></script>
+    <script type="text/javascript" src="lib/three-v73/Detector.js"></script>
+    <script type="text/javascript" src="skyframe/lib/netclient.js"></script>
+    <script type="text/javascript" src="skyframe/lib/skyframe.js"></script>
+
+</head>
+<!-- 模板正文 -->
+<body style="position: absolute;top:0px;left: 0px;right: 0px;bottom: 0px;">
+<div id="divAll" style="height: 100%;" class="container-fluid">
+
+</div>
+</body>
+
+<script>
+
+    var netclient;
+
+    $(function(){
+        netclient = NetClient('<%= host %>','<%=server %>',function(){
+            try{
+                var parmsData = JSON.parse('<%-JSON.stringify(parms) %>');
+                netclient.setDataLine('parms',parmsData);
+            }catch (e){
+                console.error(e);
+            }
+            netclient.getView("getEjs", '<%=views %>',function(result,parms){
+                $("#divAll").html(result);
+            });
+        });
+
+    });
+
+</script>
+</html>
+

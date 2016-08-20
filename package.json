@@ -1,0 +1,87 @@
+{
+  "_args": [
+    [
+      "lifekit",
+      "/Users/zhy/WebstormProjects/lifekit"
+    ]
+  ],
+  "_from": "lifekit@*",
+  "_id": "lifekit@1.0.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/lifekit",
+  "_nodeVersion": "4.4.4",
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/lifekit-1.0.0.tgz_1470817305277_0.07722395495511591"
+  },
+  "_npmUser": {
+    "email": "695541723@qq.com",
+    "name": "chenjbguo"
+  },
+  "_npmVersion": "3.9.6",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "lifekit",
+    "raw": "lifekit",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "*",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/lifekit/-/lifekit-1.0.0.tgz",
+  "_shasum": "08913afb854c8795270bd57146d5775e8f96121e",
+  "_shrinkwrap": null,
+  "_spec": "lifekit",
+  "_where": "/Users/zhy/WebstormProjects/lifekit",
+  "author": {
+    "name": "liujiangnan"
+  },
+  "bin": {
+    "smart-iot": "./bin/lifekit"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "commander": "^2.9.0",
+    "connect": "^3.4.1",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.4.2",
+    "errorhandler": "^1.4.3",
+    "express": "^4.14.0",
+    "express-session": "^1.13.0",
+    "socket.io": "^1.4.6"
+  },
+  "description": "lifekit",
+  "devDependencies": {},
+  "directories": {
+    "bin": "./bin"
+  },
+  "dist": {
+    "shasum": "08913afb854c8795270bd57146d5775e8f96121e",
+    "tarball": "https://registry.npmjs.org/lifekit/-/lifekit-1.0.0.tgz"
+  },
+  "keywords": [
+    "home",
+    "iot",
+    "lifekit",
+    "smart"
+  ],
+  "license": "ISC",
+  "main": "app.js",
+  "maintainers": [
+    {
+      "name": "chenjbguo",
+      "email": "695541723@qq.com"
+    }
+  ],
+  "name": "lifekit",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.0"
+}
