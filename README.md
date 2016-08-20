@@ -14,5 +14,5 @@
 ```  
     使用
     *拷贝lifekit到任意位置即可运行里面的app.js启动平台
-    *使用nodejs开发工具（如：webstorm）即可打开项目进行开发111
+    *使用nodejs开发工具（如：webstorm）即可打开项目进行开发111222
     
