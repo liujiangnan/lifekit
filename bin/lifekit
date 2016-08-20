@@ -7,11 +7,11 @@ program
     .version(appInfo.version)
     .usage('test');
 
-//Ïñgit·ç¸ñÒ»ÑùµÄ×ÓÃüÁî
+//åƒgité£æ ¼ä¸€æ ·çš„å­å‘½ä»¤
 program
-    //×ÓÃüÁî
+    //å­å‘½ä»¤
     .command('start')
-    //×¢²áÒ»¸öcallbackº¯Êı
+    //æ³¨å†Œä¸€ä¸ªcallbackå‡½æ•°
     .action(function(){
 	console.dir(" lifekit is started. Press ctrl + c to stop it ");
 	var rootpath = __dirname.substr(0,__dirname.length-3);
@@ -23,7 +23,5 @@ program
 			console.log(e);
 		}
 	});
-    }); 
+    });
 program.parse(process.argv);
-
-
