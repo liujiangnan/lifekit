@@ -31,7 +31,7 @@ function route(app){
     });
 
     app.post('/getView', function (req, res) {
-        var socket = netclient.getNetclientInstanceForReq(req);
+        var socket = net.getNetclientInstanceForReq(req);
         var flag = socket.isload();
         if(flag){
             var server = req.body.server;

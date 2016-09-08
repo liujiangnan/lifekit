@@ -63,6 +63,7 @@ function skyframe(){
      *  views:'',      //模块的首页面
      *  parms:'',      //url传值
      *  closeable:false  //是否可关闭
+     *  详细配置请参考README
      * }
      */
     this.init = function(option){
@@ -72,7 +73,7 @@ function skyframe(){
         var _pHeight = _parent.height();
         var url = '/skyframe?server='+option.server+'&views='+option.views+'&'+option.parms;
         var style = "";
-        var html = '<div id="'+option.id+'" style="position: absolute;top:0px;left:0px;width:'+_pWith+'px;height:'+_pHeight+'px;background: #FFFFFF;">' +
+        var html = '<div id="'+option.id+'">' +
             '<div id="sky_toolBar" style="position: absolute; top: 0px;height: 20px; width: 100%; display: none; background:#000000;filter:alpha(opacity=50);-moz-opacity:0.5;opacity:0.5;">' +
             '</div>'+
             '<iframe id="frame_' + option.id +
@@ -85,11 +86,14 @@ function skyframe(){
         _skyIframe = $("#frame_"+option.id);
 
         var zIndex = addSkyframeSequence(option.id);
+        this.setStyle("z-index",zIndex);
 
         if(option.style){
             this.setStyleObj(option.style);
-            this.setStyle("z-index",zIndex);
+        }else{
+            this.setStyleObj({position: "absolute",top:"0px",left:"0px",width:_pWith+'px',height:_pHeight+'px',background: "#FFFFFF"});
         }
+
 
         //设置moveable为true的话,则按住工具条实现拖动
         if(option.moveable){

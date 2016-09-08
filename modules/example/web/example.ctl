@@ -28,6 +28,9 @@ $(function(){
         frame.init(initObj);
     });
 
+    //net.data.a={};
+    //net.data.a.b=1;
+    //net.data.a.c={"b":2};
 
 //    netclient.on("test",function(data){
 //        console.dir(data);

@@ -81,7 +81,7 @@ function start(){
 	//加载WebSocket控制器
     console.log("加载WebSocket控制器");
 	var netclient = require(__dirname + '/iotlib/src/controller/netclient.js');
-	global.netclient = new netclient(server);
+	global.net = new netclient(server);
 
 
 
@@ -90,10 +90,6 @@ function start(){
 	var InitServer = require(__dirname + '/iotlib/src/common/InitServer.js');
 	new InitServer();
 
-
-	//加载http控制器
-    console.log("加载http控制器");
-	require(__dirname + '/iotlib/src/controller/route.js')(app);
     console.log("系统初始化完成");
 }
 start();

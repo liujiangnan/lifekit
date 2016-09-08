@@ -67,17 +67,42 @@ function netclient(server){
      */
     this.getAllSocket = function(){
         return property;
-    }
+    };
 
     function netclientInstance(serviceName,socketid){
 
-        return {
+        var obj = property.getValue(serviceName,socketid);
+        var socket = obj["socket"];
+        var dataline = obj["dataline"];
+
+        var handler = {
+            set : function(target, key, value, receiver){
+                var realValue;
+                if(type(value)==='[object Object]'||type(value)==='[object Array]'){
+                    setProxyForObj(value);
+                    realValue = new Proxy(value,handler);
+                }else{
+                    realValue = value;
+                }
+                var flag = Reflect.set(target, key, realValue, receiver);
+                //console.dir("set方法进来了.......");
+                socket.emit("dataline", dataline);
+                return flag;
+            },
+            get : function(target, key, receiver){
+                return Reflect.get(target, key, receiver);
+            }
+        };
+
+        var proxy = new Proxy(dataline,handler);
+
+        var _net = {
 
             /***
              * 判断是否加载了此模块（有些定时推送数据场景，前台都关闭了，后台推送没法判断，所以添加此方法）
              */
             isload : function(){
-                return (property.getValue(serviceName,socketid))?true:false;
+                return obj?true:false;
             },
 
             /**
@@ -86,10 +111,8 @@ function netclient(server){
              * @param data 传递的参数
              */
             emit : function(eventname,data){
-                var obj = property.getValue(serviceName,socketid);
-                if(obj){
-                    var sock = obj["socket"];
-                    sock.emit(eventname,data);
+                if(socket){
+                    socket.emit(eventname,data);
                 }
             },
 
@@ -99,59 +122,62 @@ function netclient(server){
              * @param callback 触发后执行的操作
              */
             on : function(eventname,callback){
-                var obj = property.getValue(serviceName,socketid);
-                if(obj){
-                    var sock = obj["socket"];
-                    sock.on(eventname,callback);
+                if(socket){
+                    socket.on(eventname,callback);
                 }else{
                     callback("error");
                 }
-            },
-
-            /**
-             * 设置数据链
-             * @param key 键
-             * @param data 值
-             */
-            setDataLine : function(key,data){
-                var obj = property.getValue(serviceName,socketid);
-                if(obj){
-                    var sock = obj["socket"];
-                    obj["dataline"][key] = data;
-                    property.put(serviceName,socketid,obj);
-                    sock.emit("dataline",obj["dataline"]);
-                }
-            },
-
-            /**
-             * 获取数据链
-             * @returns {{}|*}
-             */
-            getDataLine : function(key){
-                var obj = property.getValue(serviceName,socketid);
-                var res = null;
-                if(obj){
-                    var sock = obj["socket"];
-                    res = obj["dataline"][key];
-                }
-                return res;
             }
 
+        };
+
+        //判断对象的类型
+        function type(v){
+            return Object.prototype.toString.call(v);
+        };
+
+        function setProxyForObj(obj){
+            for(var key in obj){
+                var value = obj[key];
+                if(type(value)==='[object Object]'||type(value)==='[object Array]'){
+                    setProxyForObj(value);
+                    obj[key] = new Proxy(value,handler);
+                }else{
+                    obj[key] = value;
+                }
+            }
         }
+
+        function copyData(obj){
+            var res = {};
+            for(var key in obj){
+                var temp = obj[key];
+                if(type(temp)==='[object Object]'||type(temp)==='[object Array]'){
+                    res[key] = copyData(temp);
+                }else{
+                    res[key] = temp;
+                }
+            }
+            return res;
+        }
+
+        _net.data = proxy;
+
+        return _net;
     };
 
     /**
      * 获取socketio对应模块的实例对象
      * @param serviceName 模块服务名称
      * @param socketid
-     * @returns {{emit: emit, on: on, setDataLine: setDataLine, getDataLine: getDataLine}}
+     * @returns {{emit: emit, on: on}}
      */
     this.getNetclientInstance = netclientInstance;
 
     /**
 	 * 获取socketio对应模块的实例对象
 	 * @param req 请求对象
-	 * @returns {{emit: emit, on: on, setDataLine: setDataLine, getDataLine: getDataLine}}
+	 * @returns {{emit: emit, on: on}}
      */
 	this.getNetclientInstanceForReq = function(req){
 		var service = req.body.server;

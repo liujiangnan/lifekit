@@ -6,15 +6,41 @@
  var NetClient = function(host,server,callback){
  	//私有
  	var url = 'http://'+host;
-	var dataline = {};   //数据链对象
  	var socket = io.connect(url);
     var socketid = null;
+	var listener={};  //前后台数据同步的监听
+	var dataline = {};  //数据链
+
+	var handler = {
+		set : function(target, key, value, receiver){
+			var realValue;
+			if(type(value)==='[object Object]'||type(value)==='[object Array]'){
+				setProxyForObj(value);
+				realValue = new Proxy(value,handler);
+			}else{
+				realValue = value;
+			}
+			var flag = Reflect.set(target, key, realValue, receiver);
+			socket.emit("dataline", dataline);
+			return flag;
+		},
+		get : function(target, key, receiver){
+			return Reflect.get(target, key, receiver);
+		}
+	};
+
+	var proxy = new Proxy(dataline,handler);
 
  	socket.on('connect', function(){
 		//初始化对应模块的socket服务
 		socket.emit("initserver",server,function(sid){
 			socket.on('dataline',function(data){
 				dataline = data;
+				proxy = new Proxy(dataline,handler);
+				var copy = copyData(data);
+				for(var key in listener){
+					listener[key](copy);
+				}
 			});
             socketid = sid;
 			callback();
@@ -27,25 +53,16 @@
     });
 
 
+	var _net =  {
 
-
- 	//公有
- 	return {
- 		/**
-		 * 设置数据链
-		 * @param evname 服务器侦听的事件名称
-		 * @param data 传送的数据对象  
-		 * 如：{name:'',value:''}
-		 */
- 		setDataLine : function(key,data){
-			dataline[key] = data;
- 			socket.emit("dataline", dataline);
- 		},
-
-		getDataLine : function(key){
-			return dataline[key];
+		addListener : function(name,func){
+			listener[name] = func;
 		},
- 		
+
+		removeListener : function(name){
+			delete listener[name];
+		},
+
  		/**
 		 * 侦听服务器事件
 		 * @param evname 侦听服务器的事件名称
@@ -128,6 +145,40 @@
 			this.getView(method, parms, callback);
 		}
  		
-     };
+	};
+
+	//判断对象的类型
+	function type(v){
+		return Object.prototype.toString.call(v);
+	};
+
+	function setProxyForObj(obj){
+		for(var key in obj){
+			var value = obj[key];
+			if(type(value)==='[object Object]'||type(value)==='[object Array]'){
+				setProxyForObj(value);
+				obj[key] = new Proxy(value,handler);
+			}else{
+				obj[key] = value;
+			}
+		}
+	}
+
+	function copyData(obj){
+		var res = {};
+		for(var key in obj){
+			var temp = obj[key];
+			if(type(temp)==='[object Object]'||type(temp)==='[object Array]'){
+				res[key] = copyData(temp);
+			}else{
+				res[key] = temp;
+			}
+		}
+		return res;
+	}
+
+	_net.data = proxy;
+
+	return _net;
  
  };

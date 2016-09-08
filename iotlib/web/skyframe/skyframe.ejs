@@ -35,17 +35,17 @@
 
 
 
-    var netclient;
+    var net;
 
     $(function(){
-        netclient = NetClient('<%= host %>','<%=server %>',function(){
+        net = NetClient('<%= host %>','<%=server %>',function(){
             try{
                 var parmsData = JSON.parse('<%-JSON.stringify(parms) %>');
-                netclient.setDataLine('parms',parmsData);
+                net.data.parms=parmsData;
             }catch (e){
                 console.error(e);
             }
-            netclient.getView("getEjs", '<%=views %>',function(result,parms){
+            net.getView("getEjs", '<%=views %>',function(result,parms){
                 $("#divAll").html(result);
             });
         });
