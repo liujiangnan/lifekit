@@ -14,6 +14,7 @@
     "errorhandler": "^1.4.3",
     "express": "^4.14.0",
     "express-session": "^1.13.0",
+    "mysql": "^2.11.1",
     "socket.io": "^1.4.6"
   },
   "description": "lifekit",
@@ -44,7 +45,7 @@
   "readme": "ERROR: No README data found!",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"lifekit start"
+    "start": "lifekit start"
   },
   "version": "1.0.1"
 }
