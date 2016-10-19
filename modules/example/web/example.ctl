@@ -22,7 +22,7 @@ $(function(){
         initObj["minimizeable"] = $("#minimizeable").is(':checked');
         initObj["moveable"] = $("#moveable").is(':checked');
         var style = $("#styletext").val();
-        initObj["style"] = style?JSON.parse(style):{};
+        initObj["style"] = style?JSON.parse(style):null;
         initObj["parms"] = $("#paramtext").val();
         var frame = new skyframe();
         frame.init(initObj);

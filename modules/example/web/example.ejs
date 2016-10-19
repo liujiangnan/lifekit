@@ -1,53 +1,54 @@
 <!-- ejs模板,模块展现层,负责展现UI -->
 
-<style>
-    <%- include example.css %>
-</style>
+<div class="container-fluid" style="height: 100%;padding-top: 40px;">
+    <div class="row" style="height:100%;">
+        <div class="col-md-4" style="border: solid 1px #cccccc;padding-top: 40px;">
+            <form id="exampleConfig" action="" class="form-horizontal" onSubmit="return false;">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" >server</label>
+                    <div class="col-sm-10">
+                        <input id="server" name="server" class="form-control" type="text" placeholder="后台服务路径" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">views</label>
+                    <div class="col-sm-10">
+                        <input id="views" name="views" class="form-control" type="text" placeholder="入口页面路径" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-1 control-label"></label>
+                    <div class="col-sm-11 checkbox">
+                        <label class="checkbox-inline"><input type="checkbox" id="closeable" />可关闭</label>
+                        <label class="checkbox-inline"><input type="checkbox" id="maximizeable" />可最大化</label>
+                        <label class="checkbox-inline"><input type="checkbox" id="minimizeable"  />可最小化</label>
+                        <label class="checkbox-inline"><input type="checkbox" id="moveable" />可移动</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="styletext">样式</label>
+                    <div class="col-sm-10">
+                        <textarea id="styletext" name="styletext" class="form-control" placeholder='{"width":"20px","height":"20px"...}'></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="paramtext">参数</label>
+                    <div class="col-sm-10">
+                        <textarea id="paramtext" name="paramtext" class="form-control" placeholder="a=123&b=234"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="text-center">
+                        <button id="loadTest" type="button" class="btn btn-default">载入</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div  class="col-md-8" style="height: 90%; padding-left: 10px;">
+            <div id="exampleContainer" style="border: solid 1px #cccccc; height: 100%; position: relative;">
 
-
-<div class="row-fluid" style="height: 100%;padding-top: 40px;">
-    <div class="span4" style="border: solid 1px #cccccc;padding-top: 40px;">
-        <form id="exampleConfig" action="" class="form-horizontal" onSubmit="return false;">
-            <div class="control-group">
-                <label class="control-label" for="inputServer">server</label>
-                <div class="controls">
-                    <input id="server" name="server" type="text" placeholder="后台服务路径" />
-                </div>
             </div>
-            <div class="control-group">
-                <label class="control-label" for="inputView">views</label>
-                <div class="controls">
-                    <input id="views" name="views" type="text" placeholder="入口页面路径" />
-                </div>
-            </div>
-            <div class="control-group">
-                <div class="controls">
-                    <label class="checkbox"><input type="checkbox" id="closeable" />可关闭</label>
-                    <label class="checkbox"><input type="checkbox" id="maximizeable" />可最大化</label>
-                    <label class="checkbox"><input type="checkbox" id="minimizeable"  />可最小化</label>
-                    <label class="checkbox"><input type="checkbox" id="moveable" />可移动</label>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="styletext">样式</label>
-                <div class="controls">
-                    <textarea id="styletext" name="styletext" placeholder='{"width":"20px","height":"20px"...}'></textarea>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="paramtext">参数</label>
-                <div class="controls">
-                    <textarea id="paramtext" name="paramtext" placeholder="a=123&b=234"></textarea>
-                </div>
-            </div>
-            <div class="control-group">
-                <div class="controls">
-                    <button id="loadTest" type="button" class="btn btn-default">载入</button>
-                </div>
-            </div>
-        </form>
-    </div>
-    <div id="exampleContainer" class="span8" style="height: 90%;border: solid 1px #cccccc;position: relative;">
+        </div>
     </div>
 </div>
 
