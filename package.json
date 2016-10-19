@@ -1,42 +1,4 @@
 {
-  "_args": [
-    [
-      "lifekit",
-      "/Users/zhy/WebstormProjects/lifekit"
-    ]
-  ],
-  "_from": "lifekit@*",
-  "_id": "lifekit@1.0.0",
-  "_inCache": true,
-  "_installable": true,
-  "_location": "/lifekit",
-  "_nodeVersion": "4.4.4",
-  "_npmOperationalInternal": {
-    "host": "packages-16-east.internal.npmjs.com",
-    "tmp": "tmp/lifekit-1.0.0.tgz_1470817305277_0.07722395495511591"
-  },
-  "_npmUser": {
-    "email": "695541723@qq.com",
-    "name": "chenjbguo"
-  },
-  "_npmVersion": "3.9.6",
-  "_phantomChildren": {},
-  "_requested": {
-    "name": "lifekit",
-    "raw": "lifekit",
-    "rawSpec": "",
-    "scope": null,
-    "spec": "*",
-    "type": "range"
-  },
-  "_requiredBy": [
-    "#USER"
-  ],
-  "_resolved": "https://registry.npmjs.org/lifekit/-/lifekit-1.0.0.tgz",
-  "_shasum": "08913afb854c8795270bd57146d5775e8f96121e",
-  "_shrinkwrap": null,
-  "_spec": "lifekit",
-  "_where": "/Users/zhy/WebstormProjects/lifekit",
   "author": {
     "name": "liujiangnan"
   },
