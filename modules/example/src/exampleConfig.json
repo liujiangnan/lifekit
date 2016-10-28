@@ -1,6 +1,6 @@
 {
-    "server":"modules/test/src/QiangPro",
-    "views":"modules/test/web/test.ejs",
+    "server":"modules/makeUser/src/MakeUserService",
+    "views":"modules/makeUser/web/index.ejs",
     "styletext":"",
     "paramtext":""
 }

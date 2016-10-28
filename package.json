@@ -14,7 +14,9 @@
     "errorhandler": "^1.4.3",
     "express": "^4.14.0",
     "express-session": "^1.13.0",
+    "lifekit-mysqlhelper": "^1.0.1",
     "mysql": "^2.11.1",
+    "node-uuid": "^1.4.7",
     "socket.io": "^1.4.6"
   },
   "description": "lifekit",

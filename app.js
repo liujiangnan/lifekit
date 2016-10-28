@@ -19,6 +19,8 @@ function start(){
 	var app = express();
     var router = require(__dirname+"/iotlib/src/controller/route");
 
+    var dbhelp = require("lifekit-mysqlhelper");
+
 	var http = require('http');
 	http.globalAgent.maxSockets = 150;
 	var server = http.createServer(app);
@@ -83,12 +85,13 @@ function start(){
 	var netclient = require(__dirname + '/iotlib/src/controller/netclient.js');
 	global.net = new netclient(server);
 
-
-
 	//初始化系统需要加载的项--统一都放到这里面
     console.log("加载系统初始化启动项");
 	var InitServer = require(__dirname + '/iotlib/src/common/InitServer.js');
 	new InitServer();
+
+    //初始化全局的mysql连接池
+    dbhelp.dbhelper("lifekit","localhost","3306","root","123456");
 
     console.log("系统初始化完成");
 }
