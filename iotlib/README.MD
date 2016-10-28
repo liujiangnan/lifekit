@@ -176,6 +176,20 @@ this.test = function(data,callback){
 }
 ```
 
+getAjaxURL();获取Ajax的路径给第三方的插件用,需要配合getAjaxData方法使用,才能正常发起一个Ajax请求
+
+```javascript
+var url = net.getAjaxURL();
+
+```
+
+
+getAjaxData(method,parms);由于后台过滤,发起Ajax必须要带一些参数,配合getAjaxURL才能正常的发起一个Ajax;method对应后台的方法名称,parms为传入后台的参数
+
+```javascript
+var data = net.getAjaxData("testmethod",parms);//这样 后台的testmethod方法就可以被ajax调用,并且穿过去parms参数供业务使用
+```
+
 getView(method, parms, callback):经对应的服务器端method得到ejs,注意:如果method等于getEjs的话,则parms参数必须为有效的ejs路径字符串,此种情况直接返回parms指定的模版
 
 web端写法

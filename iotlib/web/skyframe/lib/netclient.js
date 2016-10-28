@@ -101,6 +101,29 @@
 		call : function(funcname,data,callback){
 			socket.emit('call', funcname, socketid, data, callback);
 		},
+
+		/**
+		 * 获取Ajax的路径给第三方的插件用
+		 * @returns {string}
+         */
+		getAjaxURL : function(){
+			return "/getView/";
+		},
+
+		/**
+		 * 由于后台过滤,发起Ajax必须要带一些参数,配合getAjaxURL才能正常的发起一个Ajax
+		 * @param method
+		 * @param parms
+		 * @returns {{server: *, method: *, socketid: *, parms: *}}
+         */
+		getAjaxData : function(method,parms){
+			return {
+				'server':server,
+				'method':method,
+				'socketid':socketid,
+				'parms':parms
+			}
+		},
         
 		/**
 		 * 获取页面并执行callback方法
