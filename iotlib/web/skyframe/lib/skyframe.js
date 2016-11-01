@@ -1,12 +1,5 @@
 
-var rootPage;
-try{
-    rootPage = window.parent?window.parent.rootPage:window;   //根页面
-}catch(e){
-    rootPage = window;
-    console.error(e);
-}
-
+var rootPage = window.top;
 
 var skyframeSequence = {sequence:{},count:8000};
 

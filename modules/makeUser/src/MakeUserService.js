@@ -7,6 +7,12 @@ var uuid = require("node-uuid");
 
 function MakeUserService(){
 
+    /**
+     * 添加用户
+     * @param req
+     * @param res
+     * @param parms
+     */
     this.addUser = function(req,res,parms){
         var data = JSON.parse(parms);
         data["GUID"] = uuid.v1();
@@ -14,15 +20,39 @@ function MakeUserService(){
         global.dbhelper.execDataSet(sql,function(error,rows){
             if(error){
                 console.log(error);
+                res.send("fail");
+            }else{
+                req.session.user = {"username":data.username,"password":data.password};
+                res.send("success");
             }
-            res.send(data["GUID"]);
         });
 
     };
 
+    /**
+     * 用户登陆
+     * @param req
+     * @param res
+     * @param parms
+     */
+    this.login = function(req,res,parms){
+        var data = JSON.parse(parms);
+        var sql = sqlHelp.queryWithColumns("LK_BASE_USER",data);
+        global.dbhelper.execDataSet(sql,function(error,rows){
+            if(error){
+                console.log(error);
+            }
+            if(rows.length>0){
+                req.session.user = data;
+                res.send("success");
+            }else{
+                res.send("fail");
+            }
+        });
+    };
+
     //检查用户名是否存在
     this.checkUser = function(req,res,parms){
-        console.dir(parms);
         var sql = sqlHelp.queryWithWhere("LK_BASE_USER","username='"+parms+"'");
         global.dbhelper.execDataSet(sql,function(error,rows){
             if(error){

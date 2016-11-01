@@ -1,6 +1,6 @@
 {
     "server":"modules/makeUser/src/MakeUserService",
-    "views":"modules/makeUser/web/index.ejs",
+    "views":"modules/makeUser/web/login/login.ejs",
     "styletext":"",
     "paramtext":""
 }
