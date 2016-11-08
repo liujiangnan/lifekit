@@ -66,11 +66,11 @@ function skyframe(){
         var _pHeight = _parent.height();
         var url = '/skyframe?server='+option.server+'&views='+option.views+'&'+option.parms;
         var style = "";
-        var html = '<div id="'+option.id+'">' +
+        var html = '<div id="'+option.id+'" style="height: inherit;">' +
             '<div id="sky_toolBar" style="position: absolute; top: 0px;height: 20px; width: 100%; display: none; background:#000000;filter:alpha(opacity=50);-moz-opacity:0.5;opacity:0.5;">' +
             '</div>'+
             '<iframe id="frame_' + option.id +
-            '" src="'+url+'" allowtransparency="true" scrolling="no" frameborder="no" marginheight="0" marginwidth="0" style="overflow: hidden;height: 100%;width: 100%;"></iframe>' +
+            '" src="'+url+'" allowtransparency="true" scrolling="auto"  frameborder="no" marginheight="0" marginwidth="0" style="height: 100%;width: 100%;"></iframe>' +
             '</div>';
 
         _parent.append(html);
@@ -84,7 +84,7 @@ function skyframe(){
         if(option.style){
             this.setStyleObj(option.style);
         }else{
-            this.setStyleObj({position: "absolute",top:"0px",left:"0px",width:_pWith+'px',height:_pHeight+'px',background: "#FFFFFF"});
+            //this.setStyleObj({position: "absolute",top:"0px",left:"0px",width:_pWith+'px',height:_pHeight+'px',background: "#FFFFFF"});
         }
 
 
