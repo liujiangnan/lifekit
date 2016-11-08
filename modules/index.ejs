@@ -8,40 +8,52 @@
     <script type="text/javascript" src="skyframe/lib/skyframe.js"></script>
 </head>
 <!-- 模板正文 -->
-<body style="position: absolute;top:0px;left: 0px;right: 0px;bottom: 0px;">
-    <div id="mainDiv" style="width:100%;height:100%;">
-
-    </div>
-    <div id="permissionDiv" style="display: none;"></div>
+<body style="margin: 0px;">
+    <div id="headDiv" style="width:100%;height:80px;"></div>
+    <div id="mainDiv" style="width: 100%;"></div>
 </body>
 
 
 <script>
-    var frame = new skyframe();
-    frame.init({
-        id:"testframe",
-        container:$("#mainDiv"),
-        server:"modules/example/src/QiangPro",
-        views:"modules/example/web/example.ejs",
-        //server:"modules/zhbr3D/src/Build3DServer",
-        //views:"modules/zhbr3D/web/build.ejs",
-        closeable:false,
-        maximizeable:false,
-        minimizeable:false,
-        moveable:false,
-        permission:true,
-        //style:{},
-        parms:'a=123&b=234'
-    });
 
-//
-//    var frame = new skyframe();
-//    frame.init({
-//        id:"permission",
-//        container:$("#permissionDiv"),
-//        server:"modules/f1permission/src/F1Permission",
-//        views:"modules/f1permission/web/f1permission.ejs"
-//    });
+    function initMainDivHeight(){
+        var height = $(window).height();
+        $('#mainDiv').height(height-82);
+    }
+
+    function initFrameObj(){
+        var headFrame = new skyframe();
+        headFrame.init({
+            id:"headFrame",
+            container:$("#headDiv"),
+            server:"modules/headPage/src/service",
+            views:"modules/headPage/web/index.ejs",
+            //server:"modules/zhbr3D/src/Build3DServer",
+            //views:"modules/zhbr3D/web/build.ejs",
+            closeable:false,
+            maximizeable:false,
+            minimizeable:false,
+            moveable:false,
+            //style:{},
+            parms:'a=123&b=234'
+        });
+
+
+        var mainFrame = new skyframe();
+        mainFrame.init({
+            id:"mainFrame",
+            container:$("#mainDiv"),
+            server:"modules/mainPage/src/service",
+            views:"modules/mainPage/web/index.ejs"
+        });
+    }
+
+
+
+    $(function(){
+        initFrameObj();
+        initMainDivHeight();
+    });
 
 </script>
 </html>
