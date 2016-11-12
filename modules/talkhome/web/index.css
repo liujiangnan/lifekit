@@ -36,9 +36,12 @@
 
 .talkView{
     margin-top: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     height:415px;
     background: #ffffff;
     border: solid 1px #d3dde8;
+    overflow: auto;
 }
 
 .talkInput{
@@ -61,6 +64,31 @@
     width: 60px;
     height: 60px;
     background-position:-27px -66px;
+}
+
+.viewUserPic{
+    background-image: url("/talkhome/web/images/people.jpg");
+    width: 40px;
+    height: 40px;
+    background-position:-37px -70px;
+    display: inline-block;
+    float: left;
+}
+
+.talkName{
+    height: 20px;
+    margin-left: 10px;
+}
+
+.infodata{
+    height:20px;
+    margin-left: 2px;
+}
+
+.talkContaner{
+    margin-top: 10px;
+    margin-left: 10px;
+    height: 40px;
 }
 
 .talkInputButtonGroup{
