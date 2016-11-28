@@ -70,7 +70,7 @@ function skyframe(){
             '<div id="sky_toolBar" style="position: absolute; top: 0px;height: 20px; width: 100%; display: none; background:#000000;filter:alpha(opacity=50);-moz-opacity:0.5;opacity:0.5;">' +
             '</div>'+
             '<iframe id="frame_' + option.id +
-            '" src="'+url+'" allowtransparency="true" scrolling="auto"  frameborder="no" marginheight="0" marginwidth="0" style="height: 100%;width: 100%;"></iframe>' +
+            '" src="'+url+'" allowTransparency="true" scrolling="auto"  frameborder="no" marginheight="0" marginwidth="0" style="height: 100%;width: 100%;"></iframe>' +
             '</div>';
 
         _parent.append(html);
