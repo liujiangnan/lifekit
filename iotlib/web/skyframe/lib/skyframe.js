@@ -43,6 +43,7 @@ function skyframe(){
     var _parent;  //窗口的父容器
     var _skyToolbar; //窗口上边框的工具条
     var _skyIframe; //窗口内容页面iframe框
+    var url; //页面地址
     var evtObj = {}; //绑定事件对象
     var _skyframe_status = 0;  //窗口的状态 0:正常,1:最小化,2:最大化
 
@@ -64,7 +65,7 @@ function skyframe(){
         _parent = opt.container;
         var _pWith = _parent.width();
         var _pHeight = _parent.height();
-        var url = '/skyframe?server='+option.server+'&views='+option.views+'&'+option.parms;
+        url = '/skyframe?server='+option.server+'&views='+option.views+'&'+option.parms;
         var style = "";
         var html = '<div id="'+option.id+'" style="height: inherit;">' +
             '<div id="sky_toolBar" style="position: absolute; top: 0px;height: 20px; width: 100%; display: none; background:#000000;filter:alpha(opacity=50);-moz-opacity:0.5;opacity:0.5;">' +
@@ -185,6 +186,10 @@ function skyframe(){
         }
 
 
+    };
+
+    this.flush = function(){
+        _skyIframe.attr('src','').attr('src',url);
     };
 
     //绑定事件,支持click,close,max,min,move,reset事件

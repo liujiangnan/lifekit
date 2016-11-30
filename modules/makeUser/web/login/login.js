@@ -16,13 +16,26 @@ function bindEvent(){
             "username":$("#username").val(),
             "password":$("#password").val()
         };
-        net.getView("login",JSON.stringify(data),function(res){
-            if(res==="success"){
-                rootPage.location.reload();
-            }else{
-                $("#cueinfo").html("用户名或密码错误").show();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/x-www-form-urlencoded; charset=utf-8",
+            url: "/login/",
+            data: data,
+            success: function (xhr) {
+            },
+            error: function (xhr, e) {
+            },
+            complete: function (xhr) {
+                var res = xhr.responseText;
+                if(res==='success'){
+                    rootPage.closeLoginFrame();
+                }else{
+                    $("#cueinfo").html("用户名或密码错误").show();
+                }
             }
         });
+
     });
 
     $("#registerUser").bind('click',function(){

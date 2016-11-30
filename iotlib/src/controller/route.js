@@ -41,7 +41,11 @@ function route(app){
             var svc = new mdlService();
 
             if(method==="getEjs"){
-                res.render(parms,{});
+                if(svc["init"]){
+                    svc["init"](req, res, parms);
+                }else{
+                    res.render(parms,{});
+                }
             }else{
                 svc[method](req, res, parms);
             }

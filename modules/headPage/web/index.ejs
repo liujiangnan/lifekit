@@ -12,14 +12,20 @@
         <div id="userHandleArea" class="col-md-4" style="height: 100%;">
             <div class="row" style="height: 100%;line-height: 80px;">
                 <div class="col-md-5 text-center" style="color: #FFFFFF;height: 100%;">
-                    <div style="height:80px;">欢迎您!<span id="nc">游客</span></div>
+                    <div style="height:80px;">欢迎您! &nbsp;&nbsp;<span id="nc"><%=nc?nc:"游客"%></span></div>
                 </div>
-                <div class="col-md-2">
-                    <a href="javascript:void(0);" onclick="login(this)">登录</a>
-                </div>
-                <div class="col-md-2">
-                    <a href="javascript:void(0);" onclick="register(this)">注册</a>
-                </div>
+                <%if(nc){%>
+                    <div class="col-md-4">
+                        <a href="javascript:void(0);" onclick="logout(this)">退出</a>
+                    </div>
+                <%}else{%>
+                    <div class="col-md-2">
+                        <a href="javascript:void(0);" onclick="login(this)">登录</a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="javascript:void(0);" onclick="register(this)">注册</a>
+                    </div>
+                <%}%>
                 <div class="col-md-2"></div>
                 <div class="col-md-1"></div>
             </div>

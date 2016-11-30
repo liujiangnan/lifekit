@@ -10,7 +10,8 @@
 <!-- 模板正文 -->
 <body style="margin: 0px;">
     <div id="headDiv" style="width:100%;height:80px;"></div>
-    <div id="mainDiv" style="width: 100%;"></div>
+    <div id="mainDiv" style="width: 100%; position: absolute"></div>
+    <div id="loginDiv"></div>
 </body>
 
 
@@ -21,8 +22,9 @@
         $('#mainDiv').height(height-82);
     }
 
+    var headFrame,mainFrame,loginFrame;
     function initFrameObj(){
-        var headFrame = new skyframe();
+        headFrame = new skyframe();
         headFrame.init({
             id:"headFrame",
             container:$("#headDiv"),
@@ -39,16 +41,39 @@
         });
 
 
-        var mainFrame = new skyframe();
+        mainFrame = new skyframe();
         mainFrame.init({
             id:"mainFrame",
             container:$("#mainDiv"),
             server:"modules/talkhome/src/service",
             views:"modules/talkhome/web/index.ejs"
         });
+
     }
 
+    function showLoginFrame(){
+        loginFrame = new skyframe();
+        loginFrame.init({
+            id:"loginFrame",
+            container:$("#loginDiv"),
+            server:"modules/makeUser/src/MakeUserService",
+            views:"modules/makeUser/web/login/login.ejs",
+            closeable:true,
+            style:{
+                position:"absolute",
+                top:"0px",
+                left:"0px",
+                height:"100%",
+                width:"100%"
+            }
+        });
+    }
 
+    function closeLoginFrame(){
+        loginFrame && loginFrame.close();
+        headFrame.flush();
+
+    }
 
     $(function(){
         initFrameObj();
