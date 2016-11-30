@@ -50,7 +50,7 @@ function route(app){
                 svc[method](req, res, parms);
             }
         }else{
-            res.render('iotlib/web/skyframe/error.ejs',{});
+            res.render('iotlib/web/skyframe/error.ejs',{message:"非法访问"});
         }
     });
 
