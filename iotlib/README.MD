@@ -47,6 +47,10 @@
 公共方法:
 
 ```javascript
+frame.flush();//刷新模块
+```
+
+```javascript
 frame.bind(evname,callback); //绑定事件,支持click,close,max,min,move,reset事件
 ```
 

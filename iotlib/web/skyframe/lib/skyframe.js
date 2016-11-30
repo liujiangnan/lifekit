@@ -184,8 +184,6 @@ function skyframe(){
                 _skyframe.minimize();
             });
         }
-
-
     };
 
     this.flush = function(){
