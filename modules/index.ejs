@@ -12,6 +12,7 @@
     <div id="headDiv" style="width:100%;height:80px;"></div>
     <div id="mainDiv" style="width: 100%; position: absolute"></div>
     <div id="loginDiv"></div>
+    <div id="registDiv"></div>
 </body>
 
 
@@ -22,7 +23,7 @@
         $('#mainDiv').height(height-82);
     }
 
-    var headFrame,mainFrame,loginFrame;
+    var headFrame,mainFrame,loginFrame,registFrame;
     function initFrameObj(){
         headFrame = new skyframe();
         headFrame.init({
@@ -51,6 +52,7 @@
 
     }
 
+    //登录的弹出窗口
     function showLoginFrame(){
         loginFrame = new skyframe();
         loginFrame.init({
@@ -69,10 +71,36 @@
         });
     }
 
+    function showRegistFrame(){
+        registFrame = new skyframe();
+        registFrame.init({
+            id:"registFrame",
+            container:$("#registDiv"),
+            server:"modules/makeUser/src/MakeUserService",
+            views:"modules/makeUser/web/register/index.ejs",
+            closeable:true,
+            style:{
+                position:"absolute",
+                top:"82px",
+                left:"0px",
+                right:"0px",
+                bottom:"0px"
+            }
+        });
+    }
+
+    //关闭登录的弹出窗口
     function closeLoginFrame(){
         loginFrame && loginFrame.close();
         headFrame.flush();
+        mainFrame.flush();
+    }
 
+    //关闭注册窗口并跳转登录
+    function closeRegistFrame(){
+        registFrame && registFrame.close();
+        headFrame.flush();
+        mainFrame.flush();
     }
 
     $(function(){

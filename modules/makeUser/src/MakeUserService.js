@@ -22,7 +22,6 @@ function MakeUserService(){
                 console.log(error);
                 res.send("fail");
             }else{
-                req.session.user = {"username":data.username,"password":data.password};
                 res.send("success");
             }
         });

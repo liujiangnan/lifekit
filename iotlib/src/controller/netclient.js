@@ -69,6 +69,14 @@ function netclient(server){
         return property;
     };
 
+    /**
+     * 获取自己的socketId
+     * @param req
+     */
+    this.getSelfSocketId = function(req){
+        return  req.body.socketid;
+    };
+
     function netclientInstance(serviceName,socketid){
 
         var obj = property.getValue(serviceName,socketid);

@@ -118,7 +118,35 @@ function saveInfo(){
     };
 
     net.getView("addUser",JSON.stringify(userObj),function(res){
-        alert(res);
+        if(res==="success"){
+            //注册成功的话自动登录
+            login({username:userObj.username,password:userObj.password},function(loginfo){
+                if(loginfo==='success'){
+                    rootPage.closeRegistFrame();
+                }else{
+                    showModal("提示","登录跳转异常,请手动登录","确定");
+                }
+            });
+        }else{
+            showModal("提示","注册失败,错误:"+res,"确定");
+        }
+    });
+}
+
+function login(obj,callback){
+    $.ajax({
+        type: "POST",
+        contentType: "application/x-www-form-urlencoded; charset=utf-8",
+        url: "/login/",
+        data: obj,
+        success: function (xhr) {
+        },
+        error: function (xhr, e) {
+        },
+        complete: function (xhr) {
+            var res = xhr.responseText;
+            callback && callback(res);
+        }
     });
 }
 

@@ -23,6 +23,29 @@
     </div>
 </div>
 
+<div id="selfMessageShow" style="height: 56px; display: none;">
+    <div class="talkContaner-right">
+        <table style="width: 100%;height:100%;">
+            <tr>
+                <td><div class="talkName-right" align="right">小明</div></td>
+                <td rowspan="2" style="width: 40px;">
+                    <div class="viewUserPic img-circle" ></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="infodata" style="position: relative;">
+                        <div class="popover fade left in" role="tooltip" style="top: 0px;right:10px;left:auto; display: block; max-width: 88%;">
+                            <div class="popover-content"></div>
+                            <div class="arrow" style="top: 13px;right:-10px;"></div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
 
 <div class="container-fluid" style="height: 100%; background: #e8e8e8">
     <div class="row">
@@ -63,14 +86,22 @@
                     &nbsp;&nbsp;&nbsp;
                     <span class="glyphicon glyphicon-picture"></span>
                 </div>
-                <div style="height: 110px;">
-                    <textarea id="message" style="width: 100%; border: none;" rows="5"></textarea>
-                </div>
-                <div align="right" style="padding-right: 20px;">
-                    <button id="sendMessage" class="btn btn-default" type="button">
-                        发送
-                    </button>
-                </div>
+                <%if(login){%>
+                    <div style="height: 110px;">
+                        <textarea id="message" style="width: 100%; border: none;" rows="5"></textarea>
+                    </div>
+                    <div align="right" style="padding-right: 20px;">
+                        <button id="sendMessage" class="btn btn-default" type="button">
+                            发送
+                        </button>
+                    </div>
+                <%}else{%>
+                    <div style="height: 110px;line-height: 110px;" align="center">
+                        您现在是游客,如需发言请&nbsp;&nbsp;
+                        <a href="javascript:void(0);" onclick="login(this)">登录</a>&nbsp;&nbsp;
+                        <a href="javascript:void(0);" onclick="register(this)">注册</a>
+                    </div>
+                <%}%>
             </div>
         </div>
         <div class="col-md-2" style="padding: 5px 0px 5px 0px;">
@@ -78,10 +109,17 @@
                 <div class="userPic img-circle" >
                 </div>
                 <div style="height: 10px;"></div>
-                <p>
-                    我是某某某&nbsp;<span class="glyphicon glyphicon-pencil" title="编辑资料"></span>
-                </p>
-                <p align="left" style="padding-left: 10px;">等级:5级</p>
+                <%if(login){%>
+                    <input type="hidden" id="userNc" value="<%=nc%>" />
+                    <p>
+                        <%=nc%>&nbsp;<span class="glyphicon glyphicon-pencil" title="编辑资料"></span>
+                    </p>
+                    <p align="left" style="padding-left: 10px;">等级:5级</p>
+                <%}else{%>
+                    <p>
+                        游客
+                    </p>
+                <%}%>
                 <p align="left" style="padding-left: 10px;">操作:&nbsp;
                     <span class="glyphicon glyphicon-heart-empty" title="收藏该房间"></span>
                     <span class="glyphicon glyphicon-send" title="去其他房间"></span>
