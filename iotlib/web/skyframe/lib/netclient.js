@@ -13,15 +13,42 @@
 
 	var handler = {
 		set : function(target, key, value, receiver){
+
+			if(key==="net_key"){
+				console.error("net_key是dataline私有属性,无法被赋值;请更改属性!");
+				return false;
+			}
+			if(key.indexOf(".")>=0){
+				console.error("dataline的属性名称不能包含'.',请更改属性!");
+				return false;
+			}
 			var realValue;
+			var netKey = key;
+			if(target["net_key"]){
+				var tempKey = target["net_key"];
+				if(tempKey.indexOf(".")>=0){
+					netKey = tempKey.substring(0,tempKey.lastIndexOf(".")+1)+key;
+				}
+			}
 			if(type(value)==='[object Object]'||type(value)==='[object Array]'){
-				setProxyForObj(value);
+				setProxyForObj(value,netKey);
 				realValue = new Proxy(value,handler);
 			}else{
 				realValue = value;
 			}
 			var flag = Reflect.set(target, key, realValue, receiver);
-			socket.emit("dataline", dataline);
+
+
+			target["net_key"] = netKey;
+			//属性改变的监听事件
+			if(listener[netKey]){
+				var listenerObj = listener[netKey];
+				for(var i in listenerObj){
+					listenerObj[i](value);
+				}
+			}
+
+			socket.emit("dataline", dataline,netKey);
 			return flag;
 		},
 		get : function(target, key, receiver){
@@ -34,13 +61,22 @@
  	socket.on('connect', function(){
 		//初始化对应模块的socket服务
 		socket.emit("initserver",server,function(sid){
-			socket.on('dataline',function(data){
-				dataline = data;
-				proxy = new Proxy(dataline,handler);
-				var copy = copyData(data);
-				for(var key in listener){
-					listener[key](copy);
+			socket.on('dataline',function(data,netKey){
+				var copy = data;
+				if(netKey.indexOf(".")>=0){
+					var netKeyArr = netKey.split(".");
+					var chengeVal = proxy[netKeyArr[0]];
+					for(var i=1;i<netKeyArr.length-1;i++){
+						chengeVal = chengeVal[netKeyArr[i]];
+					}
+					chengeVal[netKeyArr[netKeyArr.length-1]] = data;
+				}else{
+					proxy[netKey] = data[netKey];
+					//copy = copyData(data);
 				}
+				//for(var key in listener){
+				//	listener[key](copy);
+				//}
 			});
             socketid = sid;
 			callback();
@@ -55,12 +91,19 @@
 
 	var _net =  {
 
-		addListener : function(name,func){
-			listener[name] = func;
+		addEvent : function(eventname,dataline_key,func){
+			if(listener[dataline_key]){
+				listener[dataline_key][eventname] = func;
+			}else{
+				listener[dataline_key] = {};
+				listener[dataline_key][eventname] = func;
+			}
 		},
 
-		removeListener : function(name){
-			delete listener[name];
+		removeEvent : function(eventname,dataline_key){
+			if(listener[dataline_key]&&listener[dataline_key][eventname]){
+				delete listener[dataline_key][eventname];
+			}
 		},
 
  		/**
@@ -107,7 +150,7 @@
 		 * @returns {string}
          */
 		getAjaxURL : function(){
-			return "/getView/";
+			return "/"+server+"/getView/";
 		},
 
 		/**
@@ -137,9 +180,8 @@
 			$.ajax({
 		        type: "POST",
 		        contentType: "application/x-www-form-urlencoded; charset=utf-8",  
-		        url: "/getView/",
+		        url: "/"+server+"/getView/",
 		        data: {
-					'server':server,
 					'method':method,
                     'socketid':socketid,
 					'parms':parms
@@ -175,16 +217,19 @@
 		return Object.prototype.toString.call(v);
 	};
 
-	function setProxyForObj(obj){
+	function setProxyForObj(obj,parentNetKey){
+		var netKey = parentNetKey+".";
 		for(var key in obj){
+			netKey = netKey+key;
 			var value = obj[key];
 			if(type(value)==='[object Object]'||type(value)==='[object Array]'){
-				setProxyForObj(value);
+				setProxyForObj(value,netKey);
 				obj[key] = new Proxy(value,handler);
 			}else{
 				obj[key] = value;
 			}
 		}
+		obj["net_key"] = netKey;
 	}
 
 	function copyData(obj){

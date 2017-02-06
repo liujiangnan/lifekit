@@ -31,7 +31,7 @@ function netclient(server){
             };
             property.put(service,socket.id,obj);
 
-			socket.on("dataline",function(data){
+			socket.on("dataline",function(data,netKey){
                 var obj = {
                     "socket":socket,
                     "dataline":data
@@ -85,16 +85,33 @@ function netclient(server){
 
         var handler = {
             set : function(target, key, value, receiver){
+                if(key==="net_key"){
+                    console.error("net_key是dataline私有属性,无法被赋值;请更改属性!");
+                    return false;
+                }
+                if(key.indexOf(".")>=0){
+                    console.error("dataline的属性名称不能包含'.',请更改属性!");
+                    return false;
+                }
                 var realValue;
+                var netKey = key;
+                if(target["net_key"]){
+                    var tempKey = target["net_key"];
+                    if(tempKey.indexOf(".")>=0){
+                        netKey = tempKey.substring(0,tempKey.lastIndexOf(".")+1)+key;
+                    }
+                }
                 if(type(value)==='[object Object]'||type(value)==='[object Array]'){
-                    setProxyForObj(value);
+                    setProxyForObj(value,netKey);
                     realValue = new Proxy(value,handler);
                 }else{
                     realValue = value;
                 }
                 var flag = Reflect.set(target, key, realValue, receiver);
                 //console.dir("set方法进来了.......");
-                socket.emit("dataline", dataline);
+
+                target["net_key"] = netKey;
+                socket.emit("dataline", dataline,netKey);
                 return flag;
             },
             get : function(target, key, receiver){
@@ -144,16 +161,19 @@ function netclient(server){
             return Object.prototype.toString.call(v);
         };
 
-        function setProxyForObj(obj){
+        function setProxyForObj(obj,parentNetKey){
+            var netKey = parentNetKey+".";
             for(var key in obj){
+                netKey = netKey+key;
                 var value = obj[key];
                 if(type(value)==='[object Object]'||type(value)==='[object Array]'){
-                    setProxyForObj(value);
+                    setProxyForObj(value,netKey);
                     obj[key] = new Proxy(value,handler);
                 }else{
                     obj[key] = value;
                 }
             }
+            obj["net_key"] = netKey;
         }
 
         function copyData(obj){

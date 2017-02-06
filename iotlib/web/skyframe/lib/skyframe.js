@@ -65,7 +65,7 @@ function skyframe(){
         _parent = opt.container;
         var _pWith = _parent.width();
         var _pHeight = _parent.height();
-        url = '/skyframe?server='+option.server+'&views='+option.views+'&'+option.parms;
+        url = '/'+option.server;
         var style = "";
         var html = '<div id="'+option.id+'" style="height: inherit;">' +
             '<div id="sky_toolBar" style="position: absolute; top: 0px;height: 20px; width: 100%; display: none; background:#000000;filter:alpha(opacity=50);-moz-opacity:0.5;opacity:0.5;">' +

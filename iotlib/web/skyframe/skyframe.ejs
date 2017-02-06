@@ -20,14 +20,7 @@
     <script type="text/javascript" src="lib/bootstrapValidator/js/language/zh_CN.js"></script>
 
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="lib/three-v73/Three.js"></script>
-    <script type="text/javascript" src="lib/three-v73/OrbitControls.js"></script>
-    <script type="text/javascript" src="lib/three-v73/Tween.js"></script>
-    <script type="text/javascript" src="lib/three-v73/Stats.js"></script>
-    <script type="text/javascript" src="lib/three-v73/Detector.js"></script>
-    <script type="text/javascript" src="skyframe/lib/netclient.js"></script>
-    <script type="text/javascript" src="skyframe/lib/skyframe.js"></script>
+
 
 
 </head>
@@ -38,23 +31,23 @@
 </div>
 </body>
 
-
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="lib/three-v73/Three.js"></script>
+<script type="text/javascript" src="lib/three-v73/OrbitControls.js"></script>
+<script type="text/javascript" src="lib/three-v73/Tween.js"></script>
+<script type="text/javascript" src="lib/three-v73/Stats.js"></script>
+<script type="text/javascript" src="lib/three-v73/Detector.js"></script>
+<script type="text/javascript" src="skyframe/lib/netclient.js"></script>
+<script type="text/javascript" src="skyframe/lib/skyframe.js"></script>
+<script type="text/javascript" src="skyframe/lib/domchange.js"></script>
 
 <script>
-
-
 
     var net;
 
     $(function(){
         net = NetClient('<%= host %>','<%=server %>',function(){
-            try{
-                var parmsData = JSON.parse('<%-JSON.stringify(parms) %>');
-                net.data.parms=parmsData;
-            }catch (e){
-                console.error(e);
-            }
-            net.getView("getEjs", '<%=views %>',function(result,parms){
+            net.getView("getEjs", '',function(result,parms){
                 $("#divAll").html(result);
             });
         });
