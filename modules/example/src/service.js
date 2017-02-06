@@ -15,11 +15,11 @@ function service(){
             console.log(res);
         });
 
-        setInterval(function(){
-            var str = new Date().pattern("yyyy-MM-dd HH:mm:ss S");
-            socket.data.a = str;
-            console.dir(str);
-        },1000);
+        //setInterval(function(){
+        //    var str = new Date().pattern("yyyy-MM-dd HH:mm:ss S");
+        //    socket.data.a = str;
+        //    console.dir(str);
+        //},1000);
 
         res.send("*******");
     };
