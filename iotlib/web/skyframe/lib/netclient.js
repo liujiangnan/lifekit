@@ -10,6 +10,7 @@
     var socketid = null;
 	var listener={};  //前后台数据同步的监听
 	var dataline = {};  //数据链
+	var net_push_flag = false;  //前台推送变量赋值标示
 
 	var handler = {
 		set : function(target, key, value, receiver){
@@ -47,8 +48,9 @@
 					listenerObj[i](value);
 				}
 			}
-
-			socket.emit("dataline", dataline,netKey);
+			if(!net_push_flag){
+				socket.emit("dataline", dataline,netKey);
+			}
 			return flag;
 		},
 		get : function(target, key, receiver){
@@ -62,6 +64,7 @@
 		//初始化对应模块的socket服务
 		socket.emit("initserver",server,function(sid){
 			socket.on('dataline',function(data,netKey){
+				net_push_flag = true;
 				var copy = data;
 				if(netKey.indexOf(".")>=0){
 					var netKeyArr = netKey.split(".");
@@ -77,6 +80,8 @@
 				//for(var key in listener){
 				//	listener[key](copy);
 				//}
+
+				net_push_flag = false;
 			});
             socketid = sid;
 			callback();

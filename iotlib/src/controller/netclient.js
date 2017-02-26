@@ -25,18 +25,90 @@ function netclient(server){
 
 		socket.on("initserver",function(serverstr,callback){
 			service = serverstr;
+
+            var dataline = {};
+
+            var net_push_flag = false;  //前台推送变量赋值标示
+
+            var handler = {
+                set : function(target, key, value, receiver){
+                    if(key==="net_key"){
+                        console.error("net_key是dataline私有属性,无法被赋值;请更改属性!");
+                        return false;
+                    }
+                    if(key.indexOf(".")>=0){
+                        console.error("dataline的属性名称不能包含'.',请更改属性!");
+                        return false;
+                    }
+                    var realValue;
+                    var netKey = key;
+                    if(target["net_key"]){
+                        var tempKey = target["net_key"];
+                        if(tempKey.indexOf(".")>=0){
+                            netKey = tempKey.substring(0,tempKey.lastIndexOf(".")+1)+key;
+                        }
+                    }
+                    if(type(value)==='[object Object]'||type(value)==='[object Array]'){
+                        setProxyForObj(value,netKey);
+                        realValue = new Proxy(value,handler);
+                    }else{
+                        realValue = value;
+                    }
+                    var flag = Reflect.set(target, key, realValue, receiver);
+                    //console.dir("set方法进来了.......");
+
+                    target["net_key"] = netKey;
+                    if(!net_push_flag){
+                        socket.emit("dataline", dataline,netKey);
+                    }
+                    return flag;
+                },
+                get : function(target, key, receiver){
+                    return Reflect.get(target, key, receiver);
+                }
+            };
+
+            function setProxyForObj(obj,parentNetKey){
+                var netKey = parentNetKey+".";
+                for(var key in obj){
+                    netKey = netKey+key;
+                    var value = obj[key];
+                    if(type(value)==='[object Object]'||type(value)==='[object Array]'){
+                        setProxyForObj(value,netKey);
+                        obj[key] = new Proxy(value,handler);
+                    }else{
+                        obj[key] = value;
+                    }
+                }
+                obj["net_key"] = netKey;
+            }
+
+            var proxy = new Proxy(dataline,handler);
+
             var obj = {
                 "socket":socket,
-                "dataline":{}
+                "dataline":dataline,
+                "dataproxy":proxy
             };
             property.put(service,socket.id,obj);
 
 			socket.on("dataline",function(data,netKey){
-                var obj = {
-                    "socket":socket,
-                    "dataline":data
-                };
-                property.put(service,socket.id,obj);
+                net_push_flag = true;
+                var copy = data;
+                if(netKey.indexOf(".")>=0){
+                    var netKeyArr = netKey.split(".");
+                    var chengeVal = proxy[netKeyArr[0]];
+                    for(var i=1;i<netKeyArr.length-1;i++){
+                        chengeVal = chengeVal[netKeyArr[i]];
+                    }
+                    chengeVal[netKeyArr[netKeyArr.length-1]] = data;
+                }else{
+                    proxy[netKey] = data[netKey];
+                    //copy = copyData(data);
+                }
+                net_push_flag = false;
+
+                //property.put(service,socket.id,obj);
 			});
 
 			socket.on("call",function(funcname,data,callback){
@@ -82,44 +154,7 @@ function netclient(server){
         var obj = property.getValue(serviceName,socketid);
         var socket = obj["socket"];
         var dataline = obj["dataline"];
-
-        var handler = {
-            set : function(target, key, value, receiver){
-                if(key==="net_key"){
-                    console.error("net_key是dataline私有属性,无法被赋值;请更改属性!");
-                    return false;
-                }
-                if(key.indexOf(".")>=0){
-                    console.error("dataline的属性名称不能包含'.',请更改属性!");
-                    return false;
-                }
-                var realValue;
-                var netKey = key;
-                if(target["net_key"]){
-                    var tempKey = target["net_key"];
-                    if(tempKey.indexOf(".")>=0){
-                        netKey = tempKey.substring(0,tempKey.lastIndexOf(".")+1)+key;
-                    }
-                }
-                if(type(value)==='[object Object]'||type(value)==='[object Array]'){
-                    setProxyForObj(value,netKey);
-                    realValue = new Proxy(value,handler);
-                }else{
-                    realValue = value;
-                }
-                var flag = Reflect.set(target, key, realValue, receiver);
-                //console.dir("set方法进来了.......");
-
-                target["net_key"] = netKey;
-                socket.emit("dataline", dataline,netKey);
-                return flag;
-            },
-            get : function(target, key, receiver){
-                return Reflect.get(target, key, receiver);
-            }
-        };
-
-        var proxy = new Proxy(dataline,handler);
+        var proxy = obj["dataproxy"];
 
         var _net = {
 
@@ -156,43 +191,30 @@ function netclient(server){
 
         };
 
-        //判断对象的类型
-        function type(v){
-            return Object.prototype.toString.call(v);
-        };
-
-        function setProxyForObj(obj,parentNetKey){
-            var netKey = parentNetKey+".";
-            for(var key in obj){
-                netKey = netKey+key;
-                var value = obj[key];
-                if(type(value)==='[object Object]'||type(value)==='[object Array]'){
-                    setProxyForObj(value,netKey);
-                    obj[key] = new Proxy(value,handler);
-                }else{
-                    obj[key] = value;
-                }
-            }
-            obj["net_key"] = netKey;
-        }
-
-        function copyData(obj){
-            var res = {};
-            for(var key in obj){
-                var temp = obj[key];
-                if(type(temp)==='[object Object]'||type(temp)==='[object Array]'){
-                    res[key] = copyData(temp);
-                }else{
-                    res[key] = temp;
-                }
-            }
-            return res;
-        }
-
         _net.data = proxy;
 
         return _net;
     };
+
+    //判断对象的类型
+    function type(v){
+        return Object.prototype.toString.call(v);
+    };
+
+
+
+    function copyData(obj){
+        var res = {};
+        for(var key in obj){
+            var temp = obj[key];
+            if(type(temp)==='[object Object]'||type(temp)==='[object Array]'){
+                res[key] = copyData(temp);
+            }else{
+                res[key] = temp;
+            }
+        }
+        return res;
+    }
 
     /**
      * 获取socketio对应模块的实例对象
