@@ -7,7 +7,7 @@ global.root_path = __dirname;
 global.node_modules = __dirname + "/node_modules";
 
 //扩展自定义属性及方法
-require(__dirname + "/iotlib/src/common/common1");
+require(__dirname + "/iotlib/src/common/common");
 
 //启动程序
 var start = require(root_path+"/iotlib/src/init/start");
