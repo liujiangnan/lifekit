@@ -1,6 +1,6 @@
 # LifeKit
 
-物联网应用模块的最小化平台支撑
+物联网应用模块的最小化平台支撑(基于KOA实现)
 
 # 1 概要说明
 
@@ -15,15 +15,14 @@
 使用:
 
 ```javascript
+
     var frame = new skyframe(); //获取对象
-    frame.init({  //初始化
-        id:"testframe",
-        container:$("body"),
-        server:"modules/example/src/QiangPro",
-        views:"modules/example/web/example.ejs",
-        parms:'a=123&b=234'
+    frame.init({ //初始化
+        id:"headFrame",
+        container:$("#headDiv"),
+        server:"login"
     });
-    
+
 ```
 
 其中:init方法接受一个option参数,配置如下:
@@ -32,9 +31,7 @@
     var option = {
         id:"",  //为窗体设置一个ID
         container:$("body"),  //设置窗体的容器(jquery对象)
-        server:"",  //指定模块的后台服务(规定:每个模块只能有一个后台服务)
-        views:"",  //指定模块的入口页面(规定:每个模块只能有一个入口页面)
-        parms:'',  //地址传值的方式为模块传递其他参数
+        server:"",  //指定模块(规定:每个模块名称在项目中唯一) 
         closeable:false,  //设置窗体是否可关闭,默认为false
         maximizeable:false,  //设置窗体是否可最大化,默认为false
         minimizeable:false,  //设置窗体是否可以最小化,默认为false
@@ -105,7 +102,7 @@ frame.setStyleObj(obj);  //设置窗口的样式
 说明:通讯模块,对于每一个符合物联网平台规范的应用模块,前端页面都会有此内置 net 对象,此对象提供非常灵活的前后台交互方法与实时的数据推送
 功能等,同样的在server端有一个net的global对象与其配合使用
 
-数据链:
+数据链(dataline):
 netclient对象内置一个data属性,此属性具有前后台实时数据同步的能力,对此属性进行赋值或者修改等操作时,前后台都能够获取data的最新结果
 
 例如,web端有如下操作:
@@ -115,7 +112,7 @@ net.data.a={"name":"小明"};
 则后台可以获取这个属性,代码如下:
 ```javascript
 
-var client = net.getNetclientInstanceForReq(req);
+var client = net.getSocket(ctx);
 console.dir(client.data.a); //{"name":"小明"}
 
 ```
@@ -135,7 +132,7 @@ net.on("myevent",function(data){
 
 ```javascript
 var data = {a:12};
-var client = net.getNetclientInstanceForReq(req);
+var client = net.getSocket(ctx);
 client.emit("myevent",data); //触发前台的myevent事件
 ```
 
@@ -153,7 +150,7 @@ net.emit("testEmit",{a:1},function(res){
 
 ```javascript
 var data = {a:12};
-var client = net.getNetclientInstanceForReq(req);
+var client = net.getSocket(ctx);
 //由前台的emit方法触发
 client.on("testEmit",function(obj,callback){
     console.dir(obj);  //前台传过来的数据对象
@@ -206,16 +203,16 @@ net.getView("testRender",'',function(res){
 对应的服务器端写法
 
 ```javascript
-this.testRender = function(req,res,parms){
+this.testRender = function(ctx,parms){
     console.dir(parms);
-    res.render("modules/example/web/sonejs/student.ejs",{});
+    ctx.render("modules/example/web/sonejs/student.ejs",{});
 }
 ```
 
 getData(method, parms, callback):向后台请求获取数据,方法使用同getView相同,只是对应的后台写法res.render应改为res.send
 
 
-值得注意的时,后台获取client的方法都需要一个req(  var client = net.getNetclientInstanceForReq(req);  ),这样就决定了使用client就必须
+值得注意的时,后台获取client的方法都需要一个req(  var client = net.getSocket(ctx);  ),这样就决定了使用client就必须
 在一个请求里,但是有些场景,我们可能是后台自启动的服务推送给前台数据,为了适应这样的场景,添加如下两个方法:
 
 ```javascript
@@ -247,4 +244,112 @@ var property = net.getAllSocket();
 }
 ```
 它会获取所有的客户端,也就意味着它可以向其他任何一个模块推送数据,这将会增加模块的耦合,导致业务的混乱,增加代码的复杂度,增加维护难度.总之,不推荐使用
+
+
+## (3)  数据联动
+
+说明:借助于数据链(dataline),应用Vue.js使数据变动绑定到dom元素上，实现数据链对页面元素的实时控制，包括文本、样式、显示/隐藏、元素填充等
+
+公共方法：
+datachange(id,option);初始化数据绑定
+示例：
+
+例如存在如下HTML片段：
+
+`<div id="realData">`
+
+`<span>{{message}}</span>`
+`<span v-bind:title="title">`
+
+    绑定title属性
+  `</span>`
+
+`<p v-if="seen">显示与隐藏</p>`
+
+`</div>` 
+
+使用datachange方法初始化数据绑定，如下：
+
+```javascript
+
+var vue = net.datachange("realData"); //"realData"为需要数据绑定的元素ID，此方法返回一个Vue实例
+
+```
+
+当数据链(dataline)的message、title、seen属性值发生变动时，页面元素则同时发生变化(显示message的值、title属性被动态赋值、显示与隐藏)
+
+比如:
+
+    当net.data.message="hello world"时，页面`<span>{{message}}</span>`则相应的变为`<span>hello world</span>`
+    当net.data.title = "测试标题"时，页面`<span v-bind:title="title">绑定title属性</span>`则相应的变为`<span v-bind:title="测试标题">绑定title属性</span>`
+    当net.data.seen = true时，`<p v-if="seen">显示与隐藏</p>`会显示
+    当net.data.seen = false时，`<p v-if="seen">显示与隐藏</p>`会隐藏掉
+
+更多功能与效果请参见 Vue.js官网：https://cn.vuejs.org/
+
+
+## (4)  设置(config)
+
+说明：平台提供的基本配置功能都放在iotlib/src/config/sysconfig.json文件里，提供如下配置：
+
+```json
+
+{
+  "title":"lifekit",
+  "logo":"images/logo_zhbr.png",
+  "port":"8800",
+  "jwt":{
+    "option":{
+      "secret":"liujiangnan_shared-secret"
+    },
+    "unless":{
+      "path": ["/login","/login/getView/","/test"]
+    },
+    "redirect":"/login"
+  }
+}
+
+```
+
+title:系统标题
+logo:页面logo
+port:服务器端口，默认为1337端口
+jwt:权限控制，配置同koa-jwt模块配置相同；特别说明：如果配置了jwt，则必须配置其中的“unless”属性，其中必须有模块实现token生成，其他模块依赖token才能被访问；如：http://localhost:8800/example?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiMSIsImlhdCI6MTQ5Njc3MDQ3M30.31ZNbaaCxcmVWtO_ozByrenDG031bMpPTt_a-EyhnuE
+
+## (5)  规范
+
+### (1) 所有独立业务模块必须放在 /engine 文件夹下；模块名称为文件夹名称，文件夹包含 src与web两个文件夹，src存放服务端代码，web存放页面、js、css、图片等前端静态文件，web下的文件都能够被浏览器直接访问到
+    --src文件夹下必须包含service.js（必须叫这个名字）文件作为后台逻辑的统一入口,结构如下：
+    --业务模块必须包含README.MD文件，说明模块的用途与注意事项等
+
+service.js
+```javascript
+
+const jwt = require('jsonwebtoken');
+function service(){ 
+    //内置方法，实现此方法，则当模块调用时先执行此方法的逻辑
+    this.init = function(ctx,parms){
+        return ctx.render("engine/login/web/login/login.ejs",{});
+    }
+
+    //可被前台getView调用的方法
+    //ctx为KOA2框架的上下文
+    //parms为前台传送的参数
+    this.login = function(ctx,parms){
+        var data = JSON.parse(parms); 
+        const token = jwt.sign({user: data.username}, sysconfig.jwt.option.secret); 
+        var res = {flag:"success",data:token};
+        return ctx.body=JSON.stringify(res);
+    }
+
+}
+module.exports = service;
+
+```
+
+### (2) 所有的后台模块必须发布成独立的nodejs模块，放在node_modules下，可使用npm install命令安装
+
+### (3) 所有的前端模板必须放在其被引用的独立业务模块的web下,不允许多个独立业务模块公用一个前端模板，哪怕使用的模板一模一样
+
+### (4) 以上规范对架构重构者或资深nodejs开发者无效
 

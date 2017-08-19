@@ -1,0 +1,120 @@
+<!-- ejs模板,模块展现层,负责展现UI -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title><%= title %></title>
+    <script type="text/javascript" src="lib/jquery-1.12.3.min.js"></script>
+    <script type="text/javascript" src="skyframe/lib/skyframe.js"></script>
+</head>
+<!-- 模板正文 -->
+<body style="margin: 0px;">
+    <div id="headDiv" style="width:100%;height:480px;border: solid 1px #000000;"></div>
+    <!--<div id="mainDiv" style="width: 100%; position: absolute"></div>-->
+    <!--<div id="loginDiv"></div>-->
+    <!--<div id="registDiv"></div>-->
+</body>
+
+
+<script>
+
+    var testFrame = new skyframe();
+    testFrame.init({
+                id:"headFrame",
+                container:$("#headDiv"),
+                server:"login"
+            });
+
+//    function initMainDivHeight(){
+//        var height = $(window).height();
+//        $('#mainDiv').height(height-82);
+//    }
+//
+//    var headFrame,mainFrame,loginFrame,registFrame;
+//    function initFrameObj(){
+//        headFrame = new skyframe();
+//        headFrame.init({
+//            id:"headFrame",
+//            container:$("#headDiv"),
+//            server:"modules/headPage/src/service",
+//            views:"modules/headPage/web/index.ejs",
+//            //server:"modules/zhbr3D/src/Build3DServer",
+//            //views:"modules/zhbr3D/web/build.ejs",
+//            closeable:false,
+//            maximizeable:false,
+//            minimizeable:false,
+//            moveable:false,
+//            //style:{},
+//            parms:'a=123&b=234'
+//        });
+//
+//
+//        mainFrame = new skyframe();
+//        mainFrame.init({
+//            id:"mainFrame",
+//            container:$("#mainDiv"),
+//            server:"modules/talkhome/src/service",
+//            views:"modules/talkhome/web/index.ejs"
+//        });
+//
+//    }
+//
+//    //登录的弹出窗口
+//    function showLoginFrame(){
+//        loginFrame = new skyframe();
+//        loginFrame.init({
+//            id:"loginFrame",
+//            container:$("#loginDiv"),
+//            server:"modules/makeUser/src/MakeUserService",
+//            views:"modules/makeUser/web/login/login.ejs",
+//            closeable:true,
+//            style:{
+//                position:"absolute",
+//                top:"0px",
+//                left:"0px",
+//                height:"100%",
+//                width:"100%"
+//            }
+//        });
+//    }
+//
+//    function showRegistFrame(){
+//        registFrame = new skyframe();
+//        registFrame.init({
+//            id:"registFrame",
+//            container:$("#registDiv"),
+//            server:"modules/makeUser/src/MakeUserService",
+//            views:"modules/makeUser/web/register/index.ejs",
+//            closeable:true,
+//            style:{
+//                position:"absolute",
+//                top:"82px",
+//                left:"0px",
+//                right:"0px",
+//                bottom:"0px"
+//            }
+//        });
+//    }
+//
+//    //关闭登录的弹出窗口
+//    function closeLoginFrame(){
+//        loginFrame && loginFrame.close();
+//        headFrame.flush();
+//        mainFrame.flush();
+//    }
+//
+//    //关闭注册窗口并跳转登录
+//    function closeRegistFrame(){
+//        registFrame && registFrame.close();
+//        headFrame.flush();
+//        mainFrame.flush();
+//    }
+//
+//    $(function(){
+//        initFrameObj();
+//        initMainDivHeight();
+//    });
+
+</script>
+</html>
+

@@ -53,9 +53,7 @@ function skyframe(){
      * {
      *  id:'',
      *  container:$dom,     //jquery对象
-     *  server:'',     //对应IOT模块的后台服务
-     *  views:'',      //模块的首页面
-     *  parms:'',      //url传值
+     *  server:'',     //对应IOT模块 
      *  closeable:false  //是否可关闭
      *  详细配置请参考README
      * }

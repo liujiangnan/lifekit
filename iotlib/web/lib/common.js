@@ -169,6 +169,7 @@ Date.prototype.addDays = function(d)
 };
 
 
+
 Date.prototype.addWeeks = function(w)
 {
     this.addDays(w * 7);
@@ -184,6 +185,14 @@ Date.prototype.addMonths= function(m)
         this.setDate(0);
 };
 
+Date.prototype.subtractMonths= function(m)
+{
+    var d = this.getDate();
+    this.setMonth(this.getMonth() - m);
+
+    if (this.getDate() < d)
+        this.setDate(0);
+}; 
 
 Date.prototype.addYears = function(y)
 {

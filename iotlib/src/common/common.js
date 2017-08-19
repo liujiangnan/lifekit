@@ -43,6 +43,13 @@ Date.prototype.pattern=function(fmt) {
     }           
     return fmt;           
 }  
+
+Date.prototype.addMinutes = function(minutes)
+{
+    this.setMinutes(this.getMinutes() + minutes);
+};
+
+
 Date.prototype.addDays = function(d)
 {
     this.setDate(this.getDate() + d);

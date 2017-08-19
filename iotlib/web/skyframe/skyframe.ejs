@@ -3,22 +3,23 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- 新 Bootstrap 核心 CSS 文件 -->
-    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/lib/bootstrap3.3/css/bootstrap.min.css">
 
-    <link rel="stylesheet" href="lib/bootstrapValidator/css/bootstrapValidator.min.css">
+    <link rel="stylesheet" href="/lib/bootstrapValidator/css/bootstrapValidator.min.css">
 
-    <script type="text/javascript" src="lib/jquery-1.12.3.min.js"></script>
-    <script type="text/javascript" src="lib/babel/browser.js"></script>
+    <script type="text/javascript" src="/lib/jquery-1.12.3.min.js"></script>
+    <script type="text/javascript" src="/lib/babel/browser.js"></script>
 
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="/lib/bootstrap3.3/js/bootstrap.min.js"></script>
 
-    <script type="text/javascript" src="lib/bootstrapValidator/js/bootstrapValidator.min.js"></script>
-    <script type="text/javascript" src="lib/bootstrapValidator/js/language/zh_CN.js"></script>
-
+    <script type="text/javascript" src="/lib/bootstrapValidator/js/bootstrapValidator.min.js"></script>
+    <script type="text/javascript" src="/lib/bootstrapValidator/js/language/zh_CN.js"></script>
+    <script type="text/javascript" src="/lib/common.js"></script>
+    <script type="text/javascript" src="/lib/vue.min.js"></script>
 
 
 
@@ -31,27 +32,21 @@
 </div>
 </body>
 
-<script src="/socket.io/socket.io.js"></script>
-<script type="text/javascript" src="lib/three-v73/Three.js"></script>
-<script type="text/javascript" src="lib/three-v73/OrbitControls.js"></script>
-<script type="text/javascript" src="lib/three-v73/Tween.js"></script>
-<script type="text/javascript" src="lib/three-v73/Stats.js"></script>
-<script type="text/javascript" src="lib/three-v73/Detector.js"></script>
-<script type="text/javascript" src="skyframe/lib/netclient.js"></script>
-<script type="text/javascript" src="skyframe/lib/skyframe.js"></script>
-<script type="text/javascript" src="skyframe/lib/domchange.js"></script>
+<script src="/socket.io/socket.io.js"></script> 
+<script type="text/javascript" src="/skyframe/lib/netclient.js"></script>
+<script type="text/javascript" src="/skyframe/lib/skyframe.js"></script>
 
-<script>
+<script> 
 
     var net;
-
+    var _token = '<%=token %>';
+    var _method = '<%=method %>';
     $(function(){
-        net = NetClient('<%= host %>','<%=server %>',function(){
-            net.getView("getEjs", '',function(result,parms){
+        net = NetClient('<%= host %>','<%=server %>','<%=token %>',function(){
+            net.getView(_method, '<%=params %>',function(result,parms){
                 $("#divAll").html(result);
             });
         });
-
     });
 
 </script>

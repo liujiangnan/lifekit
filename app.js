@@ -10,5 +10,5 @@ global.node_modules = __dirname + "/node_modules";
 require(__dirname + "/iotlib/src/common/common");
 
 //启动程序
-var start = require(root_path+"/iotlib/src/init/start");
-new start();
+require(root_path+"/iotlib/src/init/start")();
+
