@@ -23,7 +23,7 @@ function start() {
 
 
     const app = new Koa();
-    app.keys = ['liujiangnan'];
+    app.keys = ['iot,lifekit'];
     app.use(convert(session({
         secret: 'iot',
         name: 'iot',   //这里的name值得是cookie的name，默认cookie的name是：connect.sid
