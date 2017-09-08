@@ -1,9 +1,11 @@
 {
   "name": "lifekit",
-  "bin": {
-    "lifekit": "./bin/lifekit"
+  "author": {
+    "name": "liujiangnan"
   },
-  "version": "1.0.0",
+  "description": "物联网应用模块的最小化平台支撑(基于KOA实现)",
+  "version": "1.0.5",
+  "bundleDependencies": false,
   "dependencies": {
     "debug": "^2.6.3",
     "ejs": "^2.5.6",
@@ -20,23 +22,19 @@
     "koa-send": "^4.1.0",
     "koa-static": "^3.0.0",
     "koa-views": "^5.2.1",
-    "path": "^0.12.7",
+    "object-keys": "^1.0.11",
     "socket.io": "^1.7.3",
     "socketio-jwt": "^4.5.0"
   },
+  "deprecated": false,
   "devDependencies": {},
-  "directories": {
-    "bin": "./bin"
-  },
-  "description": "物联网应用模块的最小化平台支撑",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "lifekit start"
-  },
   "keywords": [
-    "lifekit","koa-lifekit"
+    "lifekit",
+    "iot"
   ],
-  "author": "liujiangnan",
-  "license": "ISC"
+  "license": "ISC",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
 }

@@ -1,0 +1,40 @@
+<!-- ejs模板,模块展现层,负责展现UI -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+
+    <script type="text/javascript" src="/lib/jquery-1.12.3.min.js"></script>
+    <script type="text/javascript" src="/lib/babel/browser.js"></script> 
+    
+    <script type="text/javascript" src="/lib/common.js"></script>
+    <script type="text/javascript" src="/lib/vue.min.js"></script>
+
+</head>
+<!-- 模板正文 -->
+<body style="position: absolute;top:0px;left: 0px;right: 0px;bottom: 0px;">
+<div id="divAll" style="height: 100%;">
+
+</div>
+</body>
+
+<script src="/socket.io/socket.io.js"></script> 
+<script type="text/javascript" src="/skyframe/lib/netclient.js"></script>
+<script type="text/javascript" src="/skyframe/lib/skyframe.js"></script>
+
+<script> 
+
+    var net;
+    var _token = '<%=token %>';
+    var _method = '<%=method %>';
+    $(function(){
+        net = NetClient('<%= host %>','<%=server %>','<%=token %>',function(){
+            net.getView(_method, '<%=params %>',function(result,parms){
+                $("#divAll").html(result);
+            });
+        });
+    });
+
+</script>
+</html>
