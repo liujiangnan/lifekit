@@ -53,7 +53,7 @@ function skyframe(){
      * {
      *  id:'',
      *  container:$dom,     //jquery对象
-     *  server:'',     //对应IOT模块 
+     *  engine:'',     //对应IOT模块 
      *  closeable:false  //是否可关闭
      *  详细配置请参考README
      * }
@@ -63,7 +63,7 @@ function skyframe(){
         _parent = opt.container;
         var _pWith = _parent.width();
         var _pHeight = _parent.height();
-        url = '/'+option.server;
+        url = '/'+option.engine;
         var style = "";
         var html = '<div id="'+option.id+'" style="height: inherit;">' +
             '<div id="sky_toolBar" style="position: absolute; top: 0px;height: 20px; width: 100%; display: none; background:#000000;filter:alpha(opacity=50);-moz-opacity:0.5;opacity:0.5;">' +

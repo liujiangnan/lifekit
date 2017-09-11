@@ -26,6 +26,10 @@ function start(app,server) {
         if (stat.isDirectory()) {
             (function(_block){
                 app.use(function (ctx, next) {
+                    var counter = ctx.path.lastIndexOf(".");
+                    if(counter>0&&ctx.path.substr(counter,3)==="ejs"){
+                        return next();
+                    } 
                     if ((ctx.path.indexOf("/"+_block+"/web")===0)&&(ctx.method == 'HEAD' || ctx.method == 'GET')) {
                         return send(ctx, ctx.path, {root:resolve(root_path + "/engine")}).then(done => {
                             if (!done) {

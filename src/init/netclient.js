@@ -21,7 +21,7 @@ function netclient(server,secret) {
     /**
      * 根据服务名称获取所有已经开启的socketIO客户端信息
      * @param service
-     * @returns [{"key":"socketid","value":"socket对象"},{}......]
+     * @returns [{"key":"socketid","value":{net:{},service:""}},{}......]
      */
     this.getSockets = function (service) {
         return property.get(service);
