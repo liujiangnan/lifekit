@@ -25,7 +25,7 @@ function authroute(app,secret) {
                 router.get("/" + n, function (ctx, next) {
                     var host = ctx.headers['host'];
                     // 创建token
-                    var token = jwt.sign(person, secret, {
+                    var token = jwt.sign({engine:n}, secret, {
                         'expiresIn': 30 // 设置过期时间，单位是秒
                     });
                     var params = "";
@@ -44,7 +44,7 @@ function authroute(app,secret) {
                 //各个子模块路由
                 router.get("/" + n + "/:method", function (ctx, next) { 
                     var host = ctx.headers['host'];
-                    var token = jwt.sign(person, secret, {
+                    var token = jwt.sign({engine:n+'/'+ctx.params.method}, secret, {
                         'expiresIn': 30 // 设置过期时间，单位是秒
                     });
                     var params = "";

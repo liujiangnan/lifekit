@@ -45,7 +45,14 @@ function netclient(server,secret) {
     };
 
     function initSocket(socket) { 
-        var service;
+        var service = socket.decoded_token.engine;
+        if(!service){
+            socket.disconnect(true);
+            return;
+        }
+        if(service.indexOf("/")>0){
+            service = service.substring(0,service.indexOf("/"));
+        }
         console.log('connection: SocketID=' + socket.id);
         socket.on('disconnect', function () {
             property.remove(service, socket.id);
@@ -57,7 +64,9 @@ function netclient(server,secret) {
         });
 
         socket.on("initserver", function (serverstr, callback) {
-            service = serverstr;
+
+
+            //service = serverstr;
 
             var dataline = {};
 
@@ -141,7 +150,7 @@ function netclient(server,secret) {
 
             var net = creatNet(socket,proxy);
 
-            var mdlService = require(root_path + '/engine/' + serverstr+'/src/service');
+            var mdlService = require(root_path + '/engine/' + service+'/src/service');
             var svc = new mdlService(net);  
 
             socket.on("call", function (funcname,socketid,data, callback) {  
