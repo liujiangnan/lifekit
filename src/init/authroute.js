@@ -1,7 +1,7 @@
 /**
  * Web请求路由（带权限）
  */
-function authroute(app,secret) {
+function authroute(app,secret,engine_dir) {
     var router = require('koa-router')();
     var jwt = require('jsonwebtoken'); 
 
@@ -14,9 +14,9 @@ function authroute(app,secret) {
         return ctx.render('engine/index.ejs', { 'host': host });
     });
 
-    fs.readdir(root_path + "/engine", function (err, fileNameArray) {
+    fs.readdir(engine_dir, function (err, fileNameArray) {
         fileNameArray.asynEach(function (i, n, flag) {
-            var filepath = root_path + "/engine/" + n;
+            var filepath = engine_dir + "/" + n;
             var stat = fs.lstatSync(filepath);
             if (stat && stat.isDirectory()) {
                 console.log("正在装载'" + n + "'模块..");
