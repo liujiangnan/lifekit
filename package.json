@@ -4,7 +4,7 @@
     "name": "liujiangnan"
   },
   "description": "物联网应用模块的最小化平台支撑(基于KOA实现)",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "bundleDependencies": false,
   "dependencies": {
     "debug": "^2.6.3",

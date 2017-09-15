@@ -14,11 +14,14 @@ var NetClient = function (host, server, token, callback) {
 
 	var handler = {
 		set: function (target, key, value, receiver) {
-			//console.dir(value);
-			if (key === "net_key") {
+			//过滤自定义的原型链属性
+			if(key === "__proto__"){
+				return Reflect.set(target, key, value, receiver);
+			}
+			if (key === "net_key"&&!net_push_flag) {
 				console.error("net_key是dataline私有属性,无法被赋值;请更改属性!");
 				return false;
-			}
+			} 
 			if (key.indexOf(".") >= 0) {
 				console.error("dataline的属性名称不能包含'.',请更改属性!");
 				return false;
