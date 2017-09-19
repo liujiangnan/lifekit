@@ -17,6 +17,7 @@ function authroute(app,secret,engine_dir) {
     fs.readdir(engine_dir, function (err, fileNameArray) {
         fileNameArray.asynEach(function (i, n, flag) {
             var filepath = engine_dir + "/" + n;
+            var packageJson = require(filepath+"/package.json");
             var stat = fs.lstatSync(filepath);
             if (stat && stat.isDirectory()) {
                 console.log("正在装载'" + n + "'模块..");
@@ -38,6 +39,7 @@ function authroute(app,secret,engine_dir) {
                             'server': n, 
                             'token': token,
                             'method':'init',
+                            'title':packageJson.description,
                             'params':params
                         });
                 });
@@ -57,6 +59,7 @@ function authroute(app,secret,engine_dir) {
                             'server': n, 
                             'token': token,
                             'method': ctx.params.method,
+                            'title':packageJson.description,
                             'params': params
                         });
                 });
