@@ -22,11 +22,11 @@ function authroute(app,secret,engine_dir) {
 
     fs.readdir(engine_dir, function (err, fileNameArray) {
         fileNameArray.asynEach(function (i, n, flag) {
-            var filepath = engine_dir + "/" + n;
+            var filepath = engine_dir + "/" + n; 
             var stat = fs.lstatSync(filepath);
             if (stat && stat.isDirectory()) {
                 console.log("正在装载'" + n + "'模块..");
-
+                var packageJson = require(filepath+"/package.json");
                 //模块入口路由
                 router.get("/" + n, function (ctx, next) {
                     var host = ctx.headers['host'];
@@ -44,6 +44,7 @@ function authroute(app,secret,engine_dir) {
                         'server': n, 
                         'token': token,
                         'method':'init',
+                        'title': packageJson.name,
                         'params':params
                     },function(err, str){
                         if(err){
@@ -69,6 +70,7 @@ function authroute(app,secret,engine_dir) {
                         'server': n, 
                         'token': token,
                         'method': ctx.params.method,
+                        'title': packageJson.name,
                         'params': params
                     },function(err, str){
                         if(err){
