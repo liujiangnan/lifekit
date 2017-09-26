@@ -44,7 +44,7 @@ function authroute(app,secret,engine_dir) {
                         'server': n, 
                         'token': token,
                         'method':'init',
-                        'title': packageJson.name,
+                        'title': packageJson.description,
                         'params':params
                     },function(err, str){
                         if(err){
@@ -70,7 +70,7 @@ function authroute(app,secret,engine_dir) {
                         'server': n, 
                         'token': token,
                         'method': ctx.params.method,
-                        'title': packageJson.name,
+                        'title': packageJson.description,
                         'params': params
                     },function(err, str){
                         if(err){
