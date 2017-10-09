@@ -19,6 +19,8 @@ function start(app,server,engine_path) {
         engine_dir = engine_path
     }
  
+    global.ENGINE_PATH = engine_dir;
+    
     //扩展自定义属性及方法
     require("./../common/common");
 
