@@ -72,7 +72,7 @@ function skyframe(){
             '" src="'+url+'" allowTransparency="true" scrolling="auto"  frameborder="no" marginheight="0" marginwidth="0" style="height: 100%;width: 100%;"></iframe>' +
             '</div>';
 
-        _parent.append(html);
+        _parent.html(html);
         _dom = $("#"+option.id);
         _skyToolbar = _dom.find("#sky_toolBar").eq(0);
         _skyIframe = $("#frame_"+option.id);
