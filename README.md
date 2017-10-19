@@ -20,7 +20,7 @@
     frame.init({ //初始化
         id:"headFrame",
         container:$("#headDiv"),
-        server:"login"
+        engine:"login"
     });
 
 ```
