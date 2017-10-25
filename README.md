@@ -199,13 +199,13 @@ net.getView("testRender",'',function(res){
 对应的服务器端写法
 
 ```javascript
-this.testRender = function(ctx,parms){
+this.testRender = async function(ctx,parms){
     console.dir(parms);
-    ctx.render("engine/example/web/sonejs/student.ejs",{});
+    return ctx.render("engine/example/web/sonejs/student.ejs",{});
 }
 ```
 
-getData(method, parms, callback):向后台请求获取数据,方法使用同getView相同,只是对应的后台写法res.render应改为res.send
+getData(method, parms, callback):向后台请求获取数据,方法使用同getView相同,只是对应的后台写法res.render应改为res.body
 
 
 我们可能是后台自启动的服务推送给前台数据,为了适应这样的场景,添加如下两个方法:
