@@ -60,8 +60,13 @@ var NetClient = function (host, server, token, callback) {
 			return Reflect.get(target, key, receiver);
 		}
 	};
-
-	var proxy = new Proxy(dataline, handler); 
+	var proxy = {};
+	try{
+		proxy = new Proxy(dataline, handler);
+	}catch(e){
+		console.log("浏览器不支持ES6新特性，无法使用数据链！");
+	}
+	 
 
 	socket.on('connect', function () {
 		socket.on('authenticated', function () {
@@ -236,7 +241,7 @@ var NetClient = function (host, server, token, callback) {
 		datachange: function (id, option) {
 			var opt = option ? option : {};
 			opt.el = "#" + id;
-			opt.data = proxy;
+			opt.data = _net.data;
 			return new Vue(opt);
 		}
 
