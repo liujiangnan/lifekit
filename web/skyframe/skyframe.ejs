@@ -29,7 +29,7 @@
     var _method = '<%=method %>';
     $(function(){
         net = NetClient('<%= host %>','<%=server %>','<%=token %>',function(){
-            net.getView(_method, '<%=params %>',function(result,parms){
+            net.getView(_method, '<%-params %>',function(result,parms){
                 $("#divAll").html(result);
             });
         });
