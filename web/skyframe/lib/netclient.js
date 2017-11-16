@@ -104,9 +104,9 @@ var NetClient = function (host, server, token, callback) {
 	socket.on('disconnect', function () {
 		socketid = null;
 		socket.disconnect();
-		$("#divAll").bind('click',function(){
+		$("#shadeAll").bind('click',function(){
 			document.location.reload();
-		});
+		}).show();
 	});
 
 
