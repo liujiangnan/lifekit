@@ -1,0 +1,39 @@
+{
+  "_from": "lifekit-test@^1.0.1",
+  "_id": "lifekit-test@1.0.1",
+  "_inBundle": false,
+  "_integrity": "sha512-PLouutBKiMuy7ER4dRtHnXuoLsz/yVsK0TnfLdQOhX6U6DnBH6V+a0+pv6ZjUjUlzB2ARVAG6FUsevXj9pvTYA==",
+  "_location": "/lifekit-test",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "lifekit-test@^1.0.1",
+    "name": "lifekit-test",
+    "escapedName": "lifekit-test",
+    "rawSpec": "^1.0.1",
+    "saveSpec": null,
+    "fetchSpec": "^1.0.1"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/lifekit-test/-/lifekit-test-1.0.1.tgz",
+  "_shasum": "254069390b07caa34918ae4f1aaa1e230840e93c",
+  "_spec": "lifekit-test@^1.0.1",
+  "_where": "E:\\iotWorkSpace\\youlife",
+  "author": "",
+  "bundleDependencies": false,
+  "dependencies": {
+  },
+  "deprecated": false,
+  "description": "用于各个编写好的业务模块进行简单的界面预览与测试",
+  "license": "ISC",
+  "main": "index.js",
+  "name": "lifekit-test",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.4"
+}
