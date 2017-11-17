@@ -228,27 +228,16 @@ function parseISO8601(dateStringInRange) {
 function ShowWaitting(isShow){
 	if(isShow)
 	{
-		$("#fwaitting").css({'display': 'block'});
+        $("#fwaitting").css({'display': 'block'});
+        $("#fwaittingTable").css({'display': 'block'});
 	}
 	else
 	{
-		$("#fwaitting").css({'display': 'none'});		
+        $("#fwaitting").css({'display': 'none'});	
+        $("#fwaittingTable").css({'display': 'none'});	
 	}
 }
-
-/**
- * 设置等待框位置
- * @param left x坐标轴位置
- * @param top  y坐标轴位置
- */
-function SetWaittingPosition(left,top){
-	var doc = window.frames["fwaitting"].document;
-	if(doc!=null)
-	{
-		doc.getElementById("waitting").style.left = left + 'px';
-		doc.getElementById("waitting").style.top = top + 'px';
-	}
-}
+ 
 
 /**
  * 生成UUID

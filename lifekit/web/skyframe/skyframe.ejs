@@ -13,7 +13,7 @@
 </head>
 <!-- 模板正文 -->
 <body style="position: absolute;top:0px;left: 0px;right: 0px;bottom: 0px;">
-    <div id="shadeAll" style="position:absolute;top:0px;right:0px;bottom:0px;left:0px;z-index:99999;display:none;"></div>
+    <%include waiting %>
     <div id="divAll" style="height: 100%;"></div>
 </body>
 
@@ -27,8 +27,10 @@
     var _token = '<%=token %>';
     var _method = '<%=method %>';
     $(function(){
-        net = NetClient('<%= host %>','<%=server %>','<%=token %>',function(){
+        ShowWaitting(true);
+        net = NetClient('<%=host %>','<%=server %>','<%=token %>',function(){
             net.getView(_method, '<%-params %>',function(result,parms){
+                ShowWaitting(false);
                 $("#divAll").html(result);
             });
         });
