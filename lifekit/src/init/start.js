@@ -24,7 +24,7 @@ function start(app,server,engine_path) {
     //扩展自定义属性及方法
     require("./../common/common");
 
-    app.use(require('koa-static')(node_modules+'/lifekit/web'));
+    app.use(require('koa-static')(root_path+'/lifekit/web'));
 
     //app.use(views(root_path, { extension: 'ejs' })); 
 

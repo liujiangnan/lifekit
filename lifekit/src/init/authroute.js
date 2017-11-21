@@ -38,7 +38,7 @@ function authroute(app,secret,engine_dir) {
                     if(ctx.request.query){
                         params = JSON.stringify(ctx.request.query);                        
                     }
-                    ejs.renderFile(root_path+'/node_modules/lifekit/web/skyframe/skyframe.ejs',
+                    ejs.renderFile(root_path+'/lifekit/web/skyframe/skyframe.ejs',
                     { 
                         'host': host, 
                         'server': n, 
@@ -64,7 +64,7 @@ function authroute(app,secret,engine_dir) {
                     if(ctx.request.query){
                         params = JSON.stringify(ctx.request.query);                        
                     }
-                    ejs.renderFile(root_path+'/node_modules/lifekit/web/skyframe/skyframe.ejs',
+                    ejs.renderFile(root_path+'/lifekit/web/skyframe/skyframe.ejs',
                     { 
                         'host': host, 
                         'server': n, 
@@ -101,7 +101,7 @@ function authroute(app,secret,engine_dir) {
                             } 
                         }
                     } else {
-                        ejs.renderFile(root_path+'/node_modules/lifekit/web/skyframe/error.ejs',
+                        ejs.renderFile(root_path+'/lifekit/web/skyframe/error.ejs',
                         { 
                             message: "非法访问"
                         },function(err, str){

@@ -66,6 +66,6 @@ server.listen(port, function(){
     console.log("已启动服务监听，端口：" + port);
 
     //加载lifekit组件
-    lifekit(app,server,"E:/iotWorkSpace/engine");
+    lifekit(app,server);
 
 });  
