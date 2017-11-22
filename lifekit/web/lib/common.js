@@ -12,43 +12,7 @@ function setDivHeight()
 	$("#divDisplay").css("height", divDisplayHeight);
 }
 
-
-/**
- * 执行服务方法不返回页面数据
- * @param mdlId 操作的元素ID
- * @param dataurl 获取数据URL
- * @param callback 回调事件
- */
-function getViewForContentMenu(mdlId, dataurl, width, height,leftpos, toppos) {
-	//创建弹出菜单
-    var pop=window.createPopup();
-	$.ajax({
-        type: "POST",
-        contentType: "application/x-www-form-urlencoded; charset=utf-8",  
-        url: "./ui/getView.do",
-        data:  "mdlId=" + mdlId + "&dataurl=" + dataurl,
-        success: function (xhr) {
-            if ($.browser.msie) {
-
-            }
-            else {
-
-            }
-        },
-        error: function (xhr, e) {
-
-        },
-        complete: function (xhr) {
-    		//设置弹出菜单的内容
-    		pop.document.body.innerHTML=xhr.responseText;
-    		//显示菜单
-    		pop.show(leftpos, toppos,width,height,document.body);
-
-        }
-    });
-    return pop;
-    
-}
+ 
 
 
 /**
@@ -268,49 +232,4 @@ function IsEmail(strEmail)
     }
     return result;
 }
-
-/** 
-* 全局变量
-*/
-var Global = function(){};
-/** 
-* 模块ID
-*/
-Global.CurrentModuleId = "4028807e40e7d1940140e7e10a5d0001";
-/** 
-* 操作区ID
-*/
-Global.CurrentOperatingId = "";
-/**
- * 工作区ID
- */
-Global.CurrentWorkingId = "";
-
-/**
- * 浏览器屏幕信息
- */
-Global.Screen = function(){};
-
-//改变图标状态，针对图片名称为"*_0.png(鼠标离开状态)、*_1.png(鼠标划过状态)"的情况
-function changeIconStatus(that, num) {
-    var imgSrc = $(that).attr("src");
-    var newImgSrc = "";
-    if(num == 1) {
-        newImgSrc = imgSrc.replace("_0.png", "_1.png");
-    }else {
-        newImgSrc = imgSrc.replace("_1.png", "_0.png");
-    }
-    $(that).attr("src", newImgSrc);
-}
-//改变有背景图片背景图片
-// 针对background-image背景图片为"*_0.png(鼠标离开状态)、*_1.png(鼠标划过状态)"的情况
-function changeImgButtonBackground(that, num) {
-    var imgSrc = $(that).css("background-image");
-    var newImgSrc = "";
-    if(num == 1) {
-        newImgSrc = imgSrc.replace("_0.png", "_1.png");
-    }else {
-        newImgSrc = imgSrc.replace("_1.png", "_0.png");
-    }
-    $(that).css("background-image", newImgSrc);
-}
+ 
