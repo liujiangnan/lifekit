@@ -76,14 +76,14 @@ function netclient(server, secret, engine_dir) {
         set: function(target, key, value, receiver) {
 
           //过滤自定义的原型链属性（正常赋值，但不推送）
-          if(key === "__proto__"){
+          if (key === "__proto__" || key === "length") {
             return Reflect.set(target, key, value, receiver);
           }
 
-          if (key === "net_key"&&!net_push_flag) {
+          if (key === "net_key" && !net_push_flag) {
             console.error("net_key是dataline私有属性,无法被赋值;请更改属性!");
             return false;
-          } 
+          }
 
           if (key.indexOf(".") >= 0) {
             console.error("dataline的属性名称不能包含'.',请更改属性!");

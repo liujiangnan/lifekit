@@ -71,6 +71,7 @@ var NetClient = function (host, server, token, callback) {
 	socket.on('connect', function () {
 		socket.on('authenticated', function () {
 			socket.on('dataline', function (data, netKey) { 
+				console.log(netKey);
 				net_push_flag = true;
 				var copy = data;
 				if (netKey.indexOf(".") >= 0) {
@@ -78,10 +79,12 @@ var NetClient = function (host, server, token, callback) {
 					var chengeVal = proxy[netKeyArr[0]];
 					var dataVal = data[netKeyArr[0]];
 					for (var i = 1; i < netKeyArr.length - 1; i++) {
-						chengeVal = chengeVal[netKeyArr[i]];
-						dataVal = dataVal[netKeyArr[i]];
-					}
+						let key = netKeyArr[i];
+						chengeVal = chengeVal[key];
+						dataVal = dataVal[key];
+					} 
 					chengeVal[netKeyArr[netKeyArr.length - 1]] = dataVal[netKeyArr[netKeyArr.length - 1]];
+					console.log(chengeVal[netKeyArr[netKeyArr.length - 1]]);
 				} else {
 					proxy[netKey] = data[netKey];
 					//copy = copyData(data);
