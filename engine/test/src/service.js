@@ -9,9 +9,13 @@ function service(net) {
   net.data.items.push({name:"def",value:"456"});
 
   this.test = function(){
-    net.data.items.push({name:"ghi",value:"789"});
+    // net.data.items[1].name="1111";
+    // net.data.items.pop();
+
+    // net.data.items.push({name:"ghi",value:"789"});
   }
 
 }
 
 module.exports = service;
+ 

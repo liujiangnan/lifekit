@@ -73,10 +73,9 @@ function netclient(server, secret, engine_dir) {
       var net_push_flag = false; //前台推送变量赋值标示
 
       var handler = {
-        set: function(target, key, value, receiver) {
-
+        set: function(target, key, value, receiver) { 
           //过滤自定义的原型链属性（正常赋值，但不推送）
-          if (key === "__proto__" || key === "length") {
+          if (key === "__proto__") {
             return Reflect.set(target, key, value, receiver);
           }
 
@@ -145,7 +144,13 @@ function netclient(server, secret, engine_dir) {
             chengeVal = chengeVal[netKeyArr[i]];
             dataVal = dataVal[netKeyArr[i]];
           }
-          chengeVal[netKeyArr[netKeyArr.length - 1]] = dataVal[netKeyArr[netKeyArr.length - 1]];
+          if(type(chengeVal) === '[object Array]'){ 
+						let key = netKeyArr[netKeyArr.length - 1]-0;
+						let value = dataVal[netKeyArr[netKeyArr.length - 1]];
+						setArrayData(chengeVal,key,value);
+					}else{
+						chengeVal[netKeyArr[netKeyArr.length - 1]] = dataVal[netKeyArr[netKeyArr.length - 1]];
+					} 
         } else {
           proxy[netKey] = data[netKey];
           //copy = copyData(data);
@@ -217,6 +222,30 @@ function netclient(server, secret, engine_dir) {
   function type(v) {
     return Object.prototype.toString.call(v);
   };
+
+  function setArrayData(arr,index,dataVal){ 
+		if(arr.length<dataVal.length){  //push操作引起的数据链变动
+			let value = dataVal[dataVal.length-1];
+			arr.push(value);
+		}else if(arr.length===dataVal.length){ //角标赋值操作引起的数据链变动
+			if(index!=="length"){
+				let value = dataVal[index];
+				arr[index] = value;
+			} 
+		}else{ //其他
+			//arr.splice(0,arr.length);
+			for(let i=0;i<dataVal.length; i++){
+				if(i<arr.length){
+					arr[i] = dataVal[i];
+				}else{
+					arr.push(dataVal[i]);
+				} 
+			} 
+			if(arr.length>dataVal.length){
+				arr.splice(dataVal.length,arr.length);
+			}
+		}
+	}
 
 
 

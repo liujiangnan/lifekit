@@ -15,7 +15,7 @@ var NetClient = function (host, server, token, callback) {
 	var handler = {
 		set: function (target, key, value, receiver) {
 			//过滤自定义的原型链属性
-			if(key === "__proto__"){
+			if(key === "__proto__"||key==="length"){
 				return Reflect.set(target, key, value, receiver);
 			}
 			if (key === "net_key"&&!net_push_flag) {
@@ -68,10 +68,10 @@ var NetClient = function (host, server, token, callback) {
 	}
 	 
 
+
 	socket.on('connect', function () {
 		socket.on('authenticated', function () {
 			socket.on('dataline', function (data, netKey) { 
-				console.log(netKey);
 				net_push_flag = true;
 				var copy = data;
 				if (netKey.indexOf(".") >= 0) {
@@ -82,9 +82,14 @@ var NetClient = function (host, server, token, callback) {
 						let key = netKeyArr[i];
 						chengeVal = chengeVal[key];
 						dataVal = dataVal[key];
+					}
+
+					if(type(chengeVal) === '[object Array]'){  
+						let key = netKeyArr[netKeyArr.length - 1]; 
+						setArrayData(chengeVal,key,dataVal);
+					}else{
+						chengeVal[netKeyArr[netKeyArr.length - 1]] = dataVal[netKeyArr[netKeyArr.length - 1]];
 					} 
-					chengeVal[netKeyArr[netKeyArr.length - 1]] = dataVal[netKeyArr[netKeyArr.length - 1]];
-					console.log(chengeVal[netKeyArr[netKeyArr.length - 1]]);
 				} else {
 					proxy[netKey] = data[netKey];
 					//copy = copyData(data);
@@ -254,6 +259,30 @@ var NetClient = function (host, server, token, callback) {
 	function type(v) {
 		return Object.prototype.toString.call(v);
 	};
+
+	function setArrayData(arr,index,dataVal){ 
+		if(arr.length<dataVal.length){  //push操作引起的数据链变动
+			let value = dataVal[dataVal.length-1];
+			arr.push(value);
+		}else if(arr.length===dataVal.length){ //角标赋值操作引起的数据链变动
+			if(index!=="length"){
+				let value = dataVal[index];
+				arr[index] = value;
+			} 
+		}else{ //其他
+			//arr.splice(0,arr.length);
+			for(let i=0;i<dataVal.length; i++){
+				if(i<arr.length){
+					arr[i] = dataVal[i];
+				}else{
+					arr.push(dataVal[i]);
+				} 
+			} 
+			if(arr.length>dataVal.length){
+				arr.splice(dataVal.length,arr.length);
+			}
+		}
+	}
 
 	function setProxyForObj(obj, parentNetKey) {
 		var netKey = parentNetKey + ".";
