@@ -11,6 +11,7 @@ function netclient(server, secret, engine_dir) {
   var cookie = require('cookie');
   var path = require('path');
   var property = new Property();
+  let net_key = Symbol("net_key");
 
   io.on('connection', socketioJwt.authorize({
     secret: secret,
@@ -23,7 +24,7 @@ function netclient(server, secret, engine_dir) {
    * @param service
    * @returns [{"key":"socketid","value":{net:{},service:""}},{}......]
    */
-  this.getSockets = function(service) {
+  this.getSockets = function (service) {
     return property.get(service);
   };
 
@@ -32,7 +33,7 @@ function netclient(server, secret, engine_dir) {
    * 获取所有的socket信息
    * @returns {Property}
    */
-  this.getAllSocket = function() {
+  this.getAllSocket = function () {
     return property;
   };
 
@@ -40,7 +41,7 @@ function netclient(server, secret, engine_dir) {
    * 获取自己的socketId
    * @param req
    */
-  this.getSelfSocketId = function(req) {
+  this.getSelfSocketId = function (req) {
     return req.body.socketid;
   };
 
@@ -54,7 +55,7 @@ function netclient(server, secret, engine_dir) {
       service = service.substring(0, service.indexOf("/"));
     }
     console.log('connection: SocketID=' + socket.id);
-    socket.on('disconnect', function() {
+    socket.on('disconnect', function () {
       property.remove(service, socket.id);
       if (property.get(service).isEmpty()) {
         property.remove(service);
@@ -63,7 +64,7 @@ function netclient(server, secret, engine_dir) {
       console.log('disconnect: SocketID=' + socket.id);
     });
 
-    socket.on("initserver", function(serverstr, callback) {
+    socket.on("initserver", function (serverstr, callback) {
 
 
       //service = serverstr;
@@ -73,67 +74,82 @@ function netclient(server, secret, engine_dir) {
       var net_push_flag = false; //前台推送变量赋值标示
 
       var handler = {
-        set: function(target, key, value, receiver) { 
+        set: function (target, key, value, receiver) { 
           //过滤自定义的原型链属性（正常赋值，但不推送）
-          if (key === "__proto__") {
+          if (key === "__proto__" || key === "length") {
             return Reflect.set(target, key, value, receiver);
-          }
+          } 
 
-          if (key === "net_key" && !net_push_flag) {
-            console.error("net_key是dataline私有属性,无法被赋值;请更改属性!");
-            return false;
-          }
-
-          if (key.indexOf(".") >= 0) {
+          if (key!==net_key&&key.indexOf(".") >= 0) {
             console.error("dataline的属性名称不能包含'.',请更改属性!");
             return false;
           }
           var realValue;
           var netKey = key;
-          if (target["net_key"]) {
-            var tempKey = target["net_key"];
+          if (target[net_key]&&key!==net_key) {
+            var tempKey = target[net_key];
             if (tempKey.indexOf(".") >= 0) {
               netKey = tempKey.substring(0, tempKey.lastIndexOf(".") + 1) + key;
+            } 
+          } 
+          //对象属性值变化推送标识，默认是推送的
+          let obj_push_flag = true;  
+          if ((type(value) === '[object Object]' || type(value) === '[object Array]')) {   
+            if (!isProxy(value)) {
+              setProxyForObj(value, netKey); 
+              realValue = new Proxy(value, handler);
+            } else {  
+              //说明对象的这个值是一个proxy
+              //说明是对象自己的内部变动，不推送
+              //这种情况一般都出现在数组的操作上
+              //后续特殊情况则持续重构
+              obj_push_flag = false;
+              setProxyForObj(value, netKey);  
+              realValue = value;
             }
-          }
-          if (type(value) === '[object Object]' || type(value) === '[object Array]') {
-            setProxyForObj(value, netKey);
-            realValue = new Proxy(value, handler);
           } else {
             realValue = value;
+          }  
+          var flag = Reflect.set(target, key, realValue, receiver); 
+          if(net_key!==netKey){ 
+            target[net_key] = netKey;
+          } else {
+            obj_push_flag = false;
           }
-          var flag = Reflect.set(target, key, realValue, receiver);
-          //console.dir("set方法进来了.......");
-
-          target["net_key"] = netKey;
-          if (!net_push_flag) {
+          if (!net_push_flag && obj_push_flag) {
+            console.log(key);
+            console.log(value);
             socket.emit("dataline", dataline, netKey);
           }
           return flag;
         },
-        get: function(target, key, receiver) {
+        get: function (target, key, receiver) {
           return Reflect.get(target, key, receiver);
         }
       };
 
-      function setProxyForObj(obj, parentNetKey) {
-        var netKey = parentNetKey + ".";
+      function setProxyForObj(obj, parentNetKey) { 
+        var netKey = parentNetKey + "."; 
         for (var key in obj) {
           var tempNetKey = netKey + key;
           var value = obj[key];
           if (type(value) === '[object Object]' || type(value) === '[object Array]') {
             setProxyForObj(value, tempNetKey);
-            obj[key] = new Proxy(value, handler);
+            if (!isProxy(value)) { 
+              obj[key] = new Proxy(value, handler);
+            } else {
+              obj[key] = value;
+            }
           } else {
             obj[key] = value;
           }
-        }
-        obj["net_key"] = netKey;
+        }  
+        obj[net_key] = netKey;  
       }
 
       var proxy = new Proxy(dataline, handler);
 
-      socket.on("dataline", function(data, netKey) {
+      socket.on("dataline", function (data, netKey) {
         net_push_flag = true;
         var copy = data;
         if (netKey.indexOf(".") >= 0) {
@@ -144,13 +160,13 @@ function netclient(server, secret, engine_dir) {
             chengeVal = chengeVal[netKeyArr[i]];
             dataVal = dataVal[netKeyArr[i]];
           }
-          if(type(chengeVal) === '[object Array]'){ 
-						let key = netKeyArr[netKeyArr.length - 1]-0;
-						let value = dataVal[netKeyArr[netKeyArr.length - 1]];
-						setArrayData(chengeVal,key,value);
-					}else{
-						chengeVal[netKeyArr[netKeyArr.length - 1]] = dataVal[netKeyArr[netKeyArr.length - 1]];
-					} 
+          if (type(chengeVal) === '[object Array]') {
+            let key = netKeyArr[netKeyArr.length - 1] - 0;
+            let value = dataVal[netKeyArr[netKeyArr.length - 1]];
+            setArrayData(chengeVal, key, value);
+          } else {
+            chengeVal[netKeyArr[netKeyArr.length - 1]] = dataVal[netKeyArr[netKeyArr.length - 1]];
+          }
         } else {
           proxy[netKey] = data[netKey];
           //copy = copyData(data);
@@ -165,7 +181,7 @@ function netclient(server, secret, engine_dir) {
       var mdlService = require(engine_dir + '/' + service + '/src/service');
       var svc = new mdlService(net);
 
-      socket.on("call", function(funcname, socketid, data, callback) {
+      socket.on("call", function (funcname, socketid, data, callback) {
         svc[funcname](data, callback);
       });
       var obj = {
@@ -186,7 +202,7 @@ function netclient(server, secret, engine_dir) {
        * @param eventname 要触发的前台的事件名称
        * @param data 传递的参数
        */
-      emit: function(eventname, data) {
+      emit: function (eventname, data) {
         if (socket) {
           socket.emit(eventname, data);
         }
@@ -197,7 +213,7 @@ function netclient(server, secret, engine_dir) {
        * @param eventname 事件名称
        * @param callback 触发后执行的操作
        */
-      on: function(eventname, callback) {
+      on: function (eventname, callback) {
         if (socket) {
           socket.on(eventname, callback);
         } else {
@@ -223,29 +239,21 @@ function netclient(server, secret, engine_dir) {
     return Object.prototype.toString.call(v);
   };
 
-  function setArrayData(arr,index,dataVal){ 
-		if(arr.length<dataVal.length){  //push操作引起的数据链变动
-			let value = dataVal[dataVal.length-1];
-			arr.push(value);
-		}else if(arr.length===dataVal.length){ //角标赋值操作引起的数据链变动
-			if(index!=="length"){
-				let value = dataVal[index];
-				arr[index] = value;
-			} 
-		}else{ //其他
-			//arr.splice(0,arr.length);
-			for(let i=0;i<dataVal.length; i++){
-				if(i<arr.length){
-					arr[i] = dataVal[i];
-				}else{
-					arr.push(dataVal[i]);
-				} 
-			} 
-			if(arr.length>dataVal.length){
-				arr.splice(dataVal.length,arr.length);
-			}
-		}
-	}
+  function isProxy(v) {
+    return v[net_key] !== undefined;
+  }
+
+  function setArrayData(arr, index, dataVal) {
+    if (arr.length < dataVal.length) {  //push操作引起的数据链变动
+      let value = dataVal[dataVal.length - 1];
+      arr.push(value);
+    } else { //其他
+      arr.splice(0, arr.length);
+      for (let i = 0; i < dataVal.length; i++) {
+        arr.push(dataVal[i]);
+      }
+    }
+  }
 
 
 
@@ -275,7 +283,7 @@ function netclient(server, secret, engine_dir) {
    * @param ctx 请求对象
    * @returns {{emit: emit, on: on}}
    */
-  this.getService = function(ctx) {
+  this.getService = function (ctx) {
     var service = ctx.request.body.server;
     var socketid = ctx.request.body.socketid;
     var obj = property.getValue(service, socketid);

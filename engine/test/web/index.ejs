@@ -4,6 +4,7 @@
   </tr>
 </table>
 <button onclick="test()">测试</button>
+<button onclick="test1()">测试</button>
 
 <script>
   net.datachange("table");
@@ -12,6 +13,11 @@
     // net.data.items=[];
     // return;
     net.call("test");
+  }
+
+  function test1(){
+    // net.data.items.shift();
+    net.call("test1");
   }
   
 </script>

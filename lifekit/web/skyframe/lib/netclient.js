@@ -11,39 +11,50 @@ var NetClient = function (host, server, token, callback) {
 	var listener = {};  //前后台数据同步的监听
 	var dataline = {};  //数据链
 	var net_push_flag = false;  //前台推送变量赋值标示
+	let net_key = Symbol("net_key");
 
 	var handler = {
 		set: function (target, key, value, receiver) {
 			//过滤自定义的原型链属性
 			if(key === "__proto__"||key==="length"){
 				return Reflect.set(target, key, value, receiver);
-			}
-			if (key === "net_key"&&!net_push_flag) {
-				console.error("net_key是dataline私有属性,无法被赋值;请更改属性!");
-				return false;
-			} 
-			if (key.indexOf(".") >= 0) {
+			}  
+			if (key!==net_key&&key.indexOf(".") >= 0) {
 				console.error("dataline的属性名称不能包含'.',请更改属性!");
 				return false;
 			}
 			var realValue;
 			var netKey = key;
-			if (target["net_key"]) {
-				var tempKey = target["net_key"];
+			if (target[net_key]&&key!==net_key) {
+				var tempKey = target[net_key];
 				if (tempKey.indexOf(".") >= 0) {
 					netKey = tempKey.substring(0, tempKey.lastIndexOf(".") + 1) + key;
 				}
 			}
+			//对象属性值变化推送标识，默认是推送的
+			let obj_push_flag = true;  
 			if (type(value) === '[object Object]' || type(value) === '[object Array]') {
-				setProxyForObj(value, netKey);
-				realValue = new Proxy(value, handler);
+				if (!isProxy(value)) { 
+					setProxyForObj(value, netKey);
+					realValue = new Proxy(value, handler);
+				} else {
+					setProxyForObj(value, netKey);
+					//说明对象的这个值是一个proxy
+					//说明是对象自己的内部变动，不推送
+					//这种情况一般都出现在数组的操作上
+					//后续特殊情况则持续重构
+					obj_push_flag = false;
+					realValue = value;
+				}
 			} else {
 				realValue = value;
 			}
-			var flag = Reflect.set(target, key, realValue, receiver);
-
-
-			target["net_key"] = netKey;
+			var flag = Reflect.set(target, key, realValue, receiver); 
+			if(net_key!==netKey){ 
+				target[net_key] = netKey;
+			} else {
+				obj_push_flag = false;
+			}
 			//属性改变的监听事件
 			if (listener[netKey]) {
 				var listenerObj = listener[netKey];
@@ -51,7 +62,7 @@ var NetClient = function (host, server, token, callback) {
 					listenerObj[i](value);
 				}
 			}
-			if (!net_push_flag) {
+			if (!net_push_flag && obj_push_flag) {
 				socket.emit("dataline", dataline, netKey);
 			}
 			return flag;
@@ -85,7 +96,7 @@ var NetClient = function (host, server, token, callback) {
 					}
 
 					if(type(chengeVal) === '[object Array]'){  
-						let key = netKeyArr[netKeyArr.length - 1]; 
+						let key = netKeyArr[netKeyArr.length - 1];
 						setArrayData(chengeVal,key,dataVal);
 					}else{
 						chengeVal[netKeyArr[netKeyArr.length - 1]] = dataVal[netKeyArr[netKeyArr.length - 1]];
@@ -260,28 +271,15 @@ var NetClient = function (host, server, token, callback) {
 		return Object.prototype.toString.call(v);
 	};
 
-	function setArrayData(arr,index,dataVal){ 
-		if(arr.length<dataVal.length){  //push操作引起的数据链变动
-			let value = dataVal[dataVal.length-1];
-			arr.push(value);
-		}else if(arr.length===dataVal.length){ //角标赋值操作引起的数据链变动
-			if(index!=="length"){
-				let value = dataVal[index];
-				arr[index] = value;
-			} 
-		}else{ //其他
-			//arr.splice(0,arr.length);
-			for(let i=0;i<dataVal.length; i++){
-				if(i<arr.length){
-					arr[i] = dataVal[i];
-				}else{
-					arr.push(dataVal[i]);
-				} 
-			} 
-			if(arr.length>dataVal.length){
-				arr.splice(dataVal.length,arr.length);
-			}
-		}
+	function isProxy(v) {
+		return v[net_key] !== undefined;
+	}
+
+	function setArrayData(arr,index,dataVal){  
+		arr.splice(0,arr.length);
+		for(let i=0;i<dataVal.length; i++){
+			arr.push(dataVal[i]);
+		}  
 	}
 
 	function setProxyForObj(obj, parentNetKey) {
@@ -289,14 +287,18 @@ var NetClient = function (host, server, token, callback) {
 		for (var key in obj) {
 			var tempNetKey = netKey + key;
 			var value = obj[key];
-			if (type(value) === '[object Object]' || type(value) === '[object Array]') {
+			if (type(value) === '[object Object]' || type(value) === '[object Array]') { 
 				setProxyForObj(value, tempNetKey);
-				obj[key] = new Proxy(value, handler);
+				if (!isProxy(value)) { 
+					obj[key] = new Proxy(value, handler);
+				} else { 
+					obj[key] = value;
+				}
 			} else {
 				obj[key] = value;
 			}
 		}
-		obj["net_key"] = netKey;
+		obj[net_key] = netKey;
 	}
 
 	function copyData(obj) {
