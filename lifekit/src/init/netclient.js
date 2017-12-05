@@ -74,9 +74,9 @@ function netclient(server, secret, engine_dir) {
       var net_push_flag = false; //前台推送变量赋值标示
 
       var handler = {
-        set: function (target, key, value, receiver) { 
+        set: function (target, key, value, receiver) {
           //过滤自定义的原型链属性（正常赋值，但不推送）
-          if (key === "__proto__" || key === "length") {
+          if (key === "__proto__") {
             return Reflect.set(target, key, value, receiver);
           } 
 
@@ -117,8 +117,8 @@ function netclient(server, secret, engine_dir) {
             obj_push_flag = false;
           }
           if (!net_push_flag && obj_push_flag) {
-            console.log(key);
-            console.log(value);
+            // console.log(key);
+            // console.log(value);
             socket.emit("dataline", dataline, netKey);
           }
           return flag;
@@ -134,14 +134,17 @@ function netclient(server, secret, engine_dir) {
           var tempNetKey = netKey + key;
           var value = obj[key];
           if (type(value) === '[object Object]' || type(value) === '[object Array]') {
-            setProxyForObj(value, tempNetKey);
             if (!isProxy(value)) { 
+              setProxyForObj(value, tempNetKey); 
               obj[key] = new Proxy(value, handler);
             } else {
+              setProxyForObj(value, tempNetKey);
               obj[key] = value;
             }
           } else {
-            obj[key] = value;
+            if (!isProxy(obj)) { 
+              obj[key] = value;
+            }
           }
         }  
         obj[net_key] = netKey;  

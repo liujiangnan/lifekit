@@ -16,7 +16,7 @@ var NetClient = function (host, server, token, callback) {
 	var handler = {
 		set: function (target, key, value, receiver) {
 			//过滤自定义的原型链属性
-			if(key === "__proto__"||key==="length"){
+			if(key === "__proto__"){
 				return Reflect.set(target, key, value, receiver);
 			}  
 			if (key!==net_key&&key.indexOf(".") >= 0) {
@@ -288,14 +288,17 @@ var NetClient = function (host, server, token, callback) {
 			var tempNetKey = netKey + key;
 			var value = obj[key];
 			if (type(value) === '[object Object]' || type(value) === '[object Array]') { 
-				setProxyForObj(value, tempNetKey);
 				if (!isProxy(value)) { 
+					setProxyForObj(value, tempNetKey);
 					obj[key] = new Proxy(value, handler);
 				} else { 
+					setProxyForObj(value, tempNetKey);
 					obj[key] = value;
 				}
 			} else {
-				obj[key] = value;
+				if (!isProxy(obj)) { 
+					obj[key] = value;
+				} 
 			}
 		}
 		obj[net_key] = netKey;
