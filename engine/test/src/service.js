@@ -1,6 +1,9 @@
 function service(net) {
 
-  net.data.items = [{name:"abc",value:"1"},{name:"abc",value:"1"}];  
+  net.data.items = [{name:"abc",value:"1"},{name:"abc",value:"1"}]; 
+  net.data.a = 2; 
+  let myObj = {"key":"hello","value":{"a":"123"}};
+  net.data.myObj = myObj;
 
   let index = 2;
 
@@ -17,9 +20,12 @@ function service(net) {
   }
 
   this.test1 = function(){
-    index++;
-    let x = {name:"jkl",value:index+""};
-    net.data.items.unshift(x); //无法通过
+    // index++;
+    // let x = {name:"jkl",value:index+""};
+    // net.data.items.unshift(x); //无法通过
+    // net.data.a = "hello world!!";
+    delete net.data.myObj.value.a;
+    console.log(net.data.myObj.value);
   }
 
 }

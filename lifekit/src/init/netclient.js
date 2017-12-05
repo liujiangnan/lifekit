@@ -125,6 +125,9 @@ function netclient(server, secret, engine_dir) {
         },
         get: function (target, key, receiver) {
           return Reflect.get(target, key, receiver);
+        },
+        deleteProperty: function(target, key){
+          return Reflect.deleteProperty(target, key);
         }
       };
 

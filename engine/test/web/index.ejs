@@ -1,13 +1,17 @@
-<table id="table">
-  <tr v-for="item in items">
-    <td>{{ item.name }}</td><td>{{ item.value }}</td>
-  </tr>
-</table>
+<div id="test">
+  <table>
+    <tr v-for="item in items">
+      <td>{{ item.name }}</td><td>{{ item.value }}</td>
+    </tr>
+  </table>
+  <div>{{a}}</div>
+  <div>{{myObj.value.a}}</div>
+</div>
 <button onclick="test()">测试</button>
 <button onclick="test1()">测试</button>
 
 <script>
-  net.datachange("table");
+  net.datachange("test");
 
   function test(){
     // net.data.items=[];
