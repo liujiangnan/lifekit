@@ -110,7 +110,7 @@ function netclient(server, secret, engine_dir) {
           } else {
             realValue = value;
           }  
-          var flag = Reflect.set(target, key, realValue, receiver); 
+          let flag = Reflect.set(target, key, realValue, receiver); 
           if(net_key!==netKey){ 
             target[net_key] = netKey;
           } else {
@@ -127,7 +127,15 @@ function netclient(server, secret, engine_dir) {
           return Reflect.get(target, key, receiver);
         },
         deleteProperty: function(target, key){
-          return Reflect.deleteProperty(target, key);
+          let flag = Reflect.deleteProperty(target, key);
+          if (!net_push_flag) {
+            var tempKey = target[net_key];
+            if (tempKey.indexOf(".") >= 0) {
+              netKey = tempKey.substring(0, tempKey.lastIndexOf(".") + 1) + key;
+            } 
+            socket.emit("dataline", dataline, netKey);
+          }
+          return flag;
         }
       };
 
@@ -171,7 +179,12 @@ function netclient(server, secret, engine_dir) {
             let value = dataVal[netKeyArr[netKeyArr.length - 1]];
             setArrayData(chengeVal, key, value);
           } else {
-            chengeVal[netKeyArr[netKeyArr.length - 1]] = dataVal[netKeyArr[netKeyArr.length - 1]];
+            let lastKey = netKeyArr[netKeyArr.length - 1];
+						if(dataVal.hasOwnProperty(lastKey)){
+							chengeVal[lastKey] = dataVal[lastKey];
+						}else{
+							delete chengeVal[lastKey];
+						} 
           }
         } else {
           proxy[netKey] = data[netKey];

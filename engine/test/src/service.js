@@ -24,16 +24,10 @@ function service(net) {
     // let x = {name:"jkl",value:index+""};
     // net.data.items.unshift(x); //无法通过
     // net.data.a = "hello world!!";
-    delete net.data.myObj.value.a;
-    console.log(net.data.myObj.value);
+    net.data.myObj.value.a = "my name is OO";
+    //console.log(net.data.myObj.value);
   }
 
 }
 
 module.exports = service; 
-
-
-// let arr = [1,1,1,1,1,1];
-// arr.splice(2,2,2);
-// console.log(arr);
- 
