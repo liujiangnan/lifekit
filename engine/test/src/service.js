@@ -1,13 +1,27 @@
 function service(net) {
 
-  net.data.items = [{name:"abc",value:"1"},{name:"abc",value:"1"}]; 
-  net.data.a = 2; 
-  let myObj = {"key":"hello","value":{"a":"123"}};
-  net.data.myObj = myObj;
+  // net.data.items = [{name:"abc",value:"1"},{name:"abc",value:"1"}]; 
+  // net.data.a = 2; 
+  // let myObj = {"key":"hello","value":{"a":"123"}};
+  // net.data.myObj = myObj;
 
-  let index = 1;
+  let len = 20;
+  for(let i=0;i<len;i++){
+    net.data["a"+i] = Math.round(Math.random()*9+1);;
+  }
 
-  let flag = true;
+  setTimeout(function(){
+    setInterval(function(){
+      console.log("******************");
+      for(let i=0;i<len;i++){
+        net.data["a"+i] = Math.round(Math.random()*9+1);;
+      }
+    },100);
+  },15000);
+
+  // let index = 1;
+
+  // let flag = true;
 
   // setInterval(function(){
   //   index++;
