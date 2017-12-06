@@ -69,6 +69,17 @@ var NetClient = function (host, server, token, callback) {
 		},
 		get: function (target, key, receiver) {
 			return Reflect.get(target, key, receiver);
+		},
+		deleteProperty: function(target, key){
+			let flag = Reflect.deleteProperty(target, key);
+			if (!net_push_flag) {
+				var tempKey = target[net_key];
+				if (tempKey.indexOf(".") >= 0) {
+				netKey = tempKey.substring(0, tempKey.lastIndexOf(".") + 1) + key;
+				} 
+				socket.emit("dataline", dataline, netKey);
+			}
+			return flag;
 		}
 	};
 	var proxy = {};
@@ -99,7 +110,12 @@ var NetClient = function (host, server, token, callback) {
 						let key = netKeyArr[netKeyArr.length - 1];
 						setArrayData(chengeVal,key,dataVal);
 					}else{
-						chengeVal[netKeyArr[netKeyArr.length - 1]] = dataVal[netKeyArr[netKeyArr.length - 1]];
+						let lastKey = netKeyArr[netKeyArr.length - 1];
+						if(dataVal.hasOwnProperty(lastKey)){
+							chengeVal[lastKey] = dataVal[lastKey];
+						}else{
+							delete chengeVal[lastKey];
+						} 
 					} 
 				} else {
 					proxy[netKey] = data[netKey];

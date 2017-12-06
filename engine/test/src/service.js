@@ -44,9 +44,3 @@ function service(net) {
 }
 
 module.exports = service; 
-
-
-// let arr = [1,1,1,1,1,1];
-// arr.splice(2,2,2);
-// console.log(arr);
- 
