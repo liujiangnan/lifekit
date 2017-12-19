@@ -13,6 +13,8 @@ var NetClient = function (host, server, token, callback) {
 	var net_push_flag = false;  //前台推送变量赋值标示
 	let net_key = Symbol("net_key");
 
+	var lazy = lazyFun();  //缓冲器（一毫秒延迟）
+
 	var handler = {
 		set: function (target, key, value, receiver) {
 			//过滤自定义的原型链属性
@@ -63,7 +65,9 @@ var NetClient = function (host, server, token, callback) {
 				}
 			}
 			if (!net_push_flag && obj_push_flag) {
-				socket.emit("dataline", dataline, netKey);
+				lazy(netKey,function(keyArr){
+					socket.emit("dataline", dataline, keyArr);
+				});
 			}
 			return flag;
 		},
@@ -75,9 +79,11 @@ var NetClient = function (host, server, token, callback) {
 			if (!net_push_flag) {
 				var tempKey = target[net_key];
 				if (tempKey.indexOf(".") >= 0) {
-				netKey = tempKey.substring(0, tempKey.lastIndexOf(".") + 1) + key;
+					netKey = tempKey.substring(0, tempKey.lastIndexOf(".") + 1) + key;
 				} 
-				socket.emit("dataline", dataline, netKey);
+				lazy(netKey,function(keyArr){
+					socket.emit("dataline", dataline, keyArr);
+				});
 			}
 			return flag;
 		}
@@ -93,38 +99,40 @@ var NetClient = function (host, server, token, callback) {
 
 	socket.on('connect', function () {
 		socket.on('authenticated', function () {
-			socket.on('dataline', function (data, netKey) { 
+			socket.on('dataline', function (data, keys) { 
 				net_push_flag = true;
-				var copy = data;
-				if (netKey.indexOf(".") >= 0) {
-					var netKeyArr = netKey.split(".");
-					var chengeVal = proxy[netKeyArr[0]];
-					var dataVal = data[netKeyArr[0]];
-					for (var i = 1; i < netKeyArr.length - 1; i++) {
-						let key = netKeyArr[i];
-						chengeVal = chengeVal[key];
-						dataVal = dataVal[key];
-					}
-
-					if(type(chengeVal) === '[object Array]'){  
-						let key = netKeyArr[netKeyArr.length - 1];
-						setArrayData(chengeVal,key,dataVal);
-					}else{
-						let lastKey = netKeyArr[netKeyArr.length - 1];
-						if(dataVal.hasOwnProperty(lastKey)){
-							chengeVal[lastKey] = dataVal[lastKey];
+				// var copy = data;
+				for(var i=0;i<keys.length;i++){
+					var netKey = keys[i];
+					if (netKey.indexOf(".") >= 0) {
+						var netKeyArr = netKey.split(".");
+						var chengeVal = proxy[netKeyArr[0]];
+						var dataVal = data[netKeyArr[0]];
+						for (var i = 1; i < netKeyArr.length - 1; i++) {
+							let key = netKeyArr[i];
+							chengeVal = chengeVal[key];
+							dataVal = dataVal[key];
+						}
+	
+						if(type(chengeVal) === '[object Array]'){  
+							let key = netKeyArr[netKeyArr.length - 1];
+							setArrayData(chengeVal,key,dataVal);
 						}else{
-							delete chengeVal[lastKey];
+							let lastKey = netKeyArr[netKeyArr.length - 1];
+							if(dataVal.hasOwnProperty(lastKey)){
+								chengeVal[lastKey] = dataVal[lastKey];
+							}else{
+								delete chengeVal[lastKey];
+							} 
 						} 
-					} 
-				} else {
-					proxy[netKey] = data[netKey];
-					//copy = copyData(data);
-				}
-				//for(var key in listener){
-				//	listener[key](copy);
-				//}
-
+					} else {
+						proxy[netKey] = data[netKey];
+						//copy = copyData(data);
+					}
+					//for(var key in listener){
+					//	listener[key](copy);
+					//}
+				} 
 				net_push_flag = false;
 			});
 			//初始化对应模块的socket服务
@@ -163,11 +171,11 @@ var NetClient = function (host, server, token, callback) {
 		},
 
 		/**
-	 * 侦听服务器事件
-	 * @param evname 侦听服务器的事件名称
-	 * @param callback 回调函数  
-	 * 如：function example(data){}
-	 */
+		 * 侦听服务器事件
+		 * @param evname 侦听服务器的事件名称
+		 * @param callback 回调函数  
+		 * 如：function example(data){}
+		 */
 		on: function (evname, callback) {
 
 			//这几个事件都是内置的事件名称,不可重名使用
@@ -281,6 +289,30 @@ var NetClient = function (host, server, token, callback) {
 		}
 
 	};
+
+	//缓冲器--看看能不能优化成同步写法
+	function lazyFun(){
+		let arr = [];
+		let lazy = false; 
+		let intvId;
+		let func = function(val,callback){
+		  if(!lazy){
+			callback([val]); 
+			intvId = setInterval(function(){
+			  if(arr.length>0){
+				callback(arr.splice(0,arr.length));
+			  }else{
+				clearInterval(intvId);
+				lazy = false;
+			  } 
+			},1);
+			lazy = true; 
+		  }else{
+			arr.push(val);
+		  }
+		}
+		return func;
+	}
 
 	//判断对象的类型
 	function type(v) {

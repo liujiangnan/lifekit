@@ -5,14 +5,13 @@ function service(net) {
   // let myObj = {"key":"hello","value":{"a":"123"}};
   // net.data.myObj = myObj;
 
-  let len = 20;
+  let len = 1000;
   for(let i=0;i<len;i++){
     net.data["a"+i] = Math.round(Math.random()*9+1);;
   }
 
   setTimeout(function(){
-    setInterval(function(){
-      console.log("******************");
+    setInterval(function(){ 
       for(let i=0;i<len;i++){
         net.data["a"+i] = Math.round(Math.random()*9+1);;
       }
