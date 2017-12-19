@@ -291,25 +291,21 @@ var NetClient = function (host, server, token, callback) {
 	};
 
 	//缓冲器--看看能不能优化成同步写法
-	function lazyFun(){
+	function lazyFunc(){
 		let arr = [];
 		let lazy = false; 
 		let intvId;
 		let func = function(val,callback){
-		  if(!lazy){
-			callback([val]); 
-			intvId = setInterval(function(){
-			  if(arr.length>0){
+			if(!lazy){
+			arr.push(val); 
+			process.nextTick(function(){
 				callback(arr.splice(0,arr.length));
-			  }else{
-				clearInterval(intvId);
 				lazy = false;
-			  } 
-			},1);
+			}); 
 			lazy = true; 
-		  }else{
+			}else{
 			arr.push(val);
-		  }
+			}
 		}
 		return func;
 	}
