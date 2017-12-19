@@ -22,13 +22,11 @@
 
 <script> 
 
-    var net;
-    var _token = '<%=token %>';
-    var _method = '<%=method %>';
+    var net; 
     $(function(){
         ShowWaitting(true);
         net = NetClient('<%=host %>','<%=server %>','<%=token %>',function(){
-            net.getView(_method, '<%-params %>',function(result,parms){
+            net.getView('<%=method %>', '<%-params %>',function(result,parms){
                 ShowWaitting(false);
                 $("#divAll").html(result);
             });

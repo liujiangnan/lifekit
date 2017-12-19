@@ -281,15 +281,11 @@ function netclient(server, secret, engine_dir) {
     let intvId;
     let func = function(val,callback){
       if(!lazy){
-        callback([val]); 
-        intvId = setInterval(function(){
-          if(arr.length>0){
-            callback(arr.splice(0,arr.length));
-          }else{
-            clearInterval(intvId);
-            lazy = false;
-          } 
-        },1);
+        arr.push(val); 
+        process.nextTick(function(){
+          callback(arr.splice(0,arr.length));
+          lazy = false;
+        }); 
         lazy = true; 
       }else{
         arr.push(val);
