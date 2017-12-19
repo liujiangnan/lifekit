@@ -275,7 +275,7 @@ function netclient(server, secret, engine_dir) {
   }
 
   //缓冲器--看看能不能优化成同步写法
-  function lazy(){
+  function lazyFunc(){
     let arr = [];
     let lazy = false; 
     let intvId;
