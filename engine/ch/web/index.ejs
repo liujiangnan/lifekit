@@ -1,0 +1,12 @@
+<h3>Hello ClickHouse</h3>
+<button onclick="connect()">测试链接</button>
+
+<script>
+
+function connect(){
+  net.call("connect","",function(res){
+    console.log(res);
+  });
+}
+
+</script>
