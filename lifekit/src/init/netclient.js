@@ -1,17 +1,19 @@
 /**
  * WebSocket侦听路由
  */
-function netclient(server, secret, engine_dir) {
-  var Property = require('./../model/property');
-  var Map = require('./../model/map');
-  var io = require('socket.io').listen(server);
-  var socketioJwt = require("socketio-jwt");
+function netclient(server, secret, engine_dir) { 
+  const io = require('socket.io').listen(server);
+  const socketioJwt = require("socketio-jwt");
+
+  const Property = require('./../model/property');
+  const Map = require('./../model/map');
 
   //io.set('log level', 1);
-  var cookie = require('cookie');
-  var path = require('path');
-  var property = new Property();
-  let net_key = Symbol("net_key");
+  const cookie = require('cookie');
+  const path = require('path'); 
+  const net_key = Symbol("net_key");  
+  
+  let property = new Property();
 
   io.on('connection', socketioJwt.authorize({
     secret: secret,
@@ -24,7 +26,7 @@ function netclient(server, secret, engine_dir) {
    * @param service
    * @returns [{"key":"socketid","value":{net:{},service:""}},{}......]
    */
-  this.getSockets = function (service) {
+  this.getSockets = function(service) {
     return property.get(service);
   };
 
@@ -33,7 +35,7 @@ function netclient(server, secret, engine_dir) {
    * 获取所有的socket信息
    * @returns {Property}
    */
-  this.getAllSocket = function () {
+  this.getAllSocket = function() {
     return property;
   };
 
@@ -41,12 +43,12 @@ function netclient(server, secret, engine_dir) {
    * 获取自己的socketId
    * @param req
    */
-  this.getSelfSocketId = function (req) {
+  this.getSelfSocketId = function(req) {
     return req.body.socketid;
   };
 
   function initSocket(socket) {
-    var service = socket.decoded_token.engine;
+    let service = socket.decoded_token.engine;
     if (!service) {
       socket.disconnect(true);
       return;
@@ -55,7 +57,7 @@ function netclient(server, secret, engine_dir) {
       service = service.substring(0, service.indexOf("/"));
     }
     console.log('connection: SocketID=' + socket.id);
-    socket.on('disconnect', function () {
+    socket.on('disconnect', function() {
       property.remove(service, socket.id);
       if (property.get(service).isEmpty()) {
         property.remove(service);
@@ -64,56 +66,56 @@ function netclient(server, secret, engine_dir) {
       console.log('disconnect: SocketID=' + socket.id);
     });
 
-    socket.on("initserver", function (serverstr, callback) {
+    socket.on("initserver", function(serverstr, callback) {
 
 
       //service = serverstr;
 
-      var dataline = {};
+      let dataline = {};
 
-      var lazy = lazyFun();  //缓冲器（一毫秒延迟）
+      let lazy = lazyFunc(); //缓冲器（一毫秒延迟）
 
-      var net_push_flag = false; //前台推送变量赋值标示
+      let net_push_flag = false; //前台推送变量赋值标示
 
-      var handler = {
-        set: function (target, key, value, receiver) {
+      let handler = {
+        set: function(target, key, value, receiver) {
           //过滤自定义的原型链属性（正常赋值，但不推送）
           if (key === "__proto__") {
             return Reflect.set(target, key, value, receiver);
-          } 
+          }
 
-          if (key!==net_key&&key.indexOf(".") >= 0) {
+          if (key !== net_key && key.indexOf(".") >= 0) {
             console.error("dataline的属性名称不能包含'.',请更改属性!");
             return false;
           }
-          var realValue;
-          var netKey = key;
-          if (target[net_key]&&key!==net_key) {
-            var tempKey = target[net_key];
+          let realValue;
+          let netKey = key;
+          if (target[net_key] && key !== net_key) {
+            let tempKey = target[net_key];
             if (tempKey.indexOf(".") >= 0) {
               netKey = tempKey.substring(0, tempKey.lastIndexOf(".") + 1) + key;
-            } 
-          } 
+            }
+          }
           //对象属性值变化推送标识，默认是推送的
-          let obj_push_flag = true;  
-          if ((type(value) === '[object Object]' || type(value) === '[object Array]')) {   
+          let obj_push_flag = true;
+          if ((type(value) === '[object Object]' || type(value) === '[object Array]')) {
             if (!isProxy(value)) {
-              setProxyForObj(value, netKey); 
+              setProxyForObj(value, netKey);
               realValue = new Proxy(value, handler);
-            } else {  
+            } else {
               //说明对象的这个值是一个proxy
               //说明是对象自己的内部变动，不推送
               //这种情况一般都出现在数组的操作上
               //后续特殊情况则持续重构
               obj_push_flag = false;
-              setProxyForObj(value, netKey);  
+              setProxyForObj(value, netKey);
               realValue = value;
             }
           } else {
             realValue = value;
-          }  
-          let flag = Reflect.set(target, key, realValue, receiver); 
-          if(net_key!==netKey){ 
+          }
+          let flag = Reflect.set(target, key, realValue, receiver);
+          if (net_key !== netKey) {
             target[net_key] = netKey;
           } else {
             obj_push_flag = false;
@@ -121,64 +123,64 @@ function netclient(server, secret, engine_dir) {
           if (!net_push_flag && obj_push_flag) {
             // console.log(key);
             // console.log(value);
-            lazy(netKey,function(keyArr){
+            lazy(netKey, function(keyArr) {
               socket.emit("dataline", dataline, keyArr);
-            }); 
+            });
           }
           return flag;
         },
-        get: function (target, key, receiver) {
+        get: function(target, key, receiver) {
           return Reflect.get(target, key, receiver);
         },
-        deleteProperty: function(target, key){
+        deleteProperty: function(target, key) {
           let flag = Reflect.deleteProperty(target, key);
           if (!net_push_flag) {
-            var tempKey = target[net_key];
+            let tempKey = target[net_key];
             if (tempKey.indexOf(".") >= 0) {
               netKey = tempKey.substring(0, tempKey.lastIndexOf(".") + 1) + key;
-            } 
-            lazy(netKey,function(keyArr){
+            }
+            lazy(netKey, function(keyArr) {
               socket.emit("dataline", dataline, keyArr);
-            }); 
+            });
           }
           return flag;
         }
       };
 
-      function setProxyForObj(obj, parentNetKey) { 
-        var netKey = parentNetKey + "."; 
-        for (var key in obj) {
-          var tempNetKey = netKey + key;
-          var value = obj[key];
+      function setProxyForObj(obj, parentNetKey) {
+        let netKey = parentNetKey + ".";
+        for (let key in obj) {
+          let tempNetKey = netKey + key;
+          let value = obj[key];
           if (type(value) === '[object Object]' || type(value) === '[object Array]') {
-            if (!isProxy(value)) { 
-              setProxyForObj(value, tempNetKey); 
+            if (!isProxy(value)) {
+              setProxyForObj(value, tempNetKey);
               obj[key] = new Proxy(value, handler);
             } else {
               setProxyForObj(value, tempNetKey);
               obj[key] = value;
             }
           } else {
-            if (!isProxy(obj)) { 
+            if (!isProxy(obj)) {
               obj[key] = value;
             }
           }
-        }  
-        obj[net_key] = netKey;  
+        }
+        obj[net_key] = netKey;
       }
 
-      var proxy = new Proxy(dataline, handler);
+      let proxy = new Proxy(dataline, handler);
 
-      socket.on("dataline", function (data, keys) {
+      socket.on("dataline", function(data, keys) {
         net_push_flag = true;
-        // var copy = data;
-        for(let i=0;i<keys.length;i++){
-          let netKey = keys[i]; 
+        // let copy = data;
+        for (let index = 0; index < keys.length; index++) {
+          let netKey = keys[index];
           if (netKey.indexOf(".") >= 0) {
-            var netKeyArr = netKey.split(".");
-            var chengeVal = proxy[netKeyArr[0]];
-            var dataVal = data[netKeyArr[0]];
-            for (var i = 1; i < netKeyArr.length - 1; i++) {
+            let netKeyArr = netKey.split(".");
+            let chengeVal = proxy[netKeyArr[0]];
+            let dataVal = data[netKeyArr[0]];
+            for (let i = 1; i < netKeyArr.length - 1; i++) {
               chengeVal = chengeVal[netKeyArr[i]];
               dataVal = dataVal[netKeyArr[i]];
             }
@@ -188,11 +190,11 @@ function netclient(server, secret, engine_dir) {
               setArrayData(chengeVal, key, value);
             } else {
               let lastKey = netKeyArr[netKeyArr.length - 1];
-              if(dataVal.hasOwnProperty(lastKey)){
+              if (dataVal.hasOwnProperty(lastKey)) {
                 chengeVal[lastKey] = dataVal[lastKey];
-              }else{
+              } else {
                 delete chengeVal[lastKey];
-              } 
+              }
             }
           } else {
             proxy[netKey] = data[netKey];
@@ -204,15 +206,15 @@ function netclient(server, secret, engine_dir) {
         //property.put(service,socket.id,obj);
       });
 
-      var net = creatNet(socket, proxy);
+      let net = creatNet(socket, proxy);
 
-      var mdlService = require(engine_dir + '/' + service + '/src/service');
-      var svc = new mdlService(net);
+      let mdlService = require(engine_dir + '/' + service + '/src/service');
+      let svc = new mdlService(net);
 
-      socket.on("call", function (funcname, socketid, data, callback) {
+      socket.on("call", function(funcname, socketid, data, callback) {
         svc[funcname](data, callback);
       });
-      var obj = {
+      let obj = {
         "net": net,
         "service": svc
       };
@@ -224,13 +226,13 @@ function netclient(server, secret, engine_dir) {
   }
 
   function creatNet(socket, proxy) {
-    var _net = {
+    let _net = {
       /**
        * 触发前端的方法
        * @param eventname 要触发的前台的事件名称
        * @param data 传递的参数
        */
-      emit: function (eventname, data) {
+      emit: function(eventname, data) {
         if (socket) {
           socket.emit(eventname, data);
         }
@@ -241,7 +243,7 @@ function netclient(server, secret, engine_dir) {
        * @param eventname 事件名称
        * @param callback 触发后执行的操作
        */
-      on: function (eventname, callback) {
+      on: function(eventname, callback) {
         if (socket) {
           socket.on(eventname, callback);
         } else {
@@ -257,8 +259,8 @@ function netclient(server, secret, engine_dir) {
 
   function netclientInstance(serviceName, socketid) {
 
-    var obj = property.getValue(serviceName, socketid);
-    var _net = obj["net"];
+    let obj = property.getValue(serviceName, socketid);
+    let _net = obj["net"];
     return _net;
   };
 
@@ -272,7 +274,7 @@ function netclient(server, secret, engine_dir) {
   }
 
   function setArrayData(arr, index, dataVal) {
-    if (arr.length < dataVal.length) {  //push操作引起的数据链变动
+    if (arr.length < dataVal.length) { //push操作引起的数据链变动
       let value = dataVal[dataVal.length - 1];
       arr.push(value);
     } else { //其他
@@ -284,19 +286,19 @@ function netclient(server, secret, engine_dir) {
   }
 
   //缓冲器--看看能不能优化成同步写法
-  function lazyFunc(){
+  function lazyFunc() {
     let arr = [];
-    let lazy = false; 
+    let lazy = false;
     let intvId;
-    let func = function(val,callback){
-      if(!lazy){
-        arr.push(val); 
-        process.nextTick(function(){
-          callback(arr.splice(0,arr.length));
+    let func = function(val, callback) {
+      if (!lazy) {
+        arr.push(val);
+        process.nextTick(function() {
+          callback(arr.splice(0, arr.length));
           lazy = false;
-        }); 
-        lazy = true; 
-      }else{
+        });
+        lazy = true;
+      } else {
         arr.push(val);
       }
     }
@@ -305,9 +307,9 @@ function netclient(server, secret, engine_dir) {
 
 
   function copyData(obj) {
-    var res = {};
-    for (var key in obj) {
-      var temp = obj[key];
+    let res = {};
+    for (let key in obj) {
+      let temp = obj[key];
       if (type(temp) === '[object Object]' || type(temp) === '[object Array]') {
         res[key] = copyData(temp);
       } else {
@@ -330,17 +332,17 @@ function netclient(server, secret, engine_dir) {
    * @param ctx 请求对象
    * @returns {{emit: emit, on: on}}
    */
-  this.getService = function (ctx) {
-    var service = ctx.request.body.server;
-    var socketid = ctx.request.body.socketid;
-    var obj = property.getValue(service, socketid);
-    var svc = obj ? obj["service"] : null;
+  this.getService = function(ctx) {
+    let service = ctx.request.body.server;
+    let socketid = ctx.request.body.socketid;
+    let obj = property.getValue(service, socketid);
+    let svc = obj ? obj["service"] : null;
     return svc;
   };
 
 
   //	function getSessionIdBySocket(socket){
-  //		var cookies = socket.handshake.headers.cookie;
+  //		let cookies = socket.handshake.headers.cookie;
   //        return getSessionIdByCookie(cookies);
   //	}
 
@@ -352,9 +354,9 @@ function netclient(server, secret, engine_dir) {
    * @returns {*}
    */
   //	function getSessionIdByCookie(cookies){
-  //		var secret = 'iot';
-  //		var key  = 'iot';
-  //		var sessionId = null;
+  //		let secret = 'iot';
+  //		let key  = 'iot';
+  //		let sessionId = null;
   //		if (cookies) {
   //			cookies = cookie.parse(cookies);
   //			cookies = utils.parseSignedCookies(cookies, secret);

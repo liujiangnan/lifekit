@@ -11,9 +11,9 @@ var NetClient = function (host, server, token, callback) {
 	var listener = {};  //前后台数据同步的监听
 	var dataline = {};  //数据链
 	var net_push_flag = false;  //前台推送变量赋值标示
-	let net_key = Symbol("net_key");
+	var net_key = Symbol("net_key");
 
-	var lazy = lazyFun();  //缓冲器（一毫秒延迟）
+	var lazy = lazyFunc();  //缓冲器（一毫秒延迟）
 
 	var handler = {
 		set: function (target, key, value, receiver) {
@@ -34,7 +34,7 @@ var NetClient = function (host, server, token, callback) {
 				}
 			}
 			//对象属性值变化推送标识，默认是推送的
-			let obj_push_flag = true;  
+			var obj_push_flag = true;  
 			if (type(value) === '[object Object]' || type(value) === '[object Array]') {
 				if (!isProxy(value)) { 
 					setProxyForObj(value, netKey);
@@ -75,7 +75,7 @@ var NetClient = function (host, server, token, callback) {
 			return Reflect.get(target, key, receiver);
 		},
 		deleteProperty: function(target, key){
-			let flag = Reflect.deleteProperty(target, key);
+			var flag = Reflect.deleteProperty(target, key);
 			if (!net_push_flag) {
 				var tempKey = target[net_key];
 				if (tempKey.indexOf(".") >= 0) {
@@ -102,23 +102,23 @@ var NetClient = function (host, server, token, callback) {
 			socket.on('dataline', function (data, keys) { 
 				net_push_flag = true;
 				// var copy = data;
-				for(var i=0;i<keys.length;i++){
-					var netKey = keys[i];
+				for(var index=0;index<keys.length;index++){
+					var netKey = keys[index];
 					if (netKey.indexOf(".") >= 0) {
 						var netKeyArr = netKey.split(".");
 						var chengeVal = proxy[netKeyArr[0]];
 						var dataVal = data[netKeyArr[0]];
 						for (var i = 1; i < netKeyArr.length - 1; i++) {
-							let key = netKeyArr[i];
+							var key = netKeyArr[i];
 							chengeVal = chengeVal[key];
 							dataVal = dataVal[key];
 						}
 	
 						if(type(chengeVal) === '[object Array]'){  
-							let key = netKeyArr[netKeyArr.length - 1];
+							var key = netKeyArr[netKeyArr.length - 1];
 							setArrayData(chengeVal,key,dataVal);
 						}else{
-							let lastKey = netKeyArr[netKeyArr.length - 1];
+							var lastKey = netKeyArr[netKeyArr.length - 1];
 							if(dataVal.hasOwnProperty(lastKey)){
 								chengeVal[lastKey] = dataVal[lastKey];
 							}else{
@@ -188,8 +188,8 @@ var NetClient = function (host, server, token, callback) {
 		/**
 		 * 向服务器发送事件
 		 * @param evname 事件名称
-         * @param data 数据
-         */
+		 * @param data 数据
+		 */
 		emit: function (evname, data, callback) {
 			//这几个事件都是内置的事件名称,不可重名使用
 			if (evname == "call" || evname == "dataline" || evname == "initserver" || evname == "connect" || evname == "disconnect") {
@@ -203,8 +203,8 @@ var NetClient = function (host, server, token, callback) {
 		 * 调用后台的方法
 		 * @param funcname 方法名称
 		 * @param data 数据
-         * @param callback 回调函数
-         */
+		 * @param callback 回调函数
+		 */
 		call: function (funcname, data, callback) {
 			socket.emit('call', funcname, socketid, data, callback);
 		},
@@ -212,7 +212,7 @@ var NetClient = function (host, server, token, callback) {
 		/**
 		 * 获取Ajax的路径给第三方的插件用
 		 * @returns {string}
-         */
+     */
 		getAjaxURL: function () {
 			return "/" + server + "/getView/";
 		},
@@ -292,19 +292,19 @@ var NetClient = function (host, server, token, callback) {
 
 	//缓冲器--看看能不能优化成同步写法
 	function lazyFunc(){
-		let arr = [];
-		let lazy = false; 
-		let intvId;
-		let func = function(val,callback){
+		var arr = [];
+		var lazy = false; 
+		var intvId;
+		var func = function(val,callback){
 			if(!lazy){
-			arr.push(val); 
-			process.nextTick(function(){
-				callback(arr.splice(0,arr.length));
-				lazy = false;
-			}); 
-			lazy = true; 
+				arr.push(val); 
+				process.nextTick(function(){
+					callback(arr.splice(0,arr.length));
+					lazy = false;
+				}); 
+				lazy = true; 
 			}else{
-			arr.push(val);
+				arr.push(val);
 			}
 		}
 		return func;
@@ -321,7 +321,7 @@ var NetClient = function (host, server, token, callback) {
 
 	function setArrayData(arr,index,dataVal){  
 		arr.splice(0,arr.length);
-		for(let i=0;i<dataVal.length; i++){
+		for(var i=0;i<dataVal.length; i++){
 			arr.push(dataVal[i]);
 		}  
 	}
