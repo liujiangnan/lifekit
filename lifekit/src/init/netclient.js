@@ -71,6 +71,8 @@ function netclient(server, secret, engine_dir) {
 
       var dataline = {};
 
+      var lazy = lazyFun();  //缓冲器（一毫秒延迟）
+
       var net_push_flag = false; //前台推送变量赋值标示
 
       var handler = {
@@ -119,7 +121,9 @@ function netclient(server, secret, engine_dir) {
           if (!net_push_flag && obj_push_flag) {
             // console.log(key);
             // console.log(value);
-            socket.emit("dataline", dataline, netKey);
+            lazy(netKey,function(keyArr){
+              socket.emit("dataline", dataline, keyArr);
+            }); 
           }
           return flag;
         },
@@ -133,7 +137,9 @@ function netclient(server, secret, engine_dir) {
             if (tempKey.indexOf(".") >= 0) {
               netKey = tempKey.substring(0, tempKey.lastIndexOf(".") + 1) + key;
             } 
-            socket.emit("dataline", dataline, netKey);
+            lazy(netKey,function(keyArr){
+              socket.emit("dataline", dataline, keyArr);
+            }); 
           }
           return flag;
         }
@@ -163,32 +169,35 @@ function netclient(server, secret, engine_dir) {
 
       var proxy = new Proxy(dataline, handler);
 
-      socket.on("dataline", function (data, netKey) {
+      socket.on("dataline", function (data, keys) {
         net_push_flag = true;
-        var copy = data;
-        if (netKey.indexOf(".") >= 0) {
-          var netKeyArr = netKey.split(".");
-          var chengeVal = proxy[netKeyArr[0]];
-          var dataVal = data[netKeyArr[0]];
-          for (var i = 1; i < netKeyArr.length - 1; i++) {
-            chengeVal = chengeVal[netKeyArr[i]];
-            dataVal = dataVal[netKeyArr[i]];
-          }
-          if (type(chengeVal) === '[object Array]') {
-            let key = netKeyArr[netKeyArr.length - 1] - 0;
-            let value = dataVal[netKeyArr[netKeyArr.length - 1]];
-            setArrayData(chengeVal, key, value);
+        // var copy = data;
+        for(let i=0;i<keys.length;i++){
+          let netKey = keys[i]; 
+          if (netKey.indexOf(".") >= 0) {
+            var netKeyArr = netKey.split(".");
+            var chengeVal = proxy[netKeyArr[0]];
+            var dataVal = data[netKeyArr[0]];
+            for (var i = 1; i < netKeyArr.length - 1; i++) {
+              chengeVal = chengeVal[netKeyArr[i]];
+              dataVal = dataVal[netKeyArr[i]];
+            }
+            if (type(chengeVal) === '[object Array]') {
+              let key = netKeyArr[netKeyArr.length - 1] - 0;
+              let value = dataVal[netKeyArr[netKeyArr.length - 1]];
+              setArrayData(chengeVal, key, value);
+            } else {
+              let lastKey = netKeyArr[netKeyArr.length - 1];
+              if(dataVal.hasOwnProperty(lastKey)){
+                chengeVal[lastKey] = dataVal[lastKey];
+              }else{
+                delete chengeVal[lastKey];
+              } 
+            }
           } else {
-            let lastKey = netKeyArr[netKeyArr.length - 1];
-						if(dataVal.hasOwnProperty(lastKey)){
-							chengeVal[lastKey] = dataVal[lastKey];
-						}else{
-							delete chengeVal[lastKey];
-						} 
+            proxy[netKey] = data[netKey];
+            //copy = copyData(data);
           }
-        } else {
-          proxy[netKey] = data[netKey];
-          //copy = copyData(data);
         }
         net_push_flag = false;
 
