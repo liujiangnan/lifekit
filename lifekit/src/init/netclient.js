@@ -211,8 +211,13 @@ function netclient(server, secret, engine_dir) {
       let mdlService = require(engine_dir + '/' + service + '/src/service');
       let svc = new mdlService(net);
 
-      socket.on("call", function(funcname, socketid, data, callback) {
-        svc[funcname](data, callback);
+      socket.on("call", async function(funcname, socketid, data, callback) {
+        try {
+          await svc[funcname](data, callback);
+        } catch (error) {
+          console.log(error);
+          callback&&callback(error)
+        } 
       });
       let obj = {
         "net": net,
