@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" /> 
     <title><%=title %></title>  
     <script type="text/javascript" src="/lib/jquery-1.12.3.min.js"></script>
-    
     <script type="text/javascript" src="/lib/common.js"></script>
     <script type="text/javascript" src="/lib/vue.min.js"></script>  
 </head> 
@@ -21,6 +20,7 @@
 <script> 
 
     var net; 
+    var engine = '<%=engine %>';
     $(function(){
         ShowWaitting(true);
         net = NetClient('<%=host %>','<%=server %>','<%=token %>',function(){

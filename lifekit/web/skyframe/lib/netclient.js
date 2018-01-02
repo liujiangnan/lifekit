@@ -13,7 +13,7 @@ var NetClient = function (host, server, token, callback) {
 	var net_push_flag = false;  //前台推送变量赋值标示
 	var net_key = Symbol("net_key");
 
-	var lazy = lazyFunc();  //缓冲器（一毫秒延迟）
+	var lazy = lazyFunc();  //缓冲器
 
 	var handler = {
 		set: function (target, key, value, receiver) {
@@ -214,18 +214,19 @@ var NetClient = function (host, server, token, callback) {
 		 * @returns {string}
      */
 		getAjaxURL: function () {
-			return "/" + server + "/getView/";
+			return "/" + engine + "/getView/";
 		},
 
 		/**
 		 * 由于后台过滤,发起Ajax必须要带一些参数,配合getAjaxURL才能正常的发起一个Ajax
 		 * @param method
 		 * @param parms
-		 * @returns {{server: *, method: *, socketid: *, parms: *}}
+		 * @returns {{engine: *, method: *, socketid: *, parms: *}}
          */
 		getAjaxData: function (method, parms) {
 			return {
-				'server': server,
+				'engine': engine,
+				'service': server,
 				'method': method,
 				'socketid': socketid,
 				'parms': parms
@@ -241,12 +242,13 @@ var NetClient = function (host, server, token, callback) {
 		 * @type 
 		 */
 		getView: function (method, parms, callback) {
-			var _url = "/" + server + "/getView/"; 
+			var _url = "/" + engine + "/getView/"; 
 			$.ajax({
 				type: "POST",
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				url: _url,
 				data: {
+					'service': server,
 					'method': method,
 					'socketid': socketid,
 					'parms': parms

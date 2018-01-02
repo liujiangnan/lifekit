@@ -70,7 +70,7 @@ function netclient(server, secret, engine_dir) {
 
       let dataline = {};
 
-      let lazy = lazyFunc(); //缓冲器（一毫秒延迟）
+      let lazy = lazyFunc(); //缓冲器
 
       let net_push_flag = false; //前台推送变量赋值标示
 
@@ -335,7 +335,7 @@ function netclient(server, secret, engine_dir) {
    * @returns {{emit: emit, on: on}}
    */
   this.getService = function(ctx) {
-    let service = ctx.request.body.server;
+    let service = ctx.request.body.engine;
     let socketid = ctx.request.body.socketid;
     let obj = property.getValue(service, socketid);
     let svc = obj ? obj["service"] : null;

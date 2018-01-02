@@ -35,15 +35,18 @@ let authroute = async function(app, secret, engine_dir) {
         if (ctx.request.query) {
           params = JSON.stringify(ctx.request.query);
         }
-        renderOption = getDeploy("/");
+        let token = jwt.sign({ engine: n }, secret, {
+          'expiresIn': 30 // 设置过期时间，单位是秒
+        });
+        let renderOption = getDeploy("/",filepath,token);
         renderOption.host = host; 
         renderOption.params = params;
+        renderOption.engine = n;
         ejs.renderFile(root_path + '/lifekit/web/skyframe/skyframe.ejs', renderOption, function(err, str) {
           if (err) {
             console.log("模块" + n + "入口文件报错");
             console.log(err);
           }
-          console.log(str);
           return ctx.response.body = str;
         });
       });
@@ -55,9 +58,13 @@ let authroute = async function(app, secret, engine_dir) {
           params = JSON.stringify(ctx.request.query);
         }
         var service = ctx.params.service;
-        renderOption = getDeploy("/"+service);
+        let token = jwt.sign({ engine: n }, secret, {
+          'expiresIn': 30 // 设置过期时间，单位是秒
+        });
+        let renderOption = getDeploy("/"+service,filepath,token);
         renderOption.host = host; 
         renderOption.params = params;
+        renderOption.engine = n;
         ejs.renderFile(root_path + '/lifekit/web/skyframe/skyframe.ejs', renderOption, function(err, str) {
           if (err) {
             console.log("模块" + n + "/" + service + "入口文件报错");
@@ -70,8 +77,8 @@ let authroute = async function(app, secret, engine_dir) {
       //模块交互路由
       router.post('/' + n + '/getView', async function(ctx, next) {
 
-        ctx.request.body.server = n;
-        var svc = netclient.getService(ctx);
+        ctx.request.body.engine = n;
+        var svc = netclient.getService(ctx); 
         if (svc) {
           var method = ctx.request.body.method;
           var parms = ctx.request.body.parms;
@@ -80,8 +87,12 @@ let authroute = async function(app, secret, engine_dir) {
           if (method === "getEjs") {
             return ctx.render(parms, {});
           } else {
-            if (method === "init" && !svc["init"]) {
-              return ctx.render(n + "/web/index.ejs", {});
+            if (method === "init" && !svc["init"]) { 
+              let index = getDefaultPage(ctx.request.body.service); 
+              if(!index){
+                index = n + "/web/index.ejs";
+              }
+              return ctx.render(index, {});
             } else {
               try {
                 await svc[method](ctx, parms);
@@ -115,24 +126,29 @@ let authroute = async function(app, secret, engine_dir) {
   console.log("所有模块装载完成...");
 }
 
-function getDeploy(key){
+function getDefaultPage(key){
+  try {
+    let deploy = require(filepath + "/deploy.js")[key];
+    return deploy[key].index;
+  } catch (error) {
+    return null;
+  }
+}
+
+function getDeploy(key,filepath,token){
   var packageJson = null;
   var deploy = null; 
   var renderOption = { 
     'server': 'service',
     'method': 'init',
+    'token': token
   }; 
   try{
     //这个文件不一定存在
-    deploy = require(filepath + "/deploy.js"); 
+    deploy = require(filepath + "/deploy.js")[key]; 
     renderOption.title = deploy.title||"";
     if(deploy.socketio===false){
       renderOption.token = null;
-    }else{
-      // 创建token，为socketio使用,如果token为空则不开启socketio
-      renderOption.token = jwt.sign({ engine: n }, secret, {
-        'expiresIn': 30 // 设置过期时间，单位是秒
-      });
     }
     //页面加载的时候，会自动嵌入页面的header中
     if(deploy.header){
@@ -152,7 +168,7 @@ function getDeploy(key){
   }catch(e){  
     try{
       packageJson = require(filepath + "/package.json");
-      renderOption.title = packageJson.description;
+      renderOption.title = packageJson.description; 
     }catch(e){
       console.warn("模块"+n+"缺失package.json文件");
     }
