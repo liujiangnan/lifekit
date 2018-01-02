@@ -66,10 +66,7 @@ function netclient(server, secret, engine_dir) {
       console.log('disconnect: SocketID=' + socket.id);
     });
 
-    socket.on("initserver", function(serverstr, callback) {
-
-
-      //service = serverstr;
+    socket.on("initserver", function(serverstr, callback) { 
 
       let dataline = {};
 
@@ -208,7 +205,7 @@ function netclient(server, secret, engine_dir) {
 
       let net = creatNet(socket, proxy);
 
-      let mdlService = require(engine_dir + '/' + service + '/src/service');
+      let mdlService = require(engine_dir + '/' + service + '/src/'+serverstr);
       let svc = new mdlService(net);
 
       socket.on("call", async function(funcname, socketid, data, callback) {

@@ -16,6 +16,7 @@ module.exports = {
     //指定自定义的入口页面
     //默认是web/index.ejs
     index:'',
+    title:'ClickHouse'
   },
 
 }
