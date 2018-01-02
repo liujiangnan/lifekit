@@ -1,5 +1,5 @@
 {
-  "name": "clickhouse",
+  "name": "chexample",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,5 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@apla/clickhouse": "^1.5.0"
+  }
 }
