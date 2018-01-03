@@ -155,9 +155,8 @@ function getDeployOption(key,filepath,token){
   var deploy = null; 
   var renderOption = { 
     'server': 'service',
-    'method': 'init',
-    'header': '/ch/web/header.ejs',
-    // 'header': '',
+    'method': 'init', 
+    'header': '',
     'token': token
   }; 
   try{
@@ -169,7 +168,7 @@ function getDeployOption(key,filepath,token){
     }
     //页面加载的时候，会自动嵌入页面的header中
     if(deploy.header){
-      renderOption.header = deploy.header;
+      renderOption.header = root_path + '/engine/'+deploy.header;
     }
     //指定自定义的后台js文件
     if(deploy.service){
