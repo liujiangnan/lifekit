@@ -38,7 +38,7 @@ let authroute = async function(app, secret, engine_dir) {
         let token = jwt.sign({ engine: n }, secret, {
           'expiresIn': 30 // 设置过期时间，单位是秒
         });
-        let renderOption = getDeploy("/",filepath,token);
+        let renderOption = getDeployOption("/",filepath,token);
         renderOption.host = host; 
         renderOption.params = params;
         renderOption.engine = n;
@@ -61,7 +61,7 @@ let authroute = async function(app, secret, engine_dir) {
         let token = jwt.sign({ engine: n }, secret, {
           'expiresIn': 30 // 设置过期时间，单位是秒
         });
-        let renderOption = getDeploy("/"+service,filepath,token);
+        let renderOption = getDeployOption("/"+service,filepath,token);
         renderOption.host = host; 
         renderOption.params = params;
         renderOption.engine = n;
@@ -75,20 +75,25 @@ let authroute = async function(app, secret, engine_dir) {
       });
 
       //模块交互路由
-      router.post('/' + n + '/getView', async function(ctx, next) {
-
-        ctx.request.body.engine = n;
-        var svc = netclient.getService(ctx); 
+      router.post('/' + n + '/getView', async function(ctx, next) { 
+        let svc = null;
+        let service = ctx.request.body.service;
+        let option = getDeployOption("/"+service,filepath);  
+        if(option.token){ //判断模块是否开启了socketio
+          ctx.request.body.engine = n;
+          svc = netclient.getService(ctx); 
+        }else{
+          let mdlService = require(filepath + '/src/'+option.server);
+          svc = new mdlService();
+        } 
         if (svc) {
           var method = ctx.request.body.method;
           var parms = ctx.request.body.parms;
-          // var mdlService = require(filepath + '/src/service');
-          // var svc = new mdlService(socket); 
           if (method === "getEjs") {
             return ctx.render(parms, {});
           } else {
             if (method === "init" && !svc["init"]) { 
-              let index = getDefaultPage(ctx.request.body.service); 
+              let index = getDefaultPage("/"+service,filepath); 
               if(!index){
                 index = n + "/web/index.ejs";
               }
@@ -126,7 +131,17 @@ let authroute = async function(app, secret, engine_dir) {
   console.log("所有模块装载完成...");
 }
 
-function getDefaultPage(key){
+function isOpenSocketIo(key,filepath){
+  try {
+    let deploy = require(filepath + "/deploy.js")[key];
+    let res = deploy[key].socketio;
+    return res===false?res:true;
+  } catch (error) {
+    return true;
+  }
+}
+
+function getDefaultPage(key,filepath){
   try {
     let deploy = require(filepath + "/deploy.js")[key];
     return deploy[key].index;
@@ -135,12 +150,14 @@ function getDefaultPage(key){
   }
 }
 
-function getDeploy(key,filepath,token){
+function getDeployOption(key,filepath,token){
   var packageJson = null;
   var deploy = null; 
   var renderOption = { 
     'server': 'service',
     'method': 'init',
+    'header': '/ch/web/header.ejs',
+    // 'header': '',
     'token': token
   }; 
   try{
@@ -157,10 +174,11 @@ function getDeploy(key,filepath,token){
     //指定自定义的后台js文件
     if(deploy.service){
       renderOption.server = deploy.service.replace(".js","");
-    }
-    //指定后台js的处理方法
-    if(deploy.method){
-      renderOption.method = deploy.method;
+      renderOption.method = deploy.method?deploy.method:"init";
+    }else{
+      //如果没指定service，则走默认的service.js文件，路由指向service.js里的方法
+      let method = key.replace('/',"");
+      renderOption.method = method?method:"init";
     }
     if(deploy.index){
       renderOption.index = deploy.index;
@@ -169,6 +187,8 @@ function getDeploy(key,filepath,token){
     try{
       packageJson = require(filepath + "/package.json");
       renderOption.title = packageJson.description; 
+      let method = key.replace('/',"");
+      renderOption.method = method?method:"init";
     }catch(e){
       console.warn("模块"+n+"缺失package.json文件");
     }

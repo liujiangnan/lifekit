@@ -368,3 +368,79 @@ var NetClient = function (host, server, token, callback) {
 	return _net;
 
 };
+
+
+/**
+ * 负责网络通信 
+ * 请求响应通信(例如：请求页面)使用jquery的ajax  
+ */
+var NetClientNoneIO = function (server,callback) {
+	var _net = {
+		/**
+		 * 获取Ajax的路径给第三方的插件用
+		 * @returns {string}
+     */
+		getAjaxURL: function () {
+			return "/" + engine + "/getView/";
+		},
+
+		/**
+		 * 由于后台过滤,发起Ajax必须要带一些参数,配合getAjaxURL才能正常的发起一个Ajax
+		 * @param method
+		 * @param parms
+		 * @returns {{engine: *, method: *, parms: *}}
+     */
+		getAjaxData: function (method, parms) {
+			return {
+				'engine': engine,
+				'service': server,
+				'method': method,
+				'parms': parms
+			}
+		},
+
+		/**
+		 * 获取页面并执行callback方法
+		 * @param method 指定后台方法
+		 * @param parms 向后台传递的参数,json字符串
+		 * @param callback callback方法
+		 * @return 
+		 * @type 
+		 */
+		getView: function (method, parms, callback) {
+			var _url = "/" + engine + "/getView/"; 
+			$.ajax({
+				type: "POST",
+				contentType: "application/x-www-form-urlencoded; charset=utf-8",
+				url: _url,
+				data: {
+					'service': server,
+					'method': method,
+					'parms': parms
+				},
+				success: function (xhr) {
+				},
+				error: function (xhr, e) {
+
+				},
+				complete: function (xhr) {
+					if (callback) {
+						callback(xhr.responseText);
+					}
+				}
+			});
+		},
+		/**
+		 * 获取数据并执行callback方法
+		 * @param method 指定后台方法
+		 * @param parms 向后台传递的参数
+		 * @param callback callback方法
+		 * @return 
+		 * @type 
+		 */
+		getData: function (method, parms, callback) {
+			this.getView(method, parms, callback);
+		}
+	}
+	return _net;
+}

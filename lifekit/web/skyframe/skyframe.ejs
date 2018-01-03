@@ -7,6 +7,9 @@
     <script type="text/javascript" src="/lib/jquery-1.12.3.min.js"></script>
     <script type="text/javascript" src="/lib/common.js"></script>
     <script type="text/javascript" src="/lib/vue.min.js"></script>  
+    <%if(header){%>
+    <%- include(header) %>
+    <%}%>
 </head> 
 <body style="position: absolute;top:0px;left: 0px;right: 0px;bottom: 0px;margin:0px;">
     <%include waiting %>
@@ -23,12 +26,21 @@
     var engine = '<%=engine %>';
     $(function(){
         ShowWaitting(true);
+        <%if(token){%>
         net = NetClient('<%=host %>','<%=server %>','<%=token %>',function(){
             net.getView('<%=method %>', '<%-params %>',function(result,parms){
                 ShowWaitting(false);
                 $("#divAll").html(result);
             });
         });
+        <%}else{%>
+        net = NetClientNoneIO('<%=server %>',function(){
+            net.getView('<%=method %>', '<%-params %>',function(result,parms){
+                ShowWaitting(false);
+                $("#divAll").html(result);
+            });
+        });
+        <%}%>
     });
 
 </script>
