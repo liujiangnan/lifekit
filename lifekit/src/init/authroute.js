@@ -75,7 +75,7 @@ let authroute = async function(app, secret, engine_dir) {
       });
 
       //模块交互路由
-      router.post('/' + n + '/getView', async function(ctx, next) { 
+      router.post('/' + n + '/getView', async function(ctx, next) {
         let svc = null;
         let service = ctx.request.body.service;
         let option = getDeployOption("/"+service,filepath);  
@@ -93,7 +93,7 @@ let authroute = async function(app, secret, engine_dir) {
             return ctx.render(parms, {});
           } else {
             if (method === "init" && !svc["init"]) { 
-              let index = getDefaultPage("/"+service,filepath); 
+              let index = option.index; 
               if(!index){
                 index = n + "/web/index.ejs";
               }

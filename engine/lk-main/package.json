@@ -1,0 +1,24 @@
+{
+  "name": "lk-main",
+  "version": "0.0.1",
+  "description": "首页",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liujiangnan/lk-main.git"
+  },
+  "keywords": [
+    "首页模块",
+    "布局",
+    "菜单"
+  ],
+  "author": "liu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/liujiangnan/lk-main/issues"
+  },
+  "homepage": "https://github.com/liujiangnan/lk-main#readme"
+}

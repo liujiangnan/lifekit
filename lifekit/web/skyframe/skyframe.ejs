@@ -34,11 +34,10 @@
             });
         });
         <%}else{%>
-        net = NetClientNoneIO('<%=server %>',function(){
-            net.getView('<%=method %>', '<%-params %>',function(result,parms){
-                ShowWaitting(false);
-                $("#divAll").html(result);
-            });
+        net = NetClientNoneIO('<%=server %>');
+        net.getView('<%=method %>', '<%-params %>',function(result,parms){
+            ShowWaitting(false);
+            $("#divAll").html(result);
         });
         <%}%>
     });

@@ -374,7 +374,7 @@ var NetClient = function (host, server, token, callback) {
  * 负责网络通信 
  * 请求响应通信(例如：请求页面)使用jquery的ajax  
  */
-var NetClientNoneIO = function (server,callback) {
+var NetClientNoneIO = function (server) {
 	var _net = {
 		/**
 		 * 获取Ajax的路径给第三方的插件用
@@ -408,7 +408,7 @@ var NetClientNoneIO = function (server,callback) {
 		 * @type 
 		 */
 		getView: function (method, parms, callback) {
-			var _url = "/" + engine + "/getView/"; 
+			var _url = "/" + engine + "/getView/";
 			$.ajax({
 				type: "POST",
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
