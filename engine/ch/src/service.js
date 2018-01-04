@@ -1,12 +1,29 @@
 var ClickHouse = require('@apla/clickhouse'); 
 
-var ch = new ClickHouse({
-  host: 'localhost',
-  port: 8123,
-  debug: false
-});
-
 module.exports = function() {
+
+  this.getConnect = async function(ctx,param){ 
+    try {
+      let ch = new ClickHouse({
+        host: param.host,
+        port: param.port,
+        debug: false
+      });
+      ctx.session.clickhouse = ch;
+      let rows = await ch.querying("show databases",{syncParser: true}); 
+      let resdata = [];
+      let data = rows.data;
+      for(let i=0;i<data.length;i++){
+        resdata.push(data[i][0]);
+      }
+      ctx.body = { st:"success", msg:resdata };
+    } catch (error) {
+      ctx.body = { st:"error", msg:error };
+    }
+    
+  }
+
+
 
   this.query = async function(param,callback){ 
     var query = 'select * from funtest';

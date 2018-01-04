@@ -39,6 +39,14 @@ let authroute = async function(app, secret, engine_dir) {
           'expiresIn': 30 // 设置过期时间，单位是秒
         });
         let renderOption = getDeployOption("/",filepath,token);
+
+        //判断模块是否开启了socketio，如果没开启，就不能靠socket来声明实例了
+        //所以要提前声明实例并存放在session中
+        if(renderOption.token===null){ 
+          let mdlService = require(filepath + '/src/'+renderOption.server);
+          ctx.session._engine_svc = new mdlService();
+        }
+
         renderOption.host = host; 
         renderOption.params = params;
         renderOption.engine = n;
@@ -62,6 +70,14 @@ let authroute = async function(app, secret, engine_dir) {
           'expiresIn': 30 // 设置过期时间，单位是秒
         });
         let renderOption = getDeployOption("/"+service,filepath,token);
+
+        //判断模块是否开启了socketio，如果没开启，就不能靠socket来声明实例了
+        //所以要提前声明实例并存放在session中
+        if(renderOption.token===null){ 
+          let mdlService = require(filepath + '/src/'+renderOption.server);
+          ctx.session._engine_svc = new mdlService();
+        }
+
         renderOption.host = host; 
         renderOption.params = params;
         renderOption.engine = n;
@@ -82,9 +98,8 @@ let authroute = async function(app, secret, engine_dir) {
         if(option.token){ //判断模块是否开启了socketio
           ctx.request.body.engine = n;
           svc = netclient.getService(ctx); 
-        }else{
-          let mdlService = require(filepath + '/src/'+option.server);
-          svc = new mdlService();
+        }else{ 
+          svc = ctx.session._engine_svc;
         } 
         if (svc) {
           var method = ctx.request.body.method;

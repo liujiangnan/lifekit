@@ -260,7 +260,7 @@ var NetClient = function (host, server, token, callback) {
 				},
 				complete: function (xhr) {
 					if (callback) {
-						callback(xhr.responseText);
+						callback(xhr.responseText,xhr.responseJSON);
 					}
 				}
 			});
@@ -419,13 +419,14 @@ var NetClientNoneIO = function (server) {
 					'parms': parms
 				},
 				success: function (xhr) {
+					
 				},
 				error: function (xhr, e) {
 
 				},
-				complete: function (xhr) {
+				complete: function (xhr) { 
 					if (callback) {
-						callback(xhr.responseText);
+						callback(xhr.responseText,xhr.responseJSON);
 					}
 				}
 			});

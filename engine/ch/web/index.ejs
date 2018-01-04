@@ -1,46 +1,98 @@
 
-<style>
-  .el-header, .el-footer {
-    background-color: #B3C0D1;
-    color: #333;
-    text-align: center;
-    line-height: 60px;
-  }
-  
-  .el-aside {
-    background-color: #D3DCE6;
-    color: #333;
-    text-align: center;
-    line-height: 200px;
-  }
-  
-  .el-main {
-    background-color: #E9EEF3;
-    color: #333;
-    text-align: center;
-    line-height: 160px;
-  }
-  
-  body > .el-container {
-    margin-bottom: 40px;
-  }
-  
-  .el-container:nth-child(5) .el-aside,
-  .el-container:nth-child(6) .el-aside {
-    line-height: 260px;
-  }
-  
-  .el-container:nth-child(7) .el-aside {
-    line-height: 320px;
-  }
-</style>
+<link rel="stylesheet" href="/ch/web/lib/css/index.css">
 
+<el-container id="app">
+  <el-header style="height:100px;">
+      <el-row :gutter="20">
+        <el-col :span="6">
+          <img src="" alt="" />
+        </el-col>
+        <el-col :span="6"></el-col>
+        <el-col :span="6"></el-col>
+        <el-col :span="6"></el-col>
+      </el-row>
+  </el-header>
+  <el-aside width="200px" style="padding-top:20px; border-right:solid 1px #333;">
+    <a v-show="!isconnect" @click="dialogVisible = true" style="font-size:20px;" align="center">
+      <i class="iconfont icon-iconfont"></i>
+      链接
+    </a>
+    <el-dialog title="链接信息" :visible.sync="dialogVisible" width="30%">
+      <el-form :model="form">
+        <el-form-item label="host" :label-width="formLabelWidth">
+          <el-input v-model="form.host" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="port" :label-width="formLabelWidth">
+          <el-input v-model="form.port" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="username" :label-width="formLabelWidth">
+          <el-input v-model="form.user" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="password" :label-width="formLabelWidth">
+          <el-input v-model="form.password" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="connect">确 定</el-button>
+      </span>
+    </el-dialog> 
+    <el-menu v-show="isconnect" >
+      <el-menu-item v-for="(item, index) in databases" :index="index">
+        <i class="el-icon-menu"></i>
+        <span slot="title">{{item}}</span>
+      </el-menu-item> 
+    </el-menu>
+  </el-aside>
+  <el-main>
 
-<el-container>
-  <el-aside width="200px">Aside</el-aside>
-  <el-container>
-    <el-header>Header</el-header>
-    <el-main>Main</el-main>
-  </el-container>
+  </el-main>
 </el-container>
 
+<script>
+  new Vue({
+    el: '#app',
+    data: function() {
+      return {
+        isconnect: false,
+        dialogVisible: false,
+        form:{
+          host:'',
+          port:8123,
+          user:'',
+          password:''
+        },
+        formLabelWidth: '120px',
+        isCollapse: true,
+        databases: []
+      }
+    },
+    methods: { 
+      connect(){
+        var that = this;
+        net.getData("getConnect",that.form,function(txt,data){
+          that.dialogVisible = false; 
+          if(data.st==="success"){ 
+            that.isconnect = true;
+            that.databases = data.msg;
+          }else{
+            that.error(data.msg);
+          } 
+        });
+      },
+      handleOpen(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      handleClose(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      error(msg){
+        this.$notify.error({
+          title: '错误',
+          message: msg
+        });
+        this.isconnect = false;
+      }
+    }
+  })
+</script>
