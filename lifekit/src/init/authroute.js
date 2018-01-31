@@ -176,7 +176,7 @@ function getDeployOption(key,filepath,token){
   }; 
   try{
     //这个文件不一定存在
-    deploy = require(filepath + "/deploy.js")[key]; 
+    deploy = require(filepath + "/settint.js")[key]; 
     renderOption.title = deploy.title||"";
     if(deploy.socketio===false){
       renderOption.token = null;
