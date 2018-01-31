@@ -95,11 +95,11 @@ let authroute = async function(app, secret, engine_dir) {
         let svc = null;
         let service = ctx.request.body.service;
         let option = getDeployOption("/"+service,filepath);  
-        if(option.token){ //判断模块是否开启了socketio
-          ctx.request.body.engine = n;
-          svc = netclient.getService(ctx); 
-        }else{ 
-          svc = ctx.session._engine_svc;
+
+        ctx.request.body.engine = n;
+        svc = netclient.getService(ctx); 
+        if(!svc){ //如果没开启长连接的模块，是获取不到对应的service的
+          svc = ctx.session._engine_svc; 
         } 
         if (svc) {
           var method = ctx.request.body.method;
@@ -180,6 +180,8 @@ function getDeployOption(key,filepath,token){
     renderOption.title = deploy.title||"";
     if(deploy.socketio===false){
       renderOption.token = null;
+    }else{
+      renderOption.token = token;
     }
     //页面加载的时候，会自动嵌入页面的header中
     if(deploy.header){

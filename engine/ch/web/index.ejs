@@ -2,69 +2,92 @@
 <link rel="stylesheet" href="/ch/web/lib/css/index.css">
 
 <el-container id="app">
-  <el-header style="height:100px;">
+  <el-header style="height:80px;background: #303133; ">
       <el-row :gutter="20">
         <el-col :span="6">
-          <img src="" alt="" />
+          <h1 style="color:#fff;">ClickHouse</h1>
         </el-col>
-        <el-col :span="6"></el-col>
-        <el-col :span="6"></el-col>
-        <el-col :span="6"></el-col>
+        <el-col :span="6">&nbsp;</el-col>
+        <el-col :span="6">&nbsp;</el-col>
+        <el-col :span="6">
+          <a  @click="dialogVisible = true" style="float:right; color:#fff;line-height:80px;" align="center">
+            <i class="iconfont icon-iconfont"></i>
+            {{isconnect?"切换链接":"链接"}}
+          </a>
+        </el-col>
       </el-row>
   </el-header>
-  <el-aside width="200px" style="padding-top:20px; border-right:solid 1px #333;">
-    <a v-show="!isconnect" @click="dialogVisible = true" style="font-size:20px;" align="center">
-      <i class="iconfont icon-iconfont"></i>
-      链接
-    </a>
-    <el-dialog title="链接信息" :visible.sync="dialogVisible" width="30%">
-      <el-form :model="form">
-        <el-form-item label="host" :label-width="formLabelWidth">
-          <el-input v-model="form.host" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="port" :label-width="formLabelWidth">
-          <el-input v-model="form.port" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="username" :label-width="formLabelWidth">
-          <el-input v-model="form.user" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="password" :label-width="formLabelWidth">
-          <el-input v-model="form.password" auto-complete="off"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="connect">确 定</el-button>
-      </span>
-    </el-dialog> 
-    <el-menu v-show="isconnect" >
-      <el-menu-item v-for="(item, index) in databases" :index="index">
-        <i class="el-icon-menu"></i>
-        <span slot="title">{{item}}</span>
-      </el-menu-item> 
-    </el-menu>
-  </el-aside>
-  <el-main>
-
-  </el-main>
+  <el-container>
+    <el-aside width="200px" style="padding-top:20px;">  
+      <el-menu v-show="isconnect" >
+        <el-menu-item v-for="(item, index) in databases" :index="index" @click="choseDB(item)">
+          <i class="el-icon-menu"></i>
+          <span slot="title">{{item}}</span>
+        </el-menu-item> 
+      </el-menu>
+    </el-aside>
+    <el-main>
+      <el-input v-show="isconnect" type="textarea" autosize placeholder="请输入SQL" v-model="sql"></el-input> 
+      <div v-show="isconnect&&tableShow" style="border:solid 1px #E4E7ED; margin-top:10px;"> 
+        <div class="tableblock" v-for="item in tables" @click="queryTable(item)">{{item}}</div>  
+      </div> 
+      <div v-show="isconnect&&gridShow" style="border:solid 1px #E4E7ED; margin-top:10px;"> 
+        <template>
+          <el-table :data="gridData" border style="width: 100%">
+            <el-table-column v-for="item in gridColumns" prop="{{item}}" label="{{item}}"></el-table-column> 
+          </el-table>
+        </template> 
+      </div> 
+    </el-main> 
+  </el-container>
+  <el-dialog title="链接信息" :visible.sync="dialogVisible" width="30%">
+    <el-form :model="form">
+      <el-form-item label="host" :label-width="formLabelWidth">
+        <el-input v-model="form.host" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="port" :label-width="formLabelWidth">
+        <el-input v-model="form.port" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="username" :label-width="formLabelWidth">
+        <el-input v-model="form.user" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="password" :label-width="formLabelWidth">
+        <el-input v-model="form.password" auto-complete="off"></el-input>
+      </el-form-item>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="connect">确 定</el-button>
+    </span>
+  </el-dialog> 
 </el-container>
 
+
 <script>
+
+  
+
   new Vue({
     el: '#app',
     data: function() {
       return {
         isconnect: false,
-        dialogVisible: false,
+        dialogVisible: true,
         form:{
-          host:'',
+          host:'localhost',
           port:8123,
           user:'',
           password:''
         },
+        sql: "",
         formLabelWidth: '120px',
         isCollapse: true,
-        databases: []
+        databases: [],  //数据库
+        tableShow: false,  //表区域是否显示
+        tables:[],  //表
+        gridShow: false, //表数据是否显示
+        gridColumns: [],  //列名称 
+        gridData:[],  //列数据
       }
     },
     methods: { 
@@ -75,6 +98,40 @@
           if(data.st==="success"){ 
             that.isconnect = true;
             that.databases = data.msg;
+          }else{
+            that.error(data.msg);
+          } 
+        });
+      },
+      choseDB(dbname){
+        var that = this; 
+        that.tableShow = false;
+        that.tables =[];
+        that.gridShow = false;
+        that.gridData = [];
+        net.getData("choseDB",dbname,function(txt,data){
+          if(data.st==="success"){
+            that.tableShow = true;
+            that.tables = data.msg;
+          }else{
+            that.error(data.msg);
+          } 
+        });
+      },
+      queryTable(tablename){
+        var that = this; 
+        that.tableShow = false;
+        that.tables =[];
+        that.sql = "select * from "+tablename;
+        that.query();
+      },
+      query(){
+        var that = this;
+        net.getData("query",that.sql,function(txt,data){
+          if(data.st==="success"){
+            that.gridShow = true;
+            that.gridColumns = data.msg.columns;
+            that.gridData = data.msg.rows;
           }else{
             that.error(data.msg);
           } 

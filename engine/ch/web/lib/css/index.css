@@ -28,6 +28,12 @@
   color: #333; 
 }
 
-.el-menu-vertical-demo:not(.el-menu--collapse) {  
+.tableblock {
+  display: inline-block;
+  margin: 10px;
+  padding: 5px;
+  border-radius: 5px;
+  border:solid 1px #E4E7ED;
+  cursor: pointer;
 }
  
