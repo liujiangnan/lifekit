@@ -1,12 +1,10 @@
-<!-- 引入样式 -->
-<link rel="stylesheet" href="lk-main/web/lib/element-ui/lib/theme-chalk/index.css">
-<link rel="stylesheet" href="lk-main/web/index.css">
+<link rel="stylesheet" href="/lk-main/web/index.css">
 
 <el-container id="app" style="height:100%;">
   <el-header style="height:61px;">
     <el-row :gutter="20">
       <el-col :span="3">
-        <img src="lk-main/web/lib/images/logo.png" style="height:60px;" alt="">
+        <img src="/lk-main/web/lib/images/logo.png" style="height:60px;" alt="">
       </el-col>
       <el-col :span="18">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
@@ -35,23 +33,23 @@
     <div class="line"></div> 
   </el-header>
   <el-container>
-    <el-aside width="200px">
+    <el-aside style="width:auto;">
       <el-row>
-        <el-col :span="24">  
-          <div @click="changeCollapse" class="menuhead">
-              <i class="el-icon-menu"></i>
-          </div>
-          <el-menu default-active="2" class="el-menu-vertical-demo" avcdd="false">
+        <el-col :span="24">   
+          <el-menu default-active="2" class="el-menu-vertical-demo" :collapse="isCollapse">
+            <div @click="changeCollapse" class="menuhead" align="center">
+                <i class="el-icon-menu"></i>
+            </div>
             <el-menu-item index="1">
-              <i class="el-icon-location"></i>
+              <i class="el-icon-star-off"></i>
               <span  slot="title">导航一</span>
             </el-menu-item>
             <el-menu-item index="2">
-              <i class="el-icon-menu"></i>
+              <i class="el-icon-star-off"></i>
               <span slot="title">导航二</span>
             </el-menu-item>
             <el-menu-item index="3">
-              <i class="el-icon-setting"></i>
+              <i class="el-icon-star-off"></i>
               <span slot="title">导航三</span>
             </el-menu-item>
           </el-menu>
@@ -61,4 +59,4 @@
     <el-main>Main</el-main>
   </el-container>
 </el-container>
-<script type="text/javascript" src="lk-main/web/index.js"></script>
+<script type="text/javascript" src="/lk-main/web/index.js"></script>

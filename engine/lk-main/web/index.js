@@ -1,19 +1,19 @@
+ 
 ShowWaitting(true);
-//element框架需要先加载完js才能正常使用
-$.getScript("lk-main/web/lib/element-ui/lib/index.js", function() {
+$(function(){
   ShowWaitting(false);
   ready();
-});
+})
 
 function ready() {
   new Vue({
     el: '#app',
     data: function() {
       return {
+        isCollapse: false,
         visible: false,
         activeIndex: '1',
-        activeIndex2: '1',
-        tets: true
+        activeIndex2: '1'
       }
     },
     methods: {
@@ -21,7 +21,7 @@ function ready() {
         console.log(key, keyPath);
       },
       changeCollapse(){
-        this.tets = this.tets?false:true;
+        this.isCollapse = this.isCollapse?false:true;
       }
     }
   })
