@@ -15,6 +15,7 @@ module.exports = {
     // service:'src/service.js',
     // //指定后台js对应的处理方法
     // //默认是init
+    // //如果没有指定service,则method配置不生效，系统默认走service.js里与路由同名的方法
     // method:'getList',
     // //指定自定义的入口页面
     // //默认是web/index.ejs

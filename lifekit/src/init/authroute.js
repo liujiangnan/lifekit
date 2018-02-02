@@ -40,6 +40,7 @@ let authroute = async function(app, secret, engine_dir) {
         });
         let renderOption = getDeployOption("/",filepath,token);
 
+        
         //判断模块是否开启了socketio，如果没开启，就不能靠socket来声明实例了
         //所以要提前声明实例并存放在session中
         if(renderOption.token===null){ 
@@ -100,7 +101,7 @@ let authroute = async function(app, secret, engine_dir) {
         svc = netclient.getService(ctx); 
         if(!svc){ //如果没开启长连接的模块，是获取不到对应的service的
           svc = ctx.session._engine_svc; 
-        } 
+        }  
         if (svc) {
           var method = ctx.request.body.method;
           var parms = ctx.request.body.parms;
@@ -176,7 +177,7 @@ function getDeployOption(key,filepath,token){
   }; 
   try{
     //这个文件不一定存在
-    deploy = require(filepath + "/settint.js")[key]; 
+    deploy = require(filepath + "/setting.js")[key]; 
     renderOption.title = deploy.title||"";
     if(deploy.socketio===false){
       renderOption.token = null;
@@ -193,6 +194,7 @@ function getDeployOption(key,filepath,token){
       renderOption.method = deploy.method?deploy.method:"init";
     }else{
       //如果没指定service，则走默认的service.js文件，路由指向service.js里的方法
+      //此种情况，service里必须有同名的方法，否则无法访问
       let method = key.replace('/',"");
       renderOption.method = method?method:"init";
     }
