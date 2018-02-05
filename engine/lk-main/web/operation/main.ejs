@@ -1,13 +1,13 @@
 <el-container id="app1" style="height:100%;">
-  <el-aside style="width:200px;"> 
-      <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+  <el-aside style="width:200px;">
+    <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick" :render-content="renderContent"></el-tree>
   </el-aside>
   <el-main>Main</el-main>
 </el-container>
 
 <script>
   let id = 1000;
-
+  
   new Vue({
     el: '#app1',
     data() {
@@ -56,12 +56,59 @@
     methods: {
       handleNodeClick(data) {
         console.log(data);
+      },
+      renderContent(h, {
+        node,
+        data,
+        store
+      }) {
+        return h(
+          "span",{
+            'class': {
+              "menu-node": true
+            },
+          },
+          [
+            h('span', [
+              h('span',node.label)
+            ]),
+            h('span', [
+              h('a',[
+                h('i',{
+                  'class':{
+                    'el-icon-edit': true
+                  }
+                })
+              ]),
+              h('a',[
+                h('i',{
+                  'class':{
+                    'el-icon-delete': true
+                  }
+                })
+              ])
+            ]),
+          ]
+        )
       }
+    },
+    components: { 
+      'menu-tree-node': Child
     }
   });
 </script>
 
 <style>
+
+  .menu-node{
+    flex: 1; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    font-size: 14px; 
+    padding-right: 8px;
+  }
+
   .el-aside {
     background-color: #D3DCE6;
     color: #333;
