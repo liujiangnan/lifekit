@@ -51,12 +51,17 @@
             <el-col :span="8"><strong>操作</strong></el-col>
           </el-row> 
           <el-row :gutter="20" v-for="(item, index) in menuList"> 
-            <el-col :span="2">{{index+1}}</el-col>
-            <el-col :span="4">{{item.name}}</el-col>
+            <el-col :span="2">
+              <span>{{index+1}}</span> 
+            </el-col>
+            <el-col :span="4">
+              <span v-if="!item.edit">{{item.name}}</span>
+              <el-input  v-if="item.edit" v-model="item.name" placeholder="菜单名称"></el-input>
+            </el-col>
             <el-col :span="6">{{item.url}}</el-col>
             <el-col :span="4">{{item.show=="1"?"首页":"功能菜单"}}</el-col>
             <el-col :span="8">
-              <a class="el-icon-edit" type="text" ></a>
+              <a class="el-icon-edit" type="text" @click="" ></a>
               <a style="color: #F56C6C;" class="el-icon-close" type="text" ></a>
             </el-col>
           </el-row> 
