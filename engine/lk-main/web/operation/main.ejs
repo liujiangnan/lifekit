@@ -1,51 +1,105 @@
 <el-container id="app1" style="height:100%;">
-  <el-aside style="width:200px;">
-    <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick" :render-content="renderContent"></el-tree>
+  <el-aside style="width:200px;padding-top:30px;padding-left:20px;">
+    <el-tree :data="data" node-key="id" :props="defaultProps" :expand-on-click-node="false"  @node-click="handleNodeClick"></el-tree>
   </el-aside>
-  <el-main>Main</el-main>
+  <el-main>
+    <el-card>
+      <el-form ref="form" :model="form" label-width="180px">
+        <el-form-item label="网站名称">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="公司LOGO">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item> 
+      </el-form>
+    </el-card> 
+
+    <el-card class="user-card">
+      <div slot="header" @click="changeUserCard">
+        <span>用户模块</span>
+        <el-button style="float: right; padding: 3px 0" :class="userCardIcon" type="text" ></el-button>
+      </div>
+      <el-form ref="user-form" :inline="true" :model="userForm" label-width="130px" v-show="isUser">
+        <el-form-item label="登陆地址">
+          <el-input v-model="userForm.loginUrl" placeholder="请输入URL"></el-input>
+        </el-form-item>
+        <el-form-item label="登出地址">
+          <el-input v-model="userForm.logoutUrl" placeholder="请输入URL"></el-input>
+        </el-form-item> 
+        <el-form-item label="修改密码地址">
+          <el-input v-model="userForm.changePwd" placeholder="请输入URL"></el-input>
+        </el-form-item> 
+        <el-form-item label="个人信息地址">
+          <el-input v-model="userForm.editUrl"  placeholder="请输入URL"></el-input>
+        </el-form-item> 
+        <el-form-item label="用户显示名称">
+          <el-input v-model="userForm.ncStr" placeholder="请输入昵称对应的字段名称"></el-input>
+        </el-form-item> 
+      </el-form>
+    </el-card>
+    <el-card class="menu-card">
+        <div slot="header">
+          <span>菜单配置</span>
+          <el-button style="float: right; padding: 3px 0" class="el-icon-plus" type="text" ></el-button>
+        </div>
+        <div style="margin: 20px; font-size:13px;">
+          <el-row :gutter="20"> 
+            <el-col :span="2"><strong>序号</strong></el-col>
+            <el-col :span="4"><strong>菜单名称</strong></el-col>
+            <el-col :span="6"><strong>URL</strong></el-col>
+            <el-col :span="4"><strong>功能描述</strong></el-col>
+            <el-col :span="8"><strong>操作</strong></el-col>
+          </el-row> 
+          <el-row :gutter="20" v-for="(item, index) in menuList"> 
+            <el-col :span="2">{{index+1}}</el-col>
+            <el-col :span="4">{{item.name}}</el-col>
+            <el-col :span="6">{{item.url}}</el-col>
+            <el-col :span="4">{{item.show=="1"?"首页":"功能菜单"}}</el-col>
+            <el-col :span="8">
+              <a class="el-icon-edit" type="text" ></a>
+              <a style="color: #F56C6C;" class="el-icon-close" type="text" ></a>
+            </el-col>
+          </el-row> 
+        </div> 
+      </el-card>
+  </el-main>
 </el-container>
 
-<script>
-  let id = 1000;
+<script> 
   
   new Vue({
     el: '#app1',
     data() {
       return {
+        form: {
+          name: "我的网站"
+        },
+
+
+        userForm: {
+          loginUrl:'',
+          logoutUrl:'',
+          changePwd:'',
+          editUrl:'',
+          ncStr:''
+        },
+        userCardIcon:"el-icon-arrow-down", 
+        isUser:false,
+
+
+        //所属菜单列表
+        menuList:[
+          {
+            name: '首页',
+            url: '/lk-main',
+            show: '1'
+          }
+        ],
+
         data: [{
-          label: '一级 1',
-          children: [{
-            label: '二级 1-1',
-            children: [{
-              label: '三级 1-1-1'
-            }]
-          }]
-        }, {
-          label: '一级 2',
-          children: [{
-            label: '二级 2-1',
-            children: [{
-              label: '三级 2-1-1'
-            }]
-          }, {
-            label: '二级 2-2',
-            children: [{
-              label: '三级 2-2-1'
-            }]
-          }]
-        }, {
-          label: '一级 3',
-          children: [{
-            label: '二级 3-1',
-            children: [{
-              label: '三级 3-1-1'
-            }]
-          }, {
-            label: '二级 3-2',
-            children: [{
-              label: '三级 3-2-1'
-            }]
-          }]
+          id: 1,
+          label: 'HomePage', 
+          children: []
         }],
         defaultProps: {
           children: 'children',
@@ -57,72 +111,49 @@
       handleNodeClick(data) {
         console.log(data);
       },
-      renderContent(h, {
-        node,
-        data,
-        store
-      }) {
-        return h(
-          "span",{
-            'class': {
-              "menu-node": true
-            },
-          },
-          [
-            h('span', [
-              h('span',node.label)
-            ]),
-            h('span', [
-              h('a',[
-                h('i',{
-                  'class':{
-                    'el-icon-edit': true
-                  }
-                })
-              ]),
-              h('a',[
-                h('i',{
-                  'class':{
-                    'el-icon-delete': true
-                  }
-                })
-              ])
-            ]),
-          ]
-        )
+      changeUserCard(){
+        if(this.isUser){
+          this.userCardIcon = "el-icon-arrow-down";
+          this.isUser = false;
+        }else{
+          this.userCardIcon = "el-icon-arrow-up";
+          this.isUser = true;
+        }
       }
-    },
-    components: { 
-      'menu-tree-node': Child
     }
   });
 </script>
 
-<style>
+<style>  
 
-  .menu-node{
-    flex: 1; 
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
-    font-size: 14px; 
-    padding-right: 8px;
+  .user-card{
+    
   }
 
-  .el-aside {
-    background-color: #D3DCE6;
-    color: #333;
-    text-align: center;
-    line-height: 200px;
+  .el-row {
+    height: 30px;
   }
-  
-  .el-main {
-    background-color: #E9EEF3;
-    color: #333;
-    text-align: center;
-    line-height: 160px;
+
+  .el-form{
+    margin: 20px;
   }
-  
+
+  .el-card__header{
+    padding: 10px;
+  }
+
+  .el-card__body{
+    padding: 0px;
+  }
+
+  .el-card{
+    margin-bottom: 10px;
+  }
+
+  .el-aside { 
+    border-right: solid 1px #D3DCE6; 
+  }
+    
   body>.el-container {
     margin-bottom: 40px;
   }
