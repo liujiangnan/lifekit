@@ -9,7 +9,13 @@
           <el-input v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item label="公司LOGO">
-          <el-input v-model="form.name"></el-input>
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              list-type="picture-card">
+              <img v-if="imageUrl" :src="imageUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i> 
+            </el-upload>
         </el-form-item> 
       </el-form>
     </el-card> 
@@ -40,7 +46,7 @@
     <el-card class="menu-card">
         <div slot="header">
           <span>菜单配置</span>
-          <el-button style="float: right; padding: 3px 0" class="el-icon-plus" type="text" ></el-button>
+          <el-button style="float: right; padding: 3px 0" class="el-icon-plus" type="text" @click="addMenu" ></el-button>
         </div>
         <div style="margin: 20px; font-size:13px;">
           <el-row :gutter="20"> 
@@ -50,19 +56,33 @@
             <el-col :span="4"><strong>功能描述</strong></el-col>
             <el-col :span="8"><strong>操作</strong></el-col>
           </el-row> 
-          <el-row :gutter="20" v-for="(item, index) in menuList"> 
+          <el-row :gutter="20" v-for="(item, index) in menuList" style="height:40px;line-height:40px;"> 
             <el-col :span="2">
               <span>{{index+1}}</span> 
             </el-col>
             <el-col :span="4">
               <span v-if="!item.edit">{{item.name}}</span>
-              <el-input  v-if="item.edit" v-model="item.name" placeholder="菜单名称"></el-input>
+              <el-input class="menuInput" v-if="item.edit" v-model="item.name" placeholder="菜单名称"></el-input>
             </el-col>
-            <el-col :span="6">{{item.url}}</el-col>
-            <el-col :span="4">{{item.show=="1"?"首页":"功能菜单"}}</el-col>
+            <el-col :span="6">
+              <span v-if="!item.edit">{{item.url}}</span>
+              <el-input class="menuInput" v-if="item.edit" v-model="item.url" placeholder="URL"></el-input> 
+            </el-col>
+            <el-col :span="4">
+              <span v-if="!item.edit">{{item.show=="1"?"首页":"功能菜单"}}</span>
+              <el-select class="menuInput" v-if="item.edit" v-model="item.show" placeholder="请选择">
+                <el-option
+                  v-for="item in menuShow"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-col>
             <el-col :span="8">
-              <a class="el-icon-edit" type="text" @click="" ></a>
-              <a style="color: #F56C6C;" class="el-icon-close" type="text" ></a>
+              <a v-show="!item.edit" class="el-icon-edit" type="text" @click="editMenu(index)" ></a>
+              <a v-show="item.edit" class="el-icon-check success" type="text" @click="updateMenu(index)" ></a>
+              <a style="color: #F56C6C;" class="el-icon-close" type="text" @click="deleteMenu(index)" ></a>
             </el-col>
           </el-row> 
         </div> 
@@ -79,6 +99,7 @@
         form: {
           name: "我的网站"
         },
+        imageUrl: "",
 
 
         userForm: {
@@ -97,8 +118,19 @@
           {
             name: '首页',
             url: '/lk-main',
-            show: '1'
+            show: '1',
+            edit: false
+          },{
+            name: '组件',
+            url: '/lk-module',
+            show: '0',
+            edit: false
           }
+        ],
+
+        menuShow: [
+          {label:'首页',value:'1'},
+          {label:'功能菜单',value:'0'}
         ],
 
         data: [{
@@ -115,6 +147,23 @@
     methods: {
       handleNodeClick(data) {
         console.log(data);
+      },
+      addMenu(){
+        this.menuList.push({
+          name: '',
+          url: '',
+          show: '0',
+          edit: true
+        });
+      },
+      editMenu(index){
+        this.menuList[index].edit=true; 
+      },
+      updateMenu(index){
+        this.menuList[index].edit=false; 
+      },
+      deleteMenu(index){
+        this.menuList.splice(index,1);
       },
       changeUserCard(){
         if(this.isUser){
@@ -134,6 +183,7 @@
   .user-card{
     
   }
+ 
 
   .el-row {
     height: 30px;
@@ -161,5 +211,29 @@
     
   body>.el-container {
     margin-bottom: 40px;
+  }
+
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
   }
 </style>
