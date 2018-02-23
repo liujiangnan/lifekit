@@ -5,18 +5,18 @@ function service(net) {
   // let myObj = {"key":"hello","value":{"a":"123"}};
   // net.data.myObj = myObj;
 
-  let len = 1000;
-  for(let i=0;i<len;i++){
-    net.data["a"+i] = Math.round(Math.random()*9+1);;
-  }
+  // let len = 1000;
+  // for(let i=0;i<len;i++){
+  //   net.data["a"+i] = Math.round(Math.random()*9+1);;
+  // }
 
-  setTimeout(function(){
-    setInterval(function(){ 
-      for(let i=0;i<len;i++){
-        net.data["a"+i] = Math.round(Math.random()*9+1);;
-      }
-    },100);
-  },15000);
+  // setTimeout(function(){
+  //   setInterval(function(){ 
+  //     for(let i=0;i<len;i++){
+  //       net.data["a"+i] = Math.round(Math.random()*9+1);;
+  //     }
+  //   },100);
+  // },15000);
 
   // let index = 1;
 
@@ -52,6 +52,14 @@ function service(net) {
     // console.log(net.data.myObj.value);
 
     flag = false;
+  }
+
+  this.upload = function(ctx,parms){
+    return ctx.render('test/web/uploadtest',{});
+  }
+
+  this.uploadData = function(ctx,parms){
+    console.log("*************");
   }
 
 }

@@ -218,6 +218,15 @@ var NetClient = function (host, server, token, callback) {
 		},
 
 		/**
+		 * 获取上传文件的路径给第三方的插件用
+		 * @returns {string}
+     */
+		getUploadFileURL: function () {
+			return "/" + engine + "/getFile/";
+		},
+
+
+		/**
 		 * 由于后台过滤,发起Ajax必须要带一些参数,配合getAjaxURL才能正常的发起一个Ajax
 		 * @param method
 		 * @param parms
@@ -231,7 +240,7 @@ var NetClient = function (host, server, token, callback) {
 				'socketid': socketid,
 				'parms': parms
 			}
-		},
+		},  
 
 		/**
 		 * 获取页面并执行callback方法
@@ -385,6 +394,14 @@ var NetClientNoneIO = function (server) {
 		},
 
 		/**
+		 * 获取上传文件的路径给第三方的插件用
+		 * @returns {string}
+     */
+		getUploadFileURL: function () {
+			return "/" + engine + "/getFile/";
+		},
+
+		/**
 		 * 由于后台过滤,发起Ajax必须要带一些参数,配合getAjaxURL才能正常的发起一个Ajax
 		 * @param method
 		 * @param parms
@@ -397,7 +414,7 @@ var NetClientNoneIO = function (server) {
 				'method': method,
 				'parms': parms
 			}
-		},
+		}, 
 
 		/**
 		 * 获取页面并执行callback方法

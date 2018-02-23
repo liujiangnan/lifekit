@@ -90,14 +90,14 @@ let authroute = async function(app, secret, engine_dir) {
           return ctx.response.body = str;
         });
       });
-
-      //模块交互路由
-      router.post('/' + n + '/getView', async function(ctx, next) {
+ 
+      let __engine = async function(ctx, next) {  
         let svc = null;
         let service = ctx.request.body.service;
         let option = getDeployOption("/"+service,filepath);  
 
         ctx.request.body.engine = n;
+        
         svc = netclient.getService(ctx); 
         if(!svc){ //如果没开启长连接的模块，是获取不到对应的service的
           svc = ctx.session._engine_svc; 
@@ -139,7 +139,19 @@ let authroute = async function(app, secret, engine_dir) {
             return ctx.response.body = str;
           });
         }
+      };
+
+      //模块交互路由
+      router.post('/' + n + '/getView', __engine);
+
+      //模块文件上传路由
+      router.post('/' + n + '/getFile', async function(ctx, next) {  
+        for(let key in ctx.request.body.fields){
+          ctx.request.body[key] = ctx.request.body.fields[key];
+        }
+        await __engine(ctx, next); 
       });
+
       console.log("模块'" + n + "'装载完成..");
     }
   });

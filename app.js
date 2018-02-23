@@ -15,9 +15,9 @@ const convert = require('koa-convert');
 const json = require('koa-json');
 const onerror = require('koa-onerror');
 const session = require('koa-generic-session');
-const bodyparser = require('koa-bodyparser')();
+const bodyparser = require('koa-body')({multipart: true});
 const logger = require('koa-logger');
-const fs = require('fs');
+const fs = require('fs'); 
  
 
 const cors = require('koa-cors');
@@ -40,7 +40,7 @@ onerror(app);
 
 
 // middlewares
-app.use(bodyparser);
+app.use(bodyparser); 
 app.use(json());
 //app.use(logger());
 
