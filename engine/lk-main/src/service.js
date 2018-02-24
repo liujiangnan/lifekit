@@ -2,6 +2,27 @@
 let path = require('path');
 let fs = require('fs');
 
+const engineRoot = ENGINE_PATH + '/lk-main';
+
+const Sequelize = require('sequelize');
+const datasource = require(engineRoot + '/src/config/datasource.json');
+const sequelize = new Sequelize(
+  datasource.database,
+  datasource.username,
+  datasource.password,
+  datasource
+);
+
+let Home = sequelize.import(engineRoot + '/src/model/home.js');
+let Menu = sequelize.import(engineRoot + '/src/model/menu.js');
+
+
+sequelize.sync({ force: false }).then(function() {
+  console.log("框架模块数据结构初始化成功");
+}).catch(function(err) {
+  console.log("框架模块数据结构初始化失败: %s", err);
+});
+
 function service() {
 
   this.operation = async function (ctx, parms) {
