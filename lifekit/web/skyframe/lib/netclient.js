@@ -251,6 +251,10 @@ var NetClient = function (host, server, token, callback) {
 		 * @type 
 		 */
 		getView: function (method, parms, callback) {
+			if(typeof(parms)==="function"){
+				callback = parms;
+				parms = null;
+			} 
 			var _url = "/" + engine + "/getView/"; 
 			$.ajax({
 				type: "POST",
@@ -425,6 +429,10 @@ var NetClientNoneIO = function (server) {
 		 * @type 
 		 */
 		getView: function (method, parms, callback) {
+			if(typeof(parms)==="function"){
+				callback = parms;
+				parms = null;
+			} 
 			var _url = "/" + engine + "/getView/";
 			$.ajax({
 				type: "POST",
