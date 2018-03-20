@@ -1,0 +1,22 @@
+<button onclick="openPic()">图片测试</button>
+
+<script type="text/javascript">
+  var KGApi = new KGApi("kg71287864a201ec14", "90034cec1dc099cb9ab9503dec0e8ca7");
+
+  function openPic() {
+    KGApi.choosePicture({
+      params: {
+        tag: '苹果' //查询条件
+      },
+      done: function(response) {
+        console.log('--点击确认按钮后返回--');
+        console.log(response);
+        KGApi.closeDialog(); //关闭窗体
+      },
+      fail: function(err) {
+        console.log('----choosePicture error---');
+        console.log(err);
+      }
+    });
+  }
+</script>
