@@ -54,6 +54,10 @@ function service(net) {
     flag = false;
   }
 
+  this.kgtest = function(ctx,parms){
+    return ctx.render('test/web/kgtest',{});
+  }
+
   this.upload = function(ctx,parms){
     return ctx.render('test/web/uploadtest',{});
   }
