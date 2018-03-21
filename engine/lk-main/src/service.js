@@ -42,7 +42,7 @@ function service() {
         obj.edit = false;
         return obj;
       });
-      return ctx.body = {code:200,msg:"查询成功",data:{home:{name:"ceshi"},menu:menu}};
+      return ctx.body = {code:200,msg:"查询成功",data:{home:{name:"ceshi"},menu:menuData}};
     } catch (error) {
       return ctx.body = {code:-1,msg:"查询失败 error:"+error};
     }
@@ -52,14 +52,14 @@ function service() {
     try {
       let res = null;
       if(parms.id){
-        res = await Menu.update(parms,{id:parms.id});
+        res = await Menu.update(parms,{where:{id:parms.id}});
         console.log("======更新=========");
       }else{
         res = await Menu.create(parms);
         res = res.dataValues;
         console.log("======创建=========");
       } 
-      return ctx.body = {code:200,msg:"创建成功",data:res};
+      return ctx.body = {code:200,msg:"保存成功",data:res};
     } catch (error) {
       return ctx.body = {code:-1,msg:"菜单保存失败 error:"+error};
     } 

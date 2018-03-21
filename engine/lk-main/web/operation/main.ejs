@@ -106,7 +106,9 @@
         if(res.code===200&&res.data){ 
           that.initForm(res.data.home);
           that.initMenuList(res.data.menu);
-        } 
+        } else {
+          this.$message.error({ showClose: true, message: res.msg, duration: 2000 });
+        }
       });
     },
     data() {
@@ -206,6 +208,12 @@
       },
       updateMenu(index,menu){
         net.getView("saveMenu",menu,res => {
+          res = JSON.parse(res);
+          if(res.code===200){
+            this.menuList[index].id = res.data.id;
+          }else{
+            this.$message.error({ showClose: true, message: res.msg, duration: 2000 });
+          } 
           this.menuList[index].edit=false; 
         });
       },
