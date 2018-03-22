@@ -1,6 +1,13 @@
 <el-container id="app1" style="height:100%;">
   <el-aside style="width:200px;padding-top:30px;padding-left:20px;">
-    <el-tree :data="data" node-key="id" :props="defaultProps" :expand-on-click-node="false"  @node-click="handleNodeClick"></el-tree>
+    <el-tree  
+      node-key="id" 
+      :props="defaultProps" 
+      :expand-on-click-node="false" 
+      :load="loadTreeData" 
+      lazy
+      @node-click="handleNodeClick">
+    </el-tree>
   </el-aside>
   <el-main>
     <el-card>
@@ -38,7 +45,7 @@
           <el-input v-model="form.logoutUrl" placeholder="请输入URL"></el-input>
         </el-form-item> 
         <el-form-item label="修改密码地址">
-          <el-input v-model="form.changePwd" placeholder="请输入URL"></el-input>
+          <el-input v-model="form.changePwdUrl" placeholder="请输入URL"></el-input>
         </el-form-item> 
         <el-form-item label="个人信息地址">
           <el-input v-model="form.editUrl"  placeholder="请输入URL"></el-input>
@@ -61,13 +68,13 @@
             <el-col :span="4"><strong>功能描述</strong></el-col>
             <el-col :span="8"><strong>操作</strong></el-col>
           </el-row> 
-          <el-row :gutter="20" v-for="(item, index) in menuList" style="height:40px;line-height:40px;"> 
+          <el-row :gutter="20" v-for="(item, index) in menuList" style="height:42px;line-height:40px;">
             <el-col :span="2">
               <span>{{index+1}}</span> 
             </el-col>
             <el-col :span="4">
               <span v-if="!item.edit">{{item.name}}</span>
-              <el-input class="menuInput" v-else v-model="item.name" placeholder="菜单名称"></el-input>
+              <el-input class="menuInput" v-if="item.edit" v-model="item.name" placeholder="菜单名称"></el-input>
             </el-col>
             <el-col :span="6">
               <span v-if="!item.edit">{{item.url}}</span>
@@ -92,6 +99,7 @@
           </el-row> 
         </div> 
       </el-card> 
+      <el-button type="primary" @click="saveForm">保存</el-button>
   </el-main>
 </el-container>
 
@@ -119,7 +127,8 @@
           loginUrl:"",
           logoutUrl:"",
           changePwdUrl:"",
-          editUrl:""
+          editUrl:"",
+          ncStr: ""
         },
         imageUrl: "", 
         uploadUrl: net.getUploadFileURL(),
@@ -135,15 +144,10 @@
           {label:'首页',value:'1'},
           {label:'功能菜单',value:'0'}
         ],
-
-        data: [{
-          id: 1,
-          label: 'HomePage', 
-          children: []
-        }],
+ 
         defaultProps: {
           children: 'children',
-          label: 'label'
+          label: 'name'
         }
       };
     },
@@ -154,17 +158,43 @@
           return;
         } 
         this.form = {
+          id: data.id,
           name:data.name,
           logo:data.logo,
           loginUrl:data.loginUrl,
           logoutUrl:data.logoutUrl,
           changePwdUrl:data.changePwdUrl,
-          editUrl:data.editUrl
+          editUrl:data.editUrl,
+          ncStr: data.ncStr
         };
+        this.imageUrl = data.logo;
       },
 
       initMenuList(data){
         this.menuList = data;
+      },
+
+      saveForm(){
+        let id = this.form.id;
+        if(id){ //修改
+          net.getData("updateHome",this.form,res=>{
+            res = JSON.parse(res);
+            if(res.code===200){
+              this.$message.success({ showClose: true, message: res.msg, duration: 2000 });
+            }else{
+              this.$message.error({ showClose: true, message: res.msg, duration: 2000 });
+            } 
+          });
+        }else{
+          net.getData("saveHome",this.form,res=>{
+            res = JSON.parse(res);
+            if(res.code===200){
+              this.$message.success({ showClose: true, message: res.msg, duration: 2000 });
+            }else{
+              this.$message.error({ showClose: true, message: res.msg, duration: 2000 });
+            } 
+          });
+        }
       },
 
       //图片
@@ -183,6 +213,7 @@
         if (response.code===200) {
           //这才算是真正的上传成功
           this.imageUrl = response.msg; 
+          this.form.logo = response.msg;
         } else {
           this.$message.error({ showClose: true, message: '上传服务器出现异常', duration: 2000 });
         }
@@ -190,8 +221,20 @@
       handlePictureError(err, file, fileList) {
         this.$message.error(err);
       },
-
-
+      loadTreeData(node, resolve){
+        if (node.level === 0) {
+          return resolve([{ name: 'HomePage'}]);
+        }
+        let id = node.data.id?node.data.id:null;
+        net.getData("loadTree",id,res=>{
+          res = JSON.parse(res);
+          if(res.code===200){
+            return resolve(res.data);
+          }else{
+            this.$message.error({ showClose: true, message: res.msg, duration: 2000 });
+          }
+        });
+      },
       handleNodeClick(data) {
         console.log(data);
       },
@@ -207,18 +250,51 @@
         this.menuList[index].edit=true; 
       },
       updateMenu(index,menu){
-        net.getView("saveMenu",menu,res => {
-          res = JSON.parse(res);
-          if(res.code===200){
-            this.menuList[index].id = res.data.id;
-          }else{
-            this.$message.error({ showClose: true, message: res.msg, duration: 2000 });
-          } 
-          this.menuList[index].edit=false; 
-        });
+        if(!menu.id){
+          net.getView("saveMenu",menu,res => {
+            res = JSON.parse(res);
+            if(res.code===200){
+              this.menuList[index].id = res.data.id;
+              this.$message.success({ showClose: true, message: res.msg, duration: 2000 });
+            }else{
+              this.$message.error({ showClose: true, message: res.msg, duration: 2000 });
+            } 
+            this.menuList[index].edit=false; 
+          });
+        }else{
+          net.getView("updateMenu",menu,res => {
+            res = JSON.parse(res);
+            if(res.code===200){
+              this.$message.success({ showClose: true, message: res.msg, duration: 2000 });
+            }else{
+              this.$message.error({ showClose: true, message: res.msg, duration: 2000 });
+            } 
+            this.menuList[index].edit=false; 
+          });
+        } 
+        
       },
-      deleteMenu(index){
-        this.menuList.splice(index,1);
+      deleteMenu(index,menu){
+        if(!menu.id){
+          this.menuList.splice(index,1);
+          return;
+        }
+        this.$confirm('此操作将永久删除该菜单, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          net.getData("deleteMenu",menu.id,res =>{
+            res = JSON.parse(res);
+            if(res.code===200){
+              this.menuList.splice(index,1);
+              this.$message.success({ showClose: true, message: res.msg, duration: 2000 });
+            }else{
+              this.$message.error({ showClose: true, message: res.msg, duration: 2000 });
+            } 
+          }); 
+        }).catch(() => {          
+        }); 
       },
       changeUserCard(){
         if(this.isUser){

@@ -30,6 +30,26 @@ function service() {
     return ctx.render("lk-main/web/operation/main.ejs"); 
   }
 
+  this.saveHome = async function(ctx,parms){
+    console.log(parms);
+    try {
+      let res = await Home.create(parms);
+      res = res.dataValues; 
+      return ctx.body = {code:200,msg:"保存成功",data:res};
+    } catch (error) {
+      return ctx.body = {code:-1,msg:"保存失败 error:"+error};
+    } 
+  }
+
+  this.updateHome = async function(ctx,parms){
+    try { 
+      let res = await Home.update(parms,{where:{id:parms.id}}); 
+      return ctx.body = {code:200,msg:"修改成功",data:res};
+    } catch (error) {
+      return ctx.body = {code:-1,msg:"修改失败 error:"+error};
+    }
+  }
+
   this.getHomeInfo = async function (ctx,parms){
     try {
       let homeInfo = await Home.findOne();  
@@ -42,7 +62,7 @@ function service() {
         obj.edit = false;
         return obj;
       });
-      return ctx.body = {code:200,msg:"查询成功",data:{home:{name:"ceshi"},menu:menuData}};
+      return ctx.body = {code:200,msg:"查询成功",data:{home:homeInfo,menu:menuData}};
     } catch (error) {
       return ctx.body = {code:-1,msg:"查询失败 error:"+error};
     }
@@ -50,19 +70,52 @@ function service() {
 
   this.saveMenu = async function(ctx,parms){ 
     try {
-      let res = null;
-      if(parms.id){
-        res = await Menu.update(parms,{where:{id:parms.id}});
-        console.log("======更新=========");
-      }else{
-        res = await Menu.create(parms);
-        res = res.dataValues;
-        console.log("======创建=========");
-      } 
+      let res = await Menu.create(parms);
+      res = res.dataValues; 
       return ctx.body = {code:200,msg:"保存成功",data:res};
     } catch (error) {
       return ctx.body = {code:-1,msg:"菜单保存失败 error:"+error};
     } 
+  } 
+
+  this.updateMenu = async function(ctx,parms){
+    try {
+      let menu = {name:parms.name,url:parms.url,type:parms.type};
+      if(parms.pid){
+        menu.pid = parms.pid-0;
+      }  
+      let res = await Menu.update(menu,{where:{id:parms.id}}); 
+      return ctx.body = {code:200,msg:"更新成功",data:res};
+    } catch (error) {
+      return ctx.body = {code:-1,msg:"菜单修改失败 error:"+error};
+    }
+  }
+
+  this.loadTree = async function(ctx,parms){
+    let pid = null;
+    if(parms){
+      pid = parms;
+    }
+    try {
+      let res = await Menu.findAll({where:{pid:pid}});
+      let data = _.map(res,function(item){
+        let obj = item.dataValues; 
+        return obj;
+      });
+      console.log(data);
+      return ctx.body = {code:200,msg:"查询成功",data:data};
+    } catch (error) {
+      return ctx.body = {code:-1,msg:"查询失败 error:"+error};
+    }
+  }
+
+  this.deleteMenu = async function(ctx,parms){
+    try {
+      let res = await Menu.destroy({where:{id:parms}});
+      return ctx.body = {code:200,msg:"删除成功",data:res};
+    } catch (error) {
+      return ctx.body = {code:-1,msg:"菜单删除失败 error:"+error};
+    }
   }
 
   this.uploadLogo = async function(ctx,parms){ 
