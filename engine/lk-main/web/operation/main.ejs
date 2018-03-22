@@ -3,7 +3,7 @@
     <el-tree  
       node-key="id" 
       :props="defaultProps" 
-      :expand-on-click-node="false" 
+      :expand-on-click-node="true" 
       :load="loadTreeData" 
       lazy
       @node-click="handleNodeClick">
@@ -99,7 +99,7 @@
           </el-row> 
         </div> 
       </el-card> 
-      <el-button type="primary" @click="saveForm">保存</el-button>
+      <el-button v-if="choseNode==='HomePage'" type="primary" @click="saveForm">保存</el-button>
   </el-main>
 </el-container>
 
@@ -138,7 +138,7 @@
         isUser:false,
 
         choseNode: "HomePage",
-        choseNodeId: 1,
+        choseNodeId: null,
  
         //所属菜单列表
         menuList:[],
@@ -226,7 +226,7 @@
       },
       loadTreeData(node, resolve){
         if (node.level === 0) {
-          return resolve([{ name: 'HomePage'}]);
+          return resolve([{ name: 'HomePage',id:null}]);
         }
         let id = node.data.id?node.data.id:null;
         net.getData("loadTree",id,res=>{
@@ -239,7 +239,16 @@
         });
       },
       handleNodeClick(data) {
-        console.log(data);
+        this.choseNode = data.name;
+        this.choseNodeId = data.id;
+        net.getData("loadTree",data.id,res=>{
+          res = JSON.parse(res);
+          if(res.code===200){
+            this.menuList = res.data;
+          }else{
+            this.$message.error({ showClose: true, message: res.msg, duration: 2000 });
+          }
+        });
       },
       addMenu(){
         this.menuList.push({
@@ -253,6 +262,7 @@
         this.menuList[index].edit=true; 
       },
       updateMenu(index,menu){
+        menu.pid=this.choseNodeId;
         if(!menu.id){
           net.getView("saveMenu",menu,res => {
             res = JSON.parse(res);

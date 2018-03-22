@@ -31,7 +31,6 @@ function service() {
   }
 
   this.saveHome = async function(ctx,parms){
-    console.log(parms);
     try {
       let res = await Home.create(parms);
       res = res.dataValues; 
@@ -56,7 +55,7 @@ function service() {
       if(homeInfo){
         homeInfo = homeInfo.dataValues;
       }
-      let menu = await Menu.findAll(); 
+      let menu = await Menu.findAll({where:{pid:null}}); 
       let menuData = _.map(menu,function(item){
         let obj = item.dataValues;
         obj.edit = false;
@@ -67,7 +66,7 @@ function service() {
       return ctx.body = {code:-1,msg:"查询失败 error:"+error};
     }
   } 
-
+ 
   this.saveMenu = async function(ctx,parms){ 
     try {
       let res = await Menu.create(parms);
@@ -100,9 +99,9 @@ function service() {
       let res = await Menu.findAll({where:{pid:pid}});
       let data = _.map(res,function(item){
         let obj = item.dataValues; 
+        obj.edit = false;
         return obj;
-      });
-      console.log(data);
+      }); 
       return ctx.body = {code:200,msg:"查询成功",data:data};
     } catch (error) {
       return ctx.body = {code:-1,msg:"查询失败 error:"+error};
