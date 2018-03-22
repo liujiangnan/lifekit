@@ -28,8 +28,7 @@ function service() {
 
   this.operation = async function (ctx, parms) { 
     return ctx.render("lk-main/web/operation/main.ejs"); 
-  }
-
+  } 
   this.saveHome = async function(ctx,parms){
     try {
       let res = await Home.create(parms);
@@ -38,8 +37,7 @@ function service() {
     } catch (error) {
       return ctx.body = {code:-1,msg:"保存失败 error:"+error};
     } 
-  }
-
+  } 
   this.updateHome = async function(ctx,parms){
     try { 
       let res = await Home.update(parms,{where:{id:parms.id}}); 
@@ -47,8 +45,7 @@ function service() {
     } catch (error) {
       return ctx.body = {code:-1,msg:"修改失败 error:"+error};
     }
-  }
-
+  } 
   this.getHomeInfo = async function (ctx,parms){
     try {
       let homeInfo = await Home.findOne();  
@@ -65,8 +62,7 @@ function service() {
     } catch (error) {
       return ctx.body = {code:-1,msg:"查询失败 error:"+error};
     }
-  } 
- 
+  }  
   this.saveMenu = async function(ctx,parms){ 
     try {
       let res = await Menu.create(parms);
@@ -75,8 +71,7 @@ function service() {
     } catch (error) {
       return ctx.body = {code:-1,msg:"菜单保存失败 error:"+error};
     } 
-  } 
-
+  }  
   this.updateMenu = async function(ctx,parms){
     try {
       let menu = {name:parms.name,url:parms.url,type:parms.type};
@@ -88,8 +83,7 @@ function service() {
     } catch (error) {
       return ctx.body = {code:-1,msg:"菜单修改失败 error:"+error};
     }
-  }
-
+  } 
   this.loadTree = async function(ctx,parms){
     let pid = null;
     if(parms){
@@ -106,8 +100,7 @@ function service() {
     } catch (error) {
       return ctx.body = {code:-1,msg:"查询失败 error:"+error};
     }
-  }
-
+  } 
   this.deleteMenu = async function(ctx,parms){
     try {
       let res = await Menu.destroy({where:{id:parms}});
@@ -115,8 +108,7 @@ function service() {
     } catch (error) {
       return ctx.body = {code:-1,msg:"菜单删除失败 error:"+error};
     }
-  }
-
+  } 
   this.uploadLogo = async function(ctx,parms){ 
     try {
       let upfile = ctx.request.body.files.file;
@@ -126,8 +118,10 @@ function service() {
       ctx.body = {code:200,msg:"/lk-main/web/upload/"+upfile.name};
     } catch (error) {
       ctx.body = {code:500,msg:error};
-    }
-    
+    } 
+  }
+  this.loadConfigData = async function(ctx,parms){
+
   }
 
 }

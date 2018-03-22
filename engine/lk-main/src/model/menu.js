@@ -14,7 +14,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull : false
     }, 
-    type: {  //菜单类型  （1、首页；2、功能菜单）
+    type: {  //菜单类型  （1、首页；2、功能菜单；3、下拉菜单）
       type: DataTypes.STRING
     },
     pid: {  //父菜单ID 
