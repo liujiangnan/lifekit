@@ -3,7 +3,7 @@
     <el-tree :data="data" node-key="id" :props="defaultProps" :expand-on-click-node="false"  @node-click="handleNodeClick"></el-tree>
   </el-aside>
   <el-main>
-    <el-card>
+    <el-card v-if="choseNode==='HomePage'">
       <el-form ref="form" :model="form" label-width="180px">
         <el-form-item label="网站名称">
           <el-input v-model="form.name"></el-input>
@@ -25,7 +25,7 @@
       </el-form>
     </el-card> 
 
-    <el-card class="user-card">
+    <el-card v-if="choseNode==='HomePage'" class="user-card">
       <div slot="header" @click="changeUserCard">
         <span>用户模块</span>
         <el-button style="float: right; padding: 3px 0" :class="userCardIcon" type="text" ></el-button>
@@ -127,6 +127,9 @@
  
         userCardIcon:"el-icon-arrow-down", 
         isUser:false,
+
+        choseNode: "HomePage",
+        choseNodeId: 1,
  
         //所属菜单列表
         menuList:[],
