@@ -1,24 +1,35 @@
+
+const jwt = require('jsonwebtoken');
+
+const url = require("url");
+const fs = require("fs");
+const ejs = require("ejs");
+
 /**
  * Web请求路由（带权限）
  */
+
+const renderFile = function(filepath,data){
+  return new Promise(function(resolve,reject){
+    ejs.renderFile(filepath, data, function(err, str) {
+      if (err) {
+        reject(err);
+      }else{
+        resolve(str);
+      } 
+    });
+  });
+}
+
 let authroute = async function(app, secret, engine_dir) {
-  let router = require('koa-router')();
-  let jwt = require('jsonwebtoken');
 
-  let url = require("url");
-  let fs = require("fs");
-  let ejs = require("ejs");
-
+  let router = require('koa-router')(); 
 
   //浏览器地址栏请求或刷新
-  router.get('/', function(ctx, next) {
+  router.get('/', async function(ctx, next) {
     var host = ctx.headers['host'];
-    ejs.renderFile(root_path + '/engine/index.ejs', { 'host': host }, function(err, str) {
-      if (err) {
-        console.log(err);
-      }
-      return ctx.response.body = str;
-    });
+    let html = await renderFile(root_path + '/engine/index.ejs', { 'host': host });
+    return ctx.body = html;
   });
 
   let fileNameArray = fs.readdirSync(engine_dir);
@@ -29,7 +40,7 @@ let authroute = async function(app, secret, engine_dir) {
       console.log("正在装载'" + n + "'模块..");
       
       //模块入口路由
-      router.get("/" + n, function(ctx, next) {
+      router.get("/" + n, async function(ctx, next) {
         var host = ctx.headers['host']; 
         var params = "";
         if (ctx.request.query) {
@@ -38,29 +49,28 @@ let authroute = async function(app, secret, engine_dir) {
         let token = jwt.sign({ engine: n }, secret, {
           'expiresIn': 30 // 设置过期时间，单位是秒
         });
-        let renderOption = getDeployOption("/",filepath,token);
-
-        
-        //判断模块是否开启了socketio，如果没开启，就不能靠socket来声明实例了
-        //所以要提前声明实例并存放在session中
-        if(renderOption.token===null){ 
+        let renderOption = getDeployOption("/",filepath,token);  
+        try {
           let mdlService = require(filepath + '/src/'+renderOption.server);
-          ctx.session._engine_svc = new mdlService();
-        }
-
+          //判断模块是否开启了socketio，如果没开启，就不能靠socket来声明实例了
+          //所以要提前声明实例并存放在session中 
+          if(renderOption.token===null){ 
+            ctx.session._engine_svc = new mdlService();
+          }
+        } catch (error) {
+          console.log(error);
+          let html = await renderFile(root_path + '/lifekit/web/skyframe/error.ejs', {message: "非法访问"});
+          return ctx.body = html; 
+        } 
+         
         renderOption.host = host; 
         renderOption.params = params;
         renderOption.engine = n;
-        ejs.renderFile(root_path + '/lifekit/web/skyframe/skyframe.ejs', renderOption, function(err, str) {
-          if (err) {
-            console.log("模块" + n + "入口文件报错");
-            console.log(err);
-          }
-          return ctx.response.body = str;
-        });
+        let html = await renderFile(root_path + '/lifekit/web/skyframe/skyframe.ejs', renderOption);
+        return ctx.body = html;
       });
       //各个子模块路由
-      router.get("/" + n + "/:service", function(ctx, next) {
+      router.get("/" + n + "/:service", async function(ctx, next) {
         var host = ctx.headers['host']; 
         var params = "";
         if (ctx.request.query) {
@@ -70,25 +80,27 @@ let authroute = async function(app, secret, engine_dir) {
         let token = jwt.sign({ engine: n }, secret, {
           'expiresIn': 30 // 设置过期时间，单位是秒
         });
-        let renderOption = getDeployOption("/"+service,filepath,token);
-
-        //判断模块是否开启了socketio，如果没开启，就不能靠socket来声明实例了
-        //所以要提前声明实例并存放在session中
-        if(renderOption.token===null){ 
+        let renderOption = getDeployOption("/"+service,filepath,token); 
+        
+        try {
           let mdlService = require(filepath + '/src/'+renderOption.server);
-          ctx.session._engine_svc = new mdlService();
-        }
+          //判断模块是否开启了socketio，如果没开启，就不能靠socket来声明实例了
+          //所以要提前声明实例并存放在session中
+          if(renderOption.token===null){  
+            ctx.session._engine_svc = new mdlService();
+          }
+        } catch (error) {
+          console.log(error);
+          let html = await renderFile(root_path + '/lifekit/web/skyframe/error.ejs', {message: "非法访问"});
+          return ctx.body = html; 
+        }  
 
         renderOption.host = host; 
         renderOption.params = params;
         renderOption.engine = n;
-        ejs.renderFile(root_path + '/lifekit/web/skyframe/skyframe.ejs', renderOption, function(err, str) {
-          if (err) {
-            console.log("模块" + n + "/" + service + "入口文件报错");
-            console.log(err);
-          }
-          return ctx.response.body = str;
-        });
+        
+        let html = await renderFile(root_path + '/lifekit/web/skyframe/skyframe.ejs', renderOption);
+        return ctx.body = html; 
       });
  
       let __engine = async function(ctx, next) {  
@@ -118,26 +130,14 @@ let authroute = async function(app, secret, engine_dir) {
               try {
                 await svc[method](ctx, parms);
               } catch (error) {
-                ejs.renderFile(root_path + '/lifekit/web/skyframe/error.ejs', {
-                  message: "服务器错误："+error
-                }, function(err, str) {
-                  if (err) {
-                    console.log(err);
-                  }
-                  return ctx.response.body = str;
-                });
+                let html = await renderFile(root_path + '/lifekit/web/skyframe/error.ejs', {message: "服务器错误："+error});
+                return ctx.body = html;  
               }
             }
           }
         } else {
-          ejs.renderFile(root_path + '/lifekit/web/skyframe/error.ejs', {
-            message: "非法访问"
-          }, function(err, str) {
-            if (err) {
-              console.log(err);
-            }
-            return ctx.response.body = str;
-          });
+          let html = await renderFile(root_path + '/lifekit/web/skyframe/error.ejs', {message: "非法访问"});
+          return ctx.body = html;   
         }
       };
 
@@ -182,7 +182,7 @@ function getDeployOption(key,filepath,token){
   var packageJson = null;
   var deploy = null; 
   var renderOption = { 
-    'server': 'service',
+    'server': key==="/"?'service':key.replace("/",""),
     'method': 'init', 
     'header': '',
     'token': token
@@ -204,11 +204,6 @@ function getDeployOption(key,filepath,token){
     if(deploy.service){
       renderOption.server = deploy.service.replace(".js","");
       renderOption.method = deploy.method?deploy.method:"init";
-    }else{
-      //如果没指定service，则走默认的service.js文件，路由指向service.js里的方法
-      //此种情况，service里必须有同名的方法，否则无法访问
-      let method = key.replace('/',"");
-      renderOption.method = method?method:"init";
     }
     if(deploy.index){
       renderOption.index = deploy.index;
@@ -217,8 +212,6 @@ function getDeployOption(key,filepath,token){
     try{
       packageJson = require(filepath + "/package.json");
       renderOption.title = packageJson.description; 
-      let method = key.replace('/',"");
-      renderOption.method = method?method:"init";
     }catch(e){
       console.warn("模块"+n+"缺失package.json文件");
     }
