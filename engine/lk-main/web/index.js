@@ -14,7 +14,8 @@ function ready() {
         res = JSON.parse(res); 
         if(res.code===200&&res.data){ 
           that.initForm(res.data.home);
-          that.initMenuList(res.data.menu);
+          that.initMenu(res.data.menu);
+          that.initLogin(res.data.loginUser);
         } else {
           this.$message.error({ showClose: true, message: res.msg, duration: 2000 });
         }
@@ -22,18 +23,38 @@ function ready() {
     },
     data: function() {
       return {
+        form: {},
         isCollapse: false,
-        visible: false,
-        activeIndex: '1',
-        activeIndex2: '1'
+        visible: false, 
+        loginUser: null, 
+        navs:[],
+        menus:[],  
+
+        mainUrl: ""
       }
     },
-    methods: {
-      handleSelect(key, keyPath) {
-        console.log(key, keyPath);
-      },
+    methods: { 
       changeCollapse(){
         this.isCollapse = this.isCollapse?false:true;
+      },
+      initForm(formData){
+        this.form = formData 
+      },
+      initMenu(menuData){
+        this.navs = menuData;
+      },
+      initLogin(loginUser){ 
+        this.loginUser = loginUser; 
+      },
+      navClick(navData){
+        if(navData.children&&navData.children.length>0){
+          this.menus = navData.children;
+        }else{
+          this.menus = [];
+        }
+        if(navData.url){
+          mainUrl = navData.url;
+        }
       }
     }
   })

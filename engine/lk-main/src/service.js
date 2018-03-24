@@ -24,6 +24,24 @@ sequelize.sync({ force: false }).then(function() {
   console.log("框架模块数据结构初始化失败: %s", err);
 });
 
+const getMenu = async function(id){
+  let pid = null;
+  if(id){
+    pid = id;
+  }
+  let menu = await Menu.findAll({where:{pid:pid}}); 
+  let menuData = [];
+  for(let i=0;i<menu.length;i++){
+    let obj = menu[i].dataValues;
+    let children = await getMenu(obj.id);
+    if(children.length>0){
+      obj.children = children;
+    } 
+    menuData.push(obj);
+  } 
+  return menuData;
+}
+
 function service() {
 
   this.operation = async function (ctx, parms) { 
@@ -121,7 +139,17 @@ function service() {
     } 
   }
   this.loadConfigData = async function(ctx,parms){
-
+    try {
+      let homeInfo = await Home.findOne();  
+      if(homeInfo){
+        homeInfo = homeInfo.dataValues;
+      } 
+      let menuData = await getMenu(); 
+      let loginUser = ctx.session.user;
+      ctx.body = {code:200,msg:"查询成功",data:{home:homeInfo,menu:menuData,loginUser:loginUser}};
+    } catch (error) {
+      ctx.body = {code:500,msg:error};
+    }
   }
 
 }
