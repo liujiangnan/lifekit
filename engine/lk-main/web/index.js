@@ -4,10 +4,43 @@ $(function(){
   ShowWaitting(false);
   ready();
 })
+ 
+
+
 
 function ready() {
+
+  // Vue.component('my-menu', {
+  //   template: '<div>{{message.name}}</div><div v-for="to in message.children">{{to.name}}</div>',
+  //   // '<template v-for="(item,index) in message">'+ 
+  //               // '<template  v-if="item.children">'+
+  //               //  '<el-menu-item-group>'+
+  //               //     '<template slot="title">{{item.name}}</template>'+
+  //               //     '<my-menu :menus="item.children"></my-menu>'+
+  //               //   '</el-menu-item-group> '+
+  //               // '</template>'+
+  //               // '<template v-else>'+
+  //               //     '<el-menu-item :index="index">'+
+  //               //       '<i class="el-icon-star-off"></i>'+
+  //               //       '<span  slot="title">{{item.name}}</span>'+
+  //               //     '</el-menu-item> '+
+  //               // '</template> '+ 
+  //             // '</template> ',  
+  //    props:{ 
+  //      "message":Object
+  //    }
+  // });
+
   new Vue({
     el: '#app',
+    components: { 
+      'my-menu': {
+        template: '<div>{{message.name}}</div><div v-for="to in message.children">{{to.name}}</div>',
+        props:{ 
+          "message":Object
+        }
+      }
+    },
     created() {
       let that = this;
       net.getData("loadConfigData",function(res){
@@ -28,9 +61,12 @@ function ready() {
         visible: false, 
         loginUser: null, 
         navs:[],
-        menus:[],  
+        menus:[{name:"a"},{name:"b"},{name:"c"}], 
+        msg:{name:"hello",children:[{name:"abcde"},{name:"fghijk"}]}, 
 
-        mainUrl: ""
+        mainUrl: "",
+
+        test: [{a:"22222"}]
       }
     },
     methods: { 
@@ -47,11 +83,11 @@ function ready() {
         this.loginUser = loginUser; 
       },
       navClick(navData){
-        if(navData.children&&navData.children.length>0){
-          this.menus = navData.children;
-        }else{
-          this.menus = [];
-        }
+        // if(navData.children&&navData.children.length>0){  
+        //   this.menus = navData.children;
+        // }else{
+        //   this.menus = [];
+        // }
         if(navData.url){
           mainUrl = navData.url;
         }

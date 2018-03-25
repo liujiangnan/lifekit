@@ -41,15 +41,12 @@
   <el-container>
     <el-aside style="width:auto;">
       <el-row>
-        <el-col :span="24">   
+        <el-col :span="24"> 
           <el-menu default-active="2" class="el-menu-vertical-demo" :collapse="isCollapse">
             <div @click="changeCollapse" class="menuhead" align="center">
                 <i class="el-icon-menu"></i>
-            </div>
-            <el-menu-item v-for="(item,index) in menus" :index="index">
-              <i class="el-icon-star-off"></i>
-              <span  slot="title">{{item.name}}</span>
-            </el-menu-item> 
+            </div> 
+            <my-menu  :message="msg"></my-menu> 
           </el-menu>
         </el-col> 
       </el-row>
