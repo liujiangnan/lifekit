@@ -1,0 +1,29 @@
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="modalButton">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var alertHideCallback;
+    $('#myModal').on('hidden.bs.modal', function (e) {
+        alertHideCallback&&alertHideCallback();
+    })
+    function showModal(titleText,bodyText,bottomText,hideCallback){
+        $("#myModalLabel").html(titleText);
+        $(".modal-body").html(bodyText);
+        $("#modalButton").text(bottomText);
+        alertHideCallback = hideCallback;
+        $('#myModal').modal();
+    }
+</script>

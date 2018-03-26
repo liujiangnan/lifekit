@@ -1,0 +1,29 @@
+{
+  "name": "lifekit-login",
+  "version": "0.0.2",
+  "description": "用户模块",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liujiangnan/lifekit-login.git"
+  },
+  "keywords": [
+    "用户操作",
+    "登陆",
+    "注册"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/liujiangnan/lifekit-login/issues"
+  },
+  "homepage": "https://github.com/liujiangnan/lifekit-login#readme",
+  "dependencies": {
+    "mysql2": "^1.4.2",
+    "node-uuid": "^1.4.8",
+    "sequelize": "^4.11.4"
+  }
+}

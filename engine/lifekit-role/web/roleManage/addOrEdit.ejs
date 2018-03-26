@@ -1,0 +1,111 @@
+
+<style>
+	.userTag{
+		padding: 8px;
+		margin-left: 5px;
+		margin-right: 5px;
+		position:relative; 
+	}
+  
+	.line{
+		border-bottom:solid 1px #ddd; 
+		margin-top:40px; 
+		position: relative;
+	}
+
+	.lineContainer{
+		border-left:solid 1px #ddd;
+		border-right:solid 1px #ddd;
+		border-bottom:solid 1px #ddd;
+		padding-top: 20px; 
+		display: none;
+		overflow: auto;
+	}
+
+	.lineTxt{
+		position: absolute;
+		top:-10px; 
+		background: #ffffff;
+		width:80px;
+		margin-left: 30px;
+		margin-right: 10px;
+		font-weight: 700;
+		cursor: pointer;
+	}
+
+	.userTd{
+		width:100px;
+		overflow:hidden; 
+		text-overflow:ellipsis; 
+		white-space:nowrap;
+	}
+
+</style>
+
+<%  
+	var myrole;
+	if (typeof role !== 'undefined' ){
+		myrole = role;
+	} 
+%>
+<div class="container-fluid" style="padding-top:20px;">
+	<div class="panel panel-default">
+		<div class="panel-body" style="padding-top: 40px;">
+			<form id="roleform" action="" class="form-horizontal" onSubmit="return false;">
+				<input type="hidden" id="id" name="id" value="<%=myrole?myrole.id:"" %>" />
+				<div class="form-group">
+					<label class="col-sm-2 control-label">角色名称:</label>
+					<div class="col-sm-10">
+						<input id="name" name="name" class="form-control" type="text" value="<%=myrole?myrole.name:"" %>" placeholder="请输入角色名称" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">描述:</label>
+					<div class="col-sm-10">
+						<textarea id="description" name="description" class="form-control" rows="3" placeholder="请输入描述"><%=myrole?myrole.description:"" %></textarea>
+					</div>
+				</div> 
+				<div class="form-group" style="padding-top: 20px;">
+					<div class="text-center">
+						<button id="saveRole" type="button" class="btn btn-default">保存</button>
+						<button id="cancle" type="button" class="btn btn-default">取消</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script>
+
+	$(function(){
+
+		$("#saveRole").bind('click', function() {
+    var id = $("#id").val();
+    var name = $("#name").val();
+    var description = $("#description").val().trim(); 
+    var data = {
+      id:id,
+      name:name,
+      description:description
+    } 
+    net.getData("saveRole",data,function(res){
+			if(res==="success"){
+				showAlert("提示","保存成功！",function(){ 
+					document.location.reload();
+				});
+			}else{
+				showAlert("提示","保存失败！");
+			} 
+    });
+
+  });
+
+		$("#cancle").bind('click',function(){
+			document.location.reload();
+		});
+	})
+
+	
+
+</script>

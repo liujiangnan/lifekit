@@ -1,0 +1,48 @@
+<% include ../commonejs/common.ejs%>
+  <% include ../commonejs/alertModal.ejs%>
+
+    <style>
+      .commonbtn{
+        float:right;
+        margin-top: -7px;
+        margin-right: 5px;
+      }
+    </style>
+
+    <div class="container-fluid" style="padding-top:20px;">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span style="font-weight: 700">组件列表</span> 
+          <button id="edit" type="button" class="btn btn-default commonbtn" style="display: none;"> 
+            <span  class="glyphicon glyphicon-pencil"></span>
+          </button>
+          <button id="del" type="button" class="btn btn-default commonbtn" > 
+            <span  class="glyphicon glyphicon-minus"></span>
+          </button>
+          <button id="add" type="button" class="btn btn-default commonbtn" > 
+            <span  class="glyphicon glyphicon-plus"></span>
+          </button>
+        </div>
+        <table class="table table-bordered table-hover">
+          <tr>
+            <th style="width:10%">选择</th>
+            <th style="width:20%">名称</th>
+            <th style="width:20%">URL</th>
+            <th style="width:50%">描述</th>
+          </tr>
+          <%
+          for(let i=0;i<rows.length;i++){
+            let row = rows[i];
+            %>
+          <tr>  
+            <td><input type="checkbox" value="<%=row.get("id")%>" /></td>
+            <td><%=row.get("name")%></td>
+            <td><%=row.get("url")%></td>
+            <td><%=row.get("description")%></td>
+          </tr>
+          <%}%>
+        </table>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="/lifekit-role/web/engineManage/list.js"></script>

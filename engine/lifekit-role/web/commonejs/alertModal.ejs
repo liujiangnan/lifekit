@@ -1,0 +1,41 @@
+<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div id="modalButton" class="modal-footer">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var alertHideCallback;
+    $('#myModal').on('hidden.bs.modal', function (e) {
+        alertHideCallback&&alertHideCallback();
+    })
+    function showModal(titleHtml,bodyHtml,bottomHtml,hideCallback){
+        $("#myModalLabel").html(titleHtml);
+        $(".modal-body").html(bodyHtml);
+        $("#modalButton").html(bottomHtml); 
+        if(hideCallback){
+            alertHideCallback = hideCallback;
+        } 
+        $('#myModal').modal(); 
+    }
+
+    function showAlert(titleHtml,bodyHtml,hideCallback){
+        $("#myModalLabel").html(titleHtml);
+        $(".modal-body").html(bodyHtml);
+        $("#modalButton").html('<button type="button" class="btn btn-default" data-dismiss="modal" >确定</button>'); 
+        if(hideCallback){
+            alertHideCallback = hideCallback;
+        } 
+        $('#myModal').modal(); 
+    }
+</script>

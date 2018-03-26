@@ -1,0 +1,38 @@
+
+<% include commonejs/common.ejs%> 
+
+<style>
+	.menu{
+		color:aliceblue; 
+		height: 40px;
+		line-height: 40px; 
+		cursor: pointer; 
+		margin-left: 10px;
+	}
+
+	.active{
+		color:#333744;
+		background: #FFFFFF;
+	} 
+ 
+
+</style>
+
+<table id="pageAll" border="0" cellspacing="0" cellpadding="0" style="width:100%;min-height:100%;height:100%;overflow:hidden !important;overflow: visible;">
+	<tr>
+		<td id="menuTD" style="width:15%;height:100%;background: #333744;"> 
+			<div style="height:100%;" align="center">
+				<div id="menubtn" class="menu" zk="1">
+					<span class="glyphicon glyphicon-align-justify"></span>
+				</div>
+				<div id="roleManage" class="menu active" ><span class="glyphicon glyphicon-paperclip"></span>&nbsp;&nbsp;<span id="roleTxt">角色维护</span></div>
+				<div id="engineManage" class="menu" ><span class="glyphicon glyphicon-th-large"></span>&nbsp;&nbsp;<span id="engineTxt">模块维护</span></div>
+			</div>
+		</td>
+		<td style="height:100%;">
+			<div id="centerFrame" style="padding-left:10px;height:100%;"></div>
+		</td>
+	</tr>
+</table>   
+
+<script type="text/javascript" src="/lifekit-role/web/static/js/role.js"></script>

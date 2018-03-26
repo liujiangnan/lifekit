@@ -1,0 +1,52 @@
+
+<%include ../commonejs/common.ejs%>
+
+<%include ../commonejs/alertModal.ejs%>
+
+<div class="container-fluid" style="height:100%;">
+    <div class="row">
+        <div class="col-md-4 col-sm-3"></div>
+        <div class="col-md-4 col-sm-6" >
+            <div class="panel panel-default">
+                <div class="panel-heading text-center">用户登陆</div>
+                <div class="panel-body">
+                    <form id="userform" action="" class="form-horizontal" onSubmit="return false;">
+                        <div class="form-group">
+                            <div class="col-sm-2" ></div>
+                            <div class="col-sm-8 input-group">
+                                <span class="input-group-addon glyphicon glyphicon-user"></span>
+                                <input id="username" name="username" class="form-control" type="text" placeholder="请输入用户名" />
+                            </div>
+                            <div class="col-sm-2"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-2" ></div>
+                            <div class="col-sm-8 input-group">
+                                <span class="input-group-addon glyphicon glyphicon-lock"></span>
+                                <input id="password" name="password" class="form-control" type="password" placeholder="请输入密码" />
+                            </div>
+                            <div class="col-sm-2" ></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-2" ></div>
+                            <div class="col-sm-8 input-group">
+                                <p class="text-danger" id="cueinfo" style="display: none;"></p>
+                            </div>
+                            <div class="col-sm-2" ></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="text-center">
+                                <button id="loginMake" type="button" class="btn btn-lg btn-success">登陆</button>
+                                <button id="registerUser" type="button" class="btn btn-lg btn-default">注册</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4 col-sm-3"></div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/lifekit-login/web/login/login.js"></script>

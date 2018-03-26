@@ -1,0 +1,30 @@
+{
+  "name": "lifekit-role",
+  "version": "0.0.1",
+  "description": "角色模块",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liujiangnan/lifekit-role.git"
+  },
+  "keywords": [
+    "角色维护",
+    "模块权限",
+    "角色配置",
+    "权限配置"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/liujiangnan/lifekit-role/issues"
+  },
+  "homepage": "https://github.com/liujiangnan/lifekit-role#readme",
+  "dependencies": {
+    "mysql2": "^1.4.2",
+    "node-uuid": "^1.4.8",
+    "sequelize": "^4.11.4"
+  }
+}

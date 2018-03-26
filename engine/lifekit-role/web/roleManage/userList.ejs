@@ -1,0 +1,70 @@
+ 
+ <div class="container-fluid" style="padding-top:20px;">
+	<div class="panel panel-default"> 
+    <div class="panel-heading">
+      <span style="font-weight: 700">用户列表</span>  
+    </div>
+    <table id="userTable" class="table table-bordered table-hover" >
+      <tr>
+        <th>选择</th>
+        <th>用户名</th>
+        <th>昵称</th>
+        <th>联系电话</th>
+        <th>邮箱</th>
+      </tr>
+      <% for(let i=0;i<userRows.length;i++) {
+        let row = userRows[i];
+      %>
+      <tr>
+        <td><input type="checkbox" <%if(checked.indexOf(row.id)>-1){%>checked<%}%> value="<%=row.id%>" /></td>
+        <td><div class="userTd"><%=row.username%></div></td>
+        <td><div class="userTd"><%=row.name%></div></td>
+        <td><div class="userTd"><%=row.phone%></div></td>
+        <td><div class="userTd"><%=row.email%></div></td>
+      </tr> 
+      <%}%>
+    </table>  
+  </div>
+  <div style="padding-top: 20px;">
+    <div class="text-center">
+      <button id="saveUserRole" type="button" class="btn btn-default">保存</button>
+      <button id="cancle" type="button" class="btn btn-default">取消</button>
+    </div>
+  </div>
+</div> 
+ 
+<script>
+  $(function(){
+    $("#userTable tr").bind('click', function() {
+      var check = $(this).find(":checkbox").eq(0);
+      check.prop("checked", !check.prop("checked"));
+    });
+
+    $("#saveUserRole").bind('click',function(){
+      var arr = [];
+      $("#userTable :checked").each(function(){ 
+        arr.push({
+          user_id:$(this).val(),
+          role_id:'<%=role_id%>'
+        });
+      });
+      var data = {
+        role_id: '<%=role_id%>',
+        arr: arr
+      };
+      net.getData("saveUserRole",data,function(res){
+        if(res==="success"){
+          showAlert("提示","保存成功！",function(){ 
+            document.location.reload();
+          });
+        }else{
+          showAlert("提示","保存失败！");
+        } 
+      });
+    });
+
+    $("#cancle").bind('click',function(){
+      document.location.reload();
+    });
+  });
+</script>

@@ -1,0 +1,159 @@
+<style>
+  .enginegroup {
+    cursor: pointer;
+    display: inline;
+    margin-left: 3px;
+  }
+  
+  .order {
+    display: inline;
+    margin-left: 15px;
+  }
+</style>
+
+<div class="container-fluid" style="padding-top:20px;">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <span style="font-weight: 700">模块列表</span>
+    </div>
+    <div class="panel-body">
+      <div id="engineTable" class="panel panel-default">
+        <%
+          if(engines){
+            for(let i=0;i<engines.length;i++){
+              let engine = engines[i];
+              let ckd = "";
+              let engine_id = engine.id+"";
+              let auths = []
+              if(checked[engine_id]){
+                ckd = "checked";
+                auths = checked[engine_id];
+              }
+          %>
+          <div class="panel-heading" style="font-weight: 700;">
+            <input name="enginecheckbox" style="vertical-align:text-top;margin-top:0;line-height: 16px;height:16px;" type="checkbox" <%=ckd%> value="<%=engine_id %>" />
+              <div class="enginegroup text-primary" name="enginegroup">
+                <%=engine.name%>
+              </div>
+          </div>
+          <div id="<%=engine.id %>_authgroup" class="panel-body">
+            <div class="row">
+              <div class="order" style="font-weight: 700;">
+                权限设置：
+              </div>
+              <%
+                  for(let j=0;j<engine.engine_auths.length;j++){
+                    let auth = engine.engine_auths[j];
+                    let ath_check = "";
+                    let id = auth.id+"";
+                    if(auths.indexOf(id)>-1){
+                      ath_check = "checked";
+                    }
+                %>
+                <div class="order">
+                  <input type="checkbox" style="vertical-align:text-top;margin-top:0;line-height: 16px;height:16px;" name="authcheckbox" <%=ath_check%> value="<%=id%>" />
+                    <div class="enginegroup" name="engineauth">
+                      <%=auth.name%>
+                    </div>
+                </div>
+                <%
+                  }
+                %>
+            </div>
+          </div>
+          <%
+            }
+          }
+          %>
+      </div>
+    </div>
+  </div>
+  <div style="padding-top: 20px;">
+    <div class="text-center">
+      <button id="save" type="button" class="btn btn-default">保存</button>
+      <button id="cancle" type="button" class="btn btn-default">取消</button>
+    </div>
+  </div>
+</div>
+<script>
+  $(function() {
+    $('[name="enginegroup"]').bind('click', function() {
+      var check = $(this).parent().find('[name="enginecheckbox"]');
+      check.prop("checked", !check.prop("checked"));
+      var flag = check.prop("checked");
+      if (!flag) {
+        var val = check.val();
+        $("#" + val + "_authgroup :checkbox").each(function() {
+          $(this).prop('checked', flag);
+        });
+      }
+    });
+
+    $('[name="enginecheckbox"]').change(function() {
+      var flag = $(this).prop("checked");
+      if (!flag) {
+        var val = $(this).val();
+        $("#" + val + "_authgroup :checkbox").each(function() {
+          $(this).prop('checked', flag);
+        });
+      }
+    });
+
+    $('[name="engineauth"]').bind('click', function() {
+      var check = $(this).parent().find(':checkbox');
+      check.prop("checked", !check.prop("checked"));
+      var flag = check.prop("checked");
+      if (flag) {
+        $("[name='enginecheckbox']").prop('checked', flag);
+      }
+    });
+
+    $('[name="authcheckbox"]').bind('click', function() {
+      var flag = $(this).prop("checked");
+      if (flag) {
+        $("[name='enginecheckbox']").prop('checked', flag);
+      }
+    })
+
+    $("#save").bind('click',function(){
+      var arr = [];
+      $("#engineTable").find("[name='enginecheckbox']").each(function(i,n){
+        if($(this).prop("checked")){
+          var id = $(this).val();
+          arr.push({
+            role_id:'<%=role_id%>',
+            engine_id:id
+          }); 
+          var obj = {id:id,auths:[]};
+          $("#"+id+"_authgroup").find("[name='authcheckbox']").each(function(){
+            if($(this).prop("checked")){
+              arr.push({
+                role_id:'<%=role_id%>',
+                engine_id:id,
+                engine_auth_id:$(this).val()
+              }); 
+            } 
+          }); 
+        } 
+      }); 
+      var data = {
+        role_id: '<%=role_id%>',
+        arr: arr
+      };
+      net.getData("saveRoleEngine",data,function(res){
+        if(res==="success"){
+          showAlert("提示","保存成功！",function(){ 
+            document.location.reload();
+          });
+        }else{
+          showAlert("提示","保存失败！");
+        } 
+      });
+    });
+
+    $("#cancle").bind('click',function(){
+      document.location.reload();
+    });
+
+  });
+</script>
