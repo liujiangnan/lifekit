@@ -1,0 +1,17 @@
+
+<div style="height:100%; padding:10px;">
+    <p>svg代码：<a href="#" onclick="openFile">打开</a></p> 
+    <div id="code" name="code" style="border:solid 1px #999e9e;"></div>
+</div> 
+
+<script>
+  $(function(){
+    editor = CodeMirror(document.getElementById("code"), {
+      mode: "text/html",
+      indentUnit : 2,  // 缩进单位，默认2
+      smartIndent : true,  // 是否智能缩进
+      tabSize : 2,  // Tab缩进，默认2
+      lineNumbers : true  // 是否显示行号
+    }); 
+  }) 
+</script>

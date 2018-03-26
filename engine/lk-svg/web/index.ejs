@@ -1,15 +1,9 @@
 
 
-<div id="code" name="code"></div>
+<div id="svgContainer" style="height:100%;">
+  <% include svg.ejs %>
+</div>
 
 <script>
-  $(function(){
-    editor = CodeMirror(document.getElementById("code"), {
-      mode: "text/html",
-      indentUnit : 2,  // 缩进单位，默认2
-      smartIndent : true,  // 是否智能缩进
-      tabSize : 2,  // Tab缩进，默认2
-      lineNumbers : true  // 是否显示行号
-    }); 
-  }) 
+  net.datachange("svgContainer");
 </script>

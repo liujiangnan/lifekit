@@ -123,9 +123,11 @@ let authroute = async function(app, secret, engine_dir) {
             if (method === "init" && !svc["init"]) { 
               let index = option.index; 
               if(!index){
-                index = n + "/web/index.ejs";
+                index = filepath + "/web/index.ejs";
+              }else {
+                index = engine_dir+index;
               }
-              return ctx.render(index, {});
+              return ctx.body = await renderFile(index,{});
             } else {
               try {
                 await svc[method](ctx, parms);
