@@ -55,7 +55,7 @@ function ready() {
         loginUser: null, 
         navs:[],
         menus:[],   
-        mainUrl: "", 
+        mainUrl: "",  
       }
     },
     methods: { 
@@ -78,7 +78,7 @@ function ready() {
           this.menus = [];
         }
         if(navData.url){
-          mainUrl = navData.url;
+          this.mainUrl = navData.url;
         }
       }
     }

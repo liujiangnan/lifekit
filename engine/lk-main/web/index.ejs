@@ -5,8 +5,8 @@
     <el-row  style="height:100%;">
       <el-col :span="8" style="height:100%;">
         <el-row>
-          <el-col :span="4"><img :src="form.logo" style="height:60px;" alt=""></el-col> 
-          <el-col :span="20"  align="left" class="title">{{form.name}}</el-col>
+          <el-col :span="6"><img :src="form.logo" style="height:60px;" alt=""></el-col> 
+          <el-col :span="18"  align="left" class="title">{{form.name}}</el-col>
         </el-row> 
       </el-col>
       <el-col :span="13">
@@ -39,7 +39,7 @@
     <div class="line"></div> 
   </el-header>
   <el-container>
-    <el-aside style="width:auto;">
+    <el-aside style="width:auto;" v-if="menus.length">
       <el-row>
         <el-col :span="24"> 
           <el-menu default-active="2" class="el-menu-vertical-demo" :collapse="isCollapse">
