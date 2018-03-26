@@ -32,17 +32,5 @@ lifekit install lifekit-role
 
 1）直接访问
 
-登陆入口：http://localhost:1337/lifekit-role
-
-注册入口：http://localhost:1337/lifekit-login/register
-
-修改信息入口：http://localhost:1337/lifekit-login/update
-
-2）页面跳转
-
-在页面任何地方可使用如下方式跳转
-```
-window.location.href="/lifekit-login";
-```
-注册和修改信息同理
-
+登陆入口：http://localhost:1337/lifekit-role 
+ 
