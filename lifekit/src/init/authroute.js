@@ -213,7 +213,7 @@ function getDeployOption(key,filepath,token){
       packageJson = require(filepath + "/package.json");
       renderOption.title = packageJson.description; 
     }catch(e){
-      console.warn("模块"+n+"缺失package.json文件");
+      console.warn("模块"+key+"缺失package.json文件");
     }
   }
   return renderOption;
