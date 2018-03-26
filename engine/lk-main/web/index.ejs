@@ -46,7 +46,20 @@
             <div @click="changeCollapse" class="menuhead" align="center">
                 <i class="el-icon-menu"></i>
             </div> 
-            <my-menu  :message="msg"></my-menu> 
+            <template v-for="(menu,index) in menus">
+              <el-submenu v-if="menu.children" :index="index">
+                <template slot="title">
+                  <i class="el-icon-menu"></i>
+                  <span>{{menu.name}}</span>
+                </template>
+                <my-menu :menus="menu.children"></my-menu> 
+              </el-submenu>
+              <el-menu-item v-else :index="index">
+                <i class="el-icon-menu"></i>
+                <span slot="title">{{menu.name}}</span>
+              </el-menu-item>
+            </template> 
+            <!-- <cz-placeselectdown></cz-placeselectdown> -->
           </el-menu>
         </el-col> 
       </el-row>
@@ -55,5 +68,5 @@
       <iframe :src="mainUrl" frameborder="0" style="width:100%;height:100%; position:absolute;top:0px;right:0px;bottom:0px;left:0px;"></iframe>
     </el-main>
   </el-container>
-</el-container>
+</el-container> 
 <script type="text/javascript" src="/lk-main/web/index.js"></script>
