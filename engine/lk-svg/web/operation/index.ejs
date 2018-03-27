@@ -1,10 +1,15 @@
 
-<div style="height:100%; padding:10px;">
-    <p>svg代码：<a href="#" onclick="openFile">打开</a></p> 
-    <div id="code" name="code" style="border:solid 1px #999e9e;"></div>
+<div style="height:100%; padding:10px; position:relative;">
+    <div>
+      <p style="display:inline-block;">SVG代码：<span style="font-size:13px;color:#909399;">(拖拽到编辑区域)</span></p>  
+      <button style="float:right;">保存</button>
+    </div> 
+    <div id="code" name="code" style="border:solid 1px #999e9e;height:500px;"></div>
 </div> 
 
 <script>
+  var editor;
+   
   $(function(){
     editor = CodeMirror(document.getElementById("code"), {
       mode: "text/html",
@@ -13,5 +18,5 @@
       tabSize : 2,  // Tab缩进，默认2
       lineNumbers : true  // 是否显示行号
     }); 
-  }) 
+  })  
 </script>
