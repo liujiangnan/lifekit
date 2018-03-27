@@ -39,8 +39,8 @@ function start(app, server, engine_path) {
       (function(_block) {
         app.use(function(ctx, next) {
 
-          var counter = ctx.path.lastIndexOf(".");
-          if (counter > 0 && ctx.path.substr(counter, 3) === "ejs") {
+          var counter = ctx.path.lastIndexOf("."); 
+          if (counter > 0 && ctx.path.substr(counter+1, 3) === "ejs") {
             return next();
           }
           if ((ctx.path.indexOf("/" + _block + "/web") === 0) && (ctx.method == 'HEAD' || ctx.method == 'GET')) {
