@@ -191,6 +191,10 @@ var NetClient = function (host, server, token, callback) {
 		 * @param data 数据
 		 */
 		emit: function (evname, data, callback) {
+			if(typeof(data)==="function"){
+				callback = data;
+				data = null;
+			} 
 			//这几个事件都是内置的事件名称,不可重名使用
 			if (evname == "call" || evname == "dataline" || evname == "initserver" || evname == "connect" || evname == "disconnect") {
 				return;
@@ -206,6 +210,10 @@ var NetClient = function (host, server, token, callback) {
 		 * @param callback 回调函数
 		 */
 		call: function (funcname, data, callback) {
+			if(typeof(data)==="function"){
+				callback = data;
+				data = null;
+			} 
 			socket.emit('call', funcname, socketid, data, callback);
 		},
 

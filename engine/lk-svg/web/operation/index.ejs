@@ -1,14 +1,17 @@
 
-<div style="height:100%; padding:10px; position:relative;">
-    <div>
-      <p style="display:inline-block;">SVG代码：<span style="font-size:13px;color:#909399;">(拖拽到编辑区域)</span></p>  
-      <button style="float:right;">保存</button>
-    </div> 
-    <div id="code" name="code" style="border:solid 1px #999e9e;height:500px;"></div>
-</div> 
+<div style="padding:40px 20px 0 10px;">
+  <div>
+    SVG代码：<span style="font-size:13px;color:#909399;">(拖拽到编辑区域)</span>  
+  </div> 
+  <br>
+  <div id="code" name="code" style="border:solid 1px #999e9e;height:500px;"></div>
+  <button type="button" onclick="save()" style="margin-top:10px;" class="el-button el-button--primary">
+    <span>保存</span>
+  </button> 
+</div>
 
 <script>
-  var editor;
+  var editor; 
    
   $(function(){
     editor = CodeMirror(document.getElementById("code"), {
@@ -16,7 +19,38 @@
       indentUnit : 2,  // 缩进单位，默认2
       smartIndent : true,  // 是否智能缩进
       tabSize : 2,  // Tab缩进，默认2
-      lineNumbers : true  // 是否显示行号
-    }); 
+      lineNumbers : true,  // 是否显示行号
+      // 设置主题
+      // theme:"seti",
+      // 绑定Vim
+      // keyMap:"vim",
+      //代码折叠
+      lineWrapping:true,
+      foldGutter: true,
+      gutters:["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+      //全屏模式
+      // fullScreen:true, 
+      //括号匹配
+      matchBrackets:true, 
+      //智能提示 
+      // extraKeys:{"Ctrl-o":"autocomplete"}//ctrl-space唤起智能提示
+    });  
+    
+    net.call("getSvgText",function(err,str){ 
+      editor.setValue(str);
+    });
   })  
+
+  function save(){
+    var str = editor.getValue();
+    net.call("saveSvg",str,function(err){
+      if(err){
+        alert(err);
+      }else{
+        alert("保存成功!");
+      }
+    }); 
+  }
+ 
+
 </script>
