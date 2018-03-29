@@ -1,7 +1,7 @@
 
 
 function service(net){
-  // net.data.msg = Date.now();
+  net.data.msg = Date.now();
   // setInterval(function(){
   //   net.data.msg = Date.now();
   // },1000)
