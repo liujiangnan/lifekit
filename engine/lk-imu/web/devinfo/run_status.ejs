@@ -1,0 +1,42 @@
+<div id="app" style="padding:30px;"> 
+  <el-form :inline="true" ref="form" :model="form"  class="demo-form-inline">
+    <el-col :span="12">
+      <el-form-item label="首次运行时间">
+        <el-date-picker type="date" v-model="form.date1" style="width: 100%;"></el-date-picker> 
+      </el-form-item> 
+    </el-col>
+    <el-col :span="12">
+      <el-form-item label="CPU使用率">
+          <el-input v-model="form.name"></el-input>
+      </el-form-item> 
+    </el-col>
+    
+    <el-form-item label="CPU使用率">
+        <el-input v-model="form.name"></el-input>
+    </el-form-item> 
+    <el-form-item label="CPU使用率">
+        <el-input v-model="form.name"></el-input>
+    </el-form-item> 
+    <el-form-item label="CPU使用率">
+        <el-input v-model="form.name"></el-input>
+    </el-form-item> 
+    <el-form-item label="CPU使用率">
+        <el-input v-model="form.name"></el-input>
+    </el-form-item> 
+    <el-form-item label="CPU使用率">
+        <el-input v-model="form.name"></el-input>
+    </el-form-item> 
+  </el-form> 
+</div>
+<script>
+  $(function(){
+    
+    net.datachange("app",{
+      methods: {
+        onSubmit() {
+          console.log('submit!');
+        }
+      }
+    });
+  })
+</script>
