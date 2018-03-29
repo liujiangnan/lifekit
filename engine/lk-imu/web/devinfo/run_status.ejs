@@ -1,33 +1,47 @@
-<div id="app" style="padding:30px;"> 
-  <el-form :inline="true" ref="form" :model="form"  class="demo-form-inline">
-    <el-col :span="12">
-      <el-form-item label="首次运行时间">
-        <el-date-picker type="date" v-model="form.date1" style="width: 100%;"></el-date-picker> 
-      </el-form-item> 
-    </el-col>
-    <el-col :span="12">
-      <el-form-item label="CPU使用率">
-          <el-input v-model="form.name"></el-input>
-      </el-form-item> 
-    </el-col>
-    
+<div id="app" style="padding:5px;"> 
+  <el-breadcrumb separator="/" style="height:30px;line-height:30px;">
+    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+    <el-breadcrumb-item>设备信息</el-breadcrumb-item>
+    <el-breadcrumb-item>运行状态</el-breadcrumb-item> 
+  </el-breadcrumb>
+  <hr style="margin-bottom:20px;background-color: #DCDFE6;border:none; height:1px;">
+  <el-form label-position="right" ref="form" :model="form" :inline="true" label-width="150px" disabled="true"> 
+    <el-form-item label="首次运行时间" >
+      <el-date-picker type="date" v-model="form.firstDate"></el-date-picker> 
+    </el-form-item>  
+    <el-form-item label="本次开机时间" >
+      <el-date-picker type="date" v-model="form.thisDate" ></el-date-picker> 
+    </el-form-item>  
+    <el-form-item label="累计运行时长" >
+      <el-date-picker type="date" v-model="form.totleTime" ></el-date-picker> 
+    </el-form-item>  
+    <el-form-item label="本次运行时长" >
+      <el-date-picker type="date" v-model="form.thisTime" ></el-date-picker> 
+    </el-form-item>  
     <el-form-item label="CPU使用率">
-        <el-input v-model="form.name"></el-input>
-    </el-form-item> 
-    <el-form-item label="CPU使用率">
-        <el-input v-model="form.name"></el-input>
-    </el-form-item> 
-    <el-form-item label="CPU使用率">
-        <el-input v-model="form.name"></el-input>
-    </el-form-item> 
-    <el-form-item label="CPU使用率">
-        <el-input v-model="form.name"></el-input>
-    </el-form-item> 
-    <el-form-item label="CPU使用率">
-        <el-input v-model="form.name"></el-input>
-    </el-form-item> 
+        <el-input v-model="form.cpu" ></el-input>
+    </el-form-item>  
+    <el-form-item label="内存使用率">
+        <el-input v-model="form.ram"  ></el-input>
+    </el-form-item>  
+    <el-form-item label="硬盘使用率">
+        <el-input v-model="form.rom"  ></el-input>
+    </el-form-item>  
+    <hr style="margin-bottom:20px;background-color: #DCDFE6;border:none; height:1px;">
+    <el-form-item label="Web域名">
+        <el-input v-model="form.url"  ></el-input>
+    </el-form-item>  
+    <el-form-item label="有效日期">
+        <el-date-picker type="date" v-model="form.effectiveDate"  ></el-date-picker>
+    </el-form-item>  
   </el-form> 
+
 </div>
+<style>
+  .el-input{
+    width:220px;
+  }
+</style>
 <script>
   $(function(){
     
