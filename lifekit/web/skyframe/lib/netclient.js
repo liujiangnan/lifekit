@@ -321,10 +321,10 @@ var NetClient = function (host, server, token, callback) {
 		var func = function(val,callback){
 			if(!lazy){
 				arr.push(val); 
-				process.nextTick(function(){
+				setTimeout(function(){
 					callback(arr.splice(0,arr.length));
 					lazy = false;
-				}); 
+				},1); 
 				lazy = true; 
 			}else{
 				arr.push(val);
