@@ -21,5 +21,17 @@ module.exports = {
     title:'软件版本',
     service:"service",
     method: "software"
+  },
+  "/projectinfo":{
+    header:'/lk-imu/web/header.ejs',
+    title:'当前工程',
+    service:"service",
+    method: "projectInfo"
+  },
+  "/propertyright":{
+    header:'/lk-imu/web/header.ejs',
+    title:'产权信息',
+    service:"service",
+    method: "propertyRight"
   }
 }

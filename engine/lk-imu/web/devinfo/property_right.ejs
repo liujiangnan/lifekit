@@ -2,18 +2,24 @@
   <el-breadcrumb separator="/" style="height:30px;line-height:30px;">
     <el-breadcrumb-item :to="{ path: '/lk-imu' }">首页</el-breadcrumb-item>
     <el-breadcrumb-item>设备信息</el-breadcrumb-item>
-    <el-breadcrumb-item>软件版本</el-breadcrumb-item>
+    <el-breadcrumb-item>产权信息</el-breadcrumb-item>
   </el-breadcrumb>
   <hr style="margin-bottom:20px;background-color: #DCDFE6;border:none; height:1px;">
   <el-form label-position="right" ref="form" :model="form" label-width="150px" disabled="true">
-    <el-form-item label="LINUX">
-      <el-input v-model="form.linux"></el-input>
+    <el-form-item label="公司名称">
+      <el-input v-model="form.company"></el-input>
+    </el-form-item> 
+    <el-form-item label="购买时间">
+      <el-date-picker type="datetime" v-model="form.buytime"  ></el-date-picker> 
     </el-form-item>
-    <el-form-item label="运行系统">
-      <el-input v-model="form.runing"></el-input>
+    <el-form-item label="价格">
+      <el-input v-model="form.price"></el-input>
+    </el-form-item> 
+    <el-form-item label="销售员">
+      <el-input v-model="form.salesman"></el-input>
     </el-form-item>
-    <el-form-item label="WEB程序">
-      <el-input v-model="form.webapp"></el-input>
+    <el-form-item label="联系电话">
+      <el-input v-model="form.tel"></el-input>
     </el-form-item> 
   </el-form> 
 </div>

@@ -1,0 +1,45 @@
+<div id="app" style="padding:5px;">
+  <el-breadcrumb separator="/" style="height:30px;line-height:30px;">
+    <el-breadcrumb-item :to="{ path: '/lk-imu' }">首页</el-breadcrumb-item>
+    <el-breadcrumb-item>设备信息</el-breadcrumb-item>
+    <el-breadcrumb-item>当前工程</el-breadcrumb-item>
+  </el-breadcrumb>
+  <hr style="margin-bottom:20px;background-color: #DCDFE6;border:none; height:1px;">
+  <el-form label-position="right" ref="form" :model="form"  label-width="150px" disabled="true">
+    <el-form-item label="工程名称">
+      <el-input v-model="form.name"></el-input>
+    </el-form-item>
+    <el-form-item label="工程说明">
+      <el-input v-model="form.description"></el-input>
+    </el-form-item>
+    <el-form-item label="工程建立日期">
+      <el-date-picker type="datetime" v-model="form.startDate"  ></el-date-picker> 
+    </el-form-item>
+    <el-form-item label="工程修改日期">
+      <el-date-picker type="datetime" v-model="form.updateDate"  ></el-date-picker> 
+    </el-form-item>
+    <el-form-item label="工程作者">
+      <el-input v-model="form.author"></el-input>
+    </el-form-item>
+    <el-form-item label="工程版本号">
+      <el-input v-model="form.version"></el-input>
+    </el-form-item> 
+  </el-form> 
+</div>
+<style>
+  .el-input {
+    width: 220px;
+  }
+</style>
+<script>
+  $(function() {
+
+    net.datachange("app", {
+      methods: {
+        onSubmit() {
+          console.log('submit!');
+        }
+      }
+    });
+  })
+</script>
