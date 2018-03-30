@@ -1,0 +1,58 @@
+<div id="app" style="padding:5px;">
+  <el-breadcrumb separator="/" style="height:30px;line-height:30px;">
+    <el-breadcrumb-item :to="{ path: '/lk-imu' }">首页</el-breadcrumb-item>
+    <el-breadcrumb-item>设备信息</el-breadcrumb-item>
+    <el-breadcrumb-item>硬件型号</el-breadcrumb-item>
+  </el-breadcrumb>
+  <hr style="margin-bottom:20px;background-color: #DCDFE6;border:none; height:1px;">
+  <el-form label-position="right" ref="form" :model="form" :inline="true" label-width="150px" disabled="true">
+    <el-form-item label="CPU">
+      <el-input v-model="form.cpu"></el-input>
+    </el-form-item>
+    <el-form-item label="RAM">
+      <el-input v-model="form.ram"></el-input>
+    </el-form-item>
+    <el-form-item label="NANDFLASH">
+      <el-input v-model="form.nandflash"></el-input>
+    </el-form-item>
+    <hr style="margin-bottom:20px;background-color: #DCDFE6;border:none; height:1px;">
+    <el-form-item label="COM1">
+      <el-input v-model="form.com1"></el-input>
+    </el-form-item>
+    <el-form-item label="COM2">
+      <el-input v-model="form.com2"></el-input>
+    </el-form-item>
+    <el-form-item label="COM3">
+      <el-input v-model="form.com3"></el-input>
+    </el-form-item>
+    <el-form-item label="COM4">
+      <el-input v-model="form.com4"></el-input>
+    </el-form-item> 
+    <el-form-item label="NET1">
+      <el-input v-model="form.net1"></el-input>
+    </el-form-item> 
+    <el-form-item label="NET2">
+      <el-input v-model="form.net2"></el-input>
+    </el-form-item> 
+    <el-form-item label="SN">
+      <el-input v-model="form.sn"></el-input>
+    </el-form-item> 
+  </el-form> 
+</div>
+<style>
+  .el-input {
+    width: 220px;
+  }
+</style>
+<script>
+  $(function() {
+
+    net.datachange("app", {
+      methods: {
+        onSubmit() {
+          console.log('submit!');
+        }
+      }
+    });
+  })
+</script>

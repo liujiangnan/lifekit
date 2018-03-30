@@ -1,0 +1,36 @@
+<div id="app" style="padding:5px;">
+  <el-breadcrumb separator="/" style="height:30px;line-height:30px;">
+    <el-breadcrumb-item :to="{ path: '/lk-imu' }">首页</el-breadcrumb-item>
+    <el-breadcrumb-item>设备信息</el-breadcrumb-item>
+    <el-breadcrumb-item>软件版本</el-breadcrumb-item>
+  </el-breadcrumb>
+  <hr style="margin-bottom:20px;background-color: #DCDFE6;border:none; height:1px;">
+  <el-form label-position="right" ref="form" :model="form" :inline="true" label-width="150px" disabled="true">
+    <el-form-item label="LINUX">
+      <el-input v-model="form.linux"></el-input>
+    </el-form-item>
+    <el-form-item label="运行系统">
+      <el-input v-model="form.runing"></el-input>
+    </el-form-item>
+    <el-form-item label="WEB程序">
+      <el-input v-model="form.webapp"></el-input>
+    </el-form-item> 
+  </el-form> 
+</div>
+<style>
+  .el-input {
+    width: 220px;
+  }
+</style>
+<script>
+  $(function() {
+
+    net.datachange("app", {
+      methods: {
+        onSubmit() {
+          console.log('submit!');
+        }
+      }
+    });
+  })
+</script>

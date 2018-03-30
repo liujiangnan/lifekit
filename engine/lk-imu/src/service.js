@@ -1,6 +1,7 @@
 
 function service(net){
 
+  //运行状态
   this.runStatus = async function(ctx,parms){
     net.data.form = {
       firstDate: Date.now(),  //首次开机时间
@@ -16,6 +17,33 @@ function service(net){
       isEdit: false  //是否可编辑
     }
     return ctx.render("lk-imu/web/devinfo/run_status.ejs",{});
+  }
+
+  //硬件型号
+  this.devModel = async function(ctx,parms){
+    net.data.form = {
+      cpu: '',  
+      ram: '', 
+      nandflash: '', 
+      com1: '', 
+      com2: '', 
+      com3: '',
+      com4: '', 
+      net1: '',
+      net2: '',
+      sn:'',
+      isEdit: false  //是否可编辑
+    }
+    return ctx.render("lk-imu/web/devinfo/dev_model.ejs",{});
+  }
+
+  this.software = async function (ctx,parms) {
+    net.data.form = {
+      linux:'',
+      runing:'',
+      webapp:''
+    };
+    return ctx.render("lk-imu/web/devinfo/software.ejs",{});
   }
 }
 
