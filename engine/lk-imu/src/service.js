@@ -12,7 +12,7 @@ function service(net){
       ram: '', //内存利用率
       rom: '', //硬盘利用率
 
-      devNow: Date.now(),  //系统当前时间
+      devNow: '',  //系统当前时间
       updateNow: '',  //手动修改时间
 
       url: '/lk-imu',  //web域名
