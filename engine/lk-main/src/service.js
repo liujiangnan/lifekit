@@ -81,12 +81,13 @@ function service() {
       return ctx.body = {code:-1,msg:"查询失败 error:"+error};
     }
   }  
-  this.saveMenu = async function(ctx,parms){ 
+  this.saveMenu = async function(ctx,parms){
     try {
       let res = await Menu.create(parms);
       res = res.dataValues; 
       return ctx.body = {code:200,msg:"保存成功",data:res};
     } catch (error) {
+      console.log(error);
       return ctx.body = {code:-1,msg:"菜单保存失败 error:"+error};
     } 
   }  
@@ -99,6 +100,7 @@ function service() {
       let res = await Menu.update(menu,{where:{id:parms.id}}); 
       return ctx.body = {code:200,msg:"更新成功",data:res};
     } catch (error) {
+      console.log(error);
       return ctx.body = {code:-1,msg:"菜单修改失败 error:"+error};
     }
   } 
