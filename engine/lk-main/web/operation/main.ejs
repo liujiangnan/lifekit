@@ -73,11 +73,11 @@
               <span>{{index+1}}</span> 
             </el-col>
             <el-col :span="4">
-              <span v-if="!item.edit">{{item.name}}</span>
+              <div><span v-if="!item.edit">{{item.name||"-"}}</span></div> 
               <el-input class="menuInput" v-if="item.edit" v-model="item.name" placeholder="菜单名称"></el-input>
             </el-col>
             <el-col :span="6">
-              <span v-if="!item.edit">{{item.url}}</span>
+              <span v-if="!item.edit">{{item.url||"-"}}</span>
               <el-input class="menuInput" v-if="item.edit" v-model="item.url" placeholder="URL"></el-input> 
             </el-col>
             <el-col :span="4">
@@ -239,6 +239,7 @@
         });
       },
       handleNodeClick(data) {
+        console.log(data);
         this.choseNode = data.name;
         this.choseNodeId = data.id;
         net.getData("loadTree",data.id,res=>{
@@ -261,9 +262,11 @@
       editMenu(index){
         this.menuList[index].edit=true; 
       },
-      updateMenu(index,menu){
-        menu.pid=this.choseNodeId;
-        if(!menu.id){
+      updateMenu(index,menu){ 
+        if(this.choseNodeId){
+          menu.pid=this.choseNodeId;
+        }
+        if(!menu.id){ 
           net.getView("saveMenu",menu,res => {
             res = JSON.parse(res);
             if(res.code===200){
@@ -274,7 +277,7 @@
             } 
             this.menuList[index].edit=false; 
           });
-        }else{
+        }else{ 
           net.getView("updateMenu",menu,res => {
             res = JSON.parse(res);
             if(res.code===200){

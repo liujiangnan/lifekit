@@ -8,27 +8,29 @@ $(function(){
 
 
 
-function ready() {
-
+function ready() { 
   Vue.component('my-menu', {
-    template: '<div>'+
-                '<template v-for="(item,index) in menus">'+ 
-                  '<template  v-if="item.children">'+
-                    '<el-submenu>'+
-                      '<template slot="title"><i class="el-icon-menu"></i>{{item.name}}</template>'+
-                      '<my-menu :menus="item.children"></my-menu>'+
-                    '</el-submenu> '+
-                  '</template>'+
-                  '<template v-else>'+
-                      '<el-menu-item :index="index">'+
-                        '<i class="el-icon-star-off"></i>'+
-                        '<span  slot="title">{{item.name}}</span>'+
-                      '</el-menu-item> '+
-                  '</template> '+ 
-                '</template> '+
-              '</div> ',  
+    template: '<span>'+ 
+                '<template v-for="(item,index) in menus" v-if="item.children">'+
+                  '<el-submenu :index="item.id">'+
+                    '<template slot="title"><i class="el-icon-menu"></i>{{item.name}}</template>'+
+                    '<my-menu :menus="item.children" @navclick="navclick"></my-menu>'+
+                  '</el-submenu> '+
+                '</template>'+
+                '<template v-else>'+
+                    '<el-menu-item :index="item.id" @click="navclick(item)">'+
+                      '<i class="el-icon-star-off"></i>'+
+                      '<span  slot="title">{{item.name}}</span>'+
+                    '</el-menu-item> '+
+                '</template> '+   
+              '</span> ',  
      props:{ 
        "menus":Object
+     },
+     methods:{
+      navclick (item){
+        this.$emit('navclick', item); 
+      }
      }
   });
 
@@ -55,7 +57,7 @@ function ready() {
         loginUser: null, 
         navs:[],
         menus:[],   
-        mainUrl: "",  
+        mainUrl: ""
       }
     },
     methods: { 
@@ -71,11 +73,9 @@ function ready() {
       initLogin(loginUser){ 
         this.loginUser = loginUser; 
       },
-      navClick(navData){
+      navclick(navData){
         if(navData.children&&navData.children.length>0){  
           this.menus = navData.children;
-        }else{
-          this.menus = [];
         }
         if(navData.url){
           this.mainUrl = navData.url;
