@@ -12,7 +12,7 @@
       <el-col :span="13">
         <el-menu :default-active="0" class="el-menu-demo" mode="horizontal">
           <el-menu-item v-for="(item,i) in navs" :index="i" @click="navclick(item)">
-            <span style="font-size:25px;">{{item.name}}</span>
+            <span>{{item.name}}</span>
           </el-menu-item> 
         </el-menu>
       </el-col> 
@@ -39,14 +39,25 @@
     <div class="line"></div> 
   </el-header>
   <el-container>
-    <el-aside style="width:200px;" v-if="menus.length">
+    <el-aside style="width:auto;" v-if="menus.length">
       <el-row>
         <el-col :span="24"> 
-          <el-menu  class="el-menu-vertical-demo" :collapse="isCollapse">
-            <div @click="changeCollapse" class="menuhead" align="center">
-                <i class="el-icon-menu"></i>
-            </div>  
-            <my-menu :menus="menus"  @navclick="navclick"></my-menu>  
+          <div @click="changeCollapse" class="menuhead" align="center">
+              <i class="el-icon-menu"></i>
+          </div> 
+          <el-menu  class="el-menu-vertical-demo" :collapse="isCollapse"> 
+            <template v-for="(item,index) in menus">
+              <el-submenu v-if="item.children" :index="item.id">
+                <template slot="title"><i class="el-icon-menu"></i><span slot="title">{{item.name}}</span></template>
+                <el-menu-item-group> 
+                  <my-menu :menus="item.children" @navclick="navclick"></my-menu>
+                </el-menu-item-group> 
+              </el-submenu>
+              <el-menu-item v-else :index="item.id" @click="navclick(item)">
+                <i class="el-icon-star-off"></i>
+                <span  slot="title">{{item.name}}</span>
+              </el-menu-item>
+            </template>     
             <!-- <cz-placeselectdown></cz-placeselectdown> -->
           </el-menu>
         </el-col> 
