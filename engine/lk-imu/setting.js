@@ -33,5 +33,9 @@ module.exports = {
     title:'产权信息',
     service:"service",
     method: "propertyRight"
+  },
+  "/serial":{
+    header:'/lk-imu/web/header.ejs',
+    title:'串口维护'
   }
 }
