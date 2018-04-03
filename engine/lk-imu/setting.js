@@ -36,6 +36,6 @@ module.exports = {
   },
   "/serial":{
     header:'/lk-imu/web/header.ejs',
-    title:'串口维护'
+    title:'VUE组件测试'
   }
 }
