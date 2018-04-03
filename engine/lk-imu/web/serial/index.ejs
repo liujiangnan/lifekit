@@ -12,12 +12,39 @@
     </el-aside>
     <el-main>
       <el-tabs value="serialProp" type="border-card" @tab-click="handleTabClick">
-        <el-tab-pane label="属性" name="serialProp">
-          <el-form label-position="right" ref="serialProp" :model="serialProp" :inline="true" label-width="150px" disabled="true">
-            <el-form-item label="CPU">
-              <el-input v-model="serialProp.cpu"></el-input>
-            </el-form-item>
-          </el-form>
+        <el-tab-pane label="属性" name="serialProp"> 
+          <el-col :span="24" align="right" style="margin-bottom:10px;">
+            <el-button @click="saveSerial()" size="small" >保存</el-button> 
+          </el-col> 
+          <el-col :span="24">
+            <el-form label-position="right" ref="serialProp" :model="serialProp" label-width="150px" disabled="true">
+              <el-form-item label="名称"><el-input v-model="serialProp.name"></el-input></el-form-item>
+              <el-form-item label="描述"><el-input v-model="serialProp.discription"></el-input></el-form-item>
+            </el-form> 
+            <hr style="margin-bottom:20px;background-color: #DCDFE6;border:none; height:1px;">
+            <el-form label-position="right" :inline="true" ref="serialProp" :model="serialProp" label-width="150px" disabled="true">
+              <el-form-item label="串口状态"><el-input v-model="serialProp.status" disabled></el-input></el-form-item>
+              <el-form-item label="发送字节"><el-input v-model="serialProp.sendbit" disabled></el-input></el-form-item>
+              <el-form-item label="接收字节"><el-input v-model="serialProp.receivebit" disabled></el-input></el-form-item>
+              <el-form-item label="误码率"><el-input v-model="serialProp.errorRate" disabled></el-input></el-form-item>
+            </el-form> 
+            <span>通讯属性</span>
+            <hr style="margin-bottom:20px;background-color: #DCDFE6;border:none; height:1px;">
+            <el-form label-position="right" :inline="true" ref="serialProp" :model="serialProp" label-width="150px" disabled="true">
+              <el-form-item label="波特率"><el-input v-model="serialProp.baudRate"></el-input></el-form-item>
+              <el-form-item label="数据字长"><el-input v-model="serialProp.bitLength"></el-input></el-form-item>
+              <el-form-item label="校验方式"><el-input v-model="serialProp.validate"></el-input></el-form-item>
+              <el-form-item label="停止位"><el-input v-model="serialProp.stopBit"></el-input></el-form-item>
+            </el-form> 
+            <span>驱动属性</span>
+            <hr style="margin-bottom:20px;background-color: #DCDFE6;border:none; height:1px;">
+            <el-form label-position="right" :inline="true" ref="serialProp" :model="serialProp" label-width="150px" disabled="true">
+              <el-form-item label="驱动"><el-input v-model="serialProp.drive"></el-input></el-form-item>
+              <el-form-item label="参数"><el-input v-model="serialProp.pamam"></el-input></el-form-item>
+              <el-form-item label="命令时间间隔"><el-input v-model="serialProp.commandTimeInterval"></el-input></el-form-item>
+              <el-form-item label="字节流方式"><el-input v-model="serialProp.bytesStreamMode"></el-input></el-form-item>
+            </el-form>
+          </el-col> 
         </el-tab-pane>
         <el-tab-pane label="设备列表" name="devList">
           <el-button @click="addDevice()" size="small" style="float: right; margin-bottom:10px;">添加设备</el-button>  
@@ -54,6 +81,9 @@
         },
         addDevice(){
 
+        },
+        saveSerial(){
+          net.call("saveSerial");
         }
       }
     });
