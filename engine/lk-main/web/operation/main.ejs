@@ -239,7 +239,6 @@
         });
       },
       handleNodeClick(data) {
-        console.log(data);
         this.choseNode = data.name;
         this.choseNodeId = data.id;
         net.getData("loadTree",data.id,res=>{
