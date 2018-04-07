@@ -7,84 +7,121 @@
     <el-aside style="width:auto;min-width:200px;">
       <el-card style="width:200px; min-height:400px;">
         <div class="tree-title"><span>串口树</span></div>
-        <el-tree :data="treeData" :props="treeProps" @node-click="handleNodeClick"></el-tree>
+        <el-tree :data="treeData" :props="treeProps" node-key="id" @node-click="handleNodeClick"></el-tree>
       </el-card>
     </el-aside>
     <el-main>
-      <el-tabs value="serialProp" type="border-card" @tab-click="handleTabClick">
-        <el-tab-pane label="属性" name="serialProp"> 
-          <el-col :span="24" align="right" style="margin-bottom:10px;">
-            <el-button @click="saveSerial()" size="small" >保存</el-button> 
-          </el-col> 
-          <el-col :span="24">
-            <el-form label-position="right" ref="serialProp" :model="serialProp" label-width="150px" disabled="true">
-              <el-form-item label="名称"><el-input v-model="serialProp.name"></el-input></el-form-item>
-              <el-form-item label="描述"><el-input v-model="serialProp.discription"></el-input></el-form-item>
-            </el-form> 
-            <hr style="margin-bottom:20px;background-color: #DCDFE6;border:none; height:1px;">
-            <el-form label-position="right" :inline="true" ref="serialProp" :model="serialProp" label-width="150px" disabled="true">
-              <el-form-item label="串口状态"><el-input v-model="serialProp.status" disabled></el-input></el-form-item>
-              <el-form-item label="发送字节"><el-input v-model="serialProp.sendbit" disabled></el-input></el-form-item>
-              <el-form-item label="接收字节"><el-input v-model="serialProp.receivebit" disabled></el-input></el-form-item>
-              <el-form-item label="误码率"><el-input v-model="serialProp.errorRate" disabled></el-input></el-form-item>
-            </el-form> 
-            <span>通讯属性</span>
-            <hr style="margin-bottom:20px;background-color: #DCDFE6;border:none; height:1px;">
-            <el-form label-position="right" :inline="true" ref="serialProp" :model="serialProp" label-width="150px" disabled="true">
-              <el-form-item label="波特率"><el-input v-model="serialProp.baudRate"></el-input></el-form-item>
-              <el-form-item label="数据字长"><el-input v-model="serialProp.bitLength"></el-input></el-form-item>
-              <el-form-item label="校验方式"><el-input v-model="serialProp.validate"></el-input></el-form-item>
-              <el-form-item label="停止位"><el-input v-model="serialProp.stopBit"></el-input></el-form-item>
-            </el-form> 
-            <span>驱动属性</span>
-            <hr style="margin-bottom:20px;background-color: #DCDFE6;border:none; height:1px;">
-            <el-form label-position="right" :inline="true" ref="serialProp" :model="serialProp" label-width="150px" disabled="true">
-              <el-form-item label="驱动"><el-input v-model="serialProp.drive"></el-input></el-form-item>
-              <el-form-item label="参数"><el-input v-model="serialProp.pamam"></el-input></el-form-item>
-              <el-form-item label="命令时间间隔"><el-input v-model="serialProp.commandTimeInterval"></el-input></el-form-item>
-              <el-form-item label="字节流方式"><el-input v-model="serialProp.bytesStreamMode"></el-input></el-form-item>
-            </el-form>
-          </el-col> 
-        </el-tab-pane>
-        <el-tab-pane label="设备列表" name="devList">
-          <el-button @click="addDevice()" size="small" style="float: right; margin-bottom:10px;">添加设备</el-button>  
-          <el-table :data="devList" border style="width: 100%;">
-            <el-table-column prop="name" label="设备名称" width="180"></el-table-column>
-            <el-table-column prop="status" label="通讯状态" width="180"></el-table-column>
-            <el-table-column prop="address" label="设备地址"></el-table-column>
-            <el-table-column label="操作">
-              <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-                <el-button type="text" size="small">编辑</el-button>
-                <el-button type="text" size="small">删除</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-tab-pane>
-      </el-tabs>
+      <template v-if="type==='serial'">
+        <% include serial %>
+      </template>
+      <template v-if="type==='device'">
+        <% include device %>
+      </template>
     </el-main>
   </el-container>
 </div>
 
 <script>
   $(function() {
-    net.datachange("app", {
+    new Vue({
+      el: '#app',
+      data(){
+        return {
+          treeProps:{
+            id: "id",
+            label: "name",
+            children: "children"
+          },
+          treeData:net.data.treeData,
+          
+          type:"serial",  //默认是串口
+
+          serialProp: net.data.treeData[0],  //串口属性
+          deviceProp: {},  //设备属性
+          devList: net.data.treeData[0].children,  //设备列表
+
+          addDeviceFlag: false,  //设备标识
+
+        }
+      },
       methods: {
         handleNodeClick(data) {
-
+          if(data.type==="serial"){
+            this.type = "serial";
+            this.serialProp = data;
+          }else if(data.type==="device"){
+            this.type = "device";
+            this.deviceProp = data;
+          } 
         },
         handleTabClick(tab, event) {
 
         },
-        handleClick(row){
-
+        handleDevRowClick(row){
+          this.deviceProp = row;
+          this.addDeviceFlag = true; 
+        },
+        handleDevRowDel(id,index){
+          let _this = this;
+          this.$confirm('确认删除？')
+          .then(_ => {
+            net.call("deleteDevice",id,function(flag){
+              if(flag==="success"){
+                _this.devList.splice(index,1);
+                _this.$message.success({ showClose: true, message: "操作成功", duration: 2000 });
+              }else{
+                _this.$message.error({ showClose: true, message: flag, duration: 2000 });
+              }
+            });
+          })
+          .catch(_ => {
+            _this.$message.error({ showClose: true, message: _, duration: 2000 });
+          });
         },
         addDevice(){
-
+          this.addDeviceFlag = true;
+        },
+        cancel(flag){
+          if(flag==='device'){
+            this.deviceProp = {};
+            this.addDeviceFlag = false;
+          }
         },
         saveSerial(){
-          net.call("saveSerial");
+          let _this = this;
+          net.call("saveSerial",this.serialProp,function(flag){
+            if(flag==="success"){
+              _this.$message.success({ showClose: true, message: "保存成功", duration: 2000 });
+            }else{
+              _this.$message.error({ showClose: true, message: flag, duration: 2000 });
+            }
+          });
+        },
+        saveDevice(){
+          let _this = this;
+          let deviceInfo = this.deviceProp;
+          deviceInfo.lkImuSerialId = this.serialProp.id;
+          net.call("saveDevice",deviceInfo,function(res){
+            if(res.flag==="success"){
+              if(res.data){
+                //返回数据说明是新增，否则是修改
+                _this.devList.push(res.data);
+              } 
+              _this.$alert('保存成功', '设备', {
+                confirmButtonText: '确定',
+                callback: action => {
+                  _this.deviceProp = {};
+                  _this.addDeviceFlag = false;
+                }
+              });
+            }else{
+              _this.$message.error({ showClose: true, message: res, duration: 2000 });
+            }
+          });
         }
+      },
+      mounted(){
+
       }
     });
   });

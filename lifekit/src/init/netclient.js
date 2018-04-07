@@ -182,9 +182,8 @@ function netclient(server, secret, engine_dir) {
               dataVal = dataVal[netKeyArr[i]];
             }
             if (type(chengeVal) === '[object Array]') {
-              let key = netKeyArr[netKeyArr.length - 1] - 0;
-              let value = dataVal[netKeyArr[netKeyArr.length - 1]];
-              setArrayData(chengeVal, key, value);
+              let key = netKeyArr[netKeyArr.length - 1] - 0; 
+              setArrayData(chengeVal, key, dataVal);
             } else {
               let lastKey = netKeyArr[netKeyArr.length - 1];
               if (dataVal.hasOwnProperty(lastKey)) {
@@ -210,7 +209,11 @@ function netclient(server, secret, engine_dir) {
 
       socket.on("call", async function(funcname, socketid, data, callback) {
         try {
-          await svc[funcname](data, callback);
+          if(data!==null){
+            await svc[funcname](data, callback);
+          }else{
+            await svc[funcname](callback);
+          }
         } catch (error) {
           console.log(error);
           callback&&callback(error)
@@ -275,16 +278,11 @@ function netclient(server, secret, engine_dir) {
     return v[net_key] !== undefined;
   }
 
-  function setArrayData(arr, index, dataVal) {
-    if (arr.length < dataVal.length) { //push操作引起的数据链变动
-      let value = dataVal[dataVal.length - 1];
-      arr.push(value);
-    } else { //其他
-      arr.splice(0, arr.length);
-      for (let i = 0; i < dataVal.length; i++) {
-        arr.push(dataVal[i]);
-      }
-    }
+  function setArrayData(arr, index, dataVal) { 
+    arr.splice(0,arr.length);
+		for(var i=0;i<dataVal.length; i++){
+			arr.push(dataVal[i]);
+		}
   }
 
   //缓冲器--看看能不能优化成同步写法
