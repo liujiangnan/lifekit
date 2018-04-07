@@ -15,9 +15,12 @@ const sequelize = new Sequelize(
 
 let Serial = sequelize.import(engineRoot + '/src/model/serial.js');
 let Device = sequelize.import(engineRoot + '/src/model/device.js');
+let Signal = sequelize.import(engineRoot + '/src/model/signal.js');
 
 // 定义 hasMany 关联
-Serial.hasMany(Device, {as: 'Devices'})
+Serial.hasMany(Device, {as: 'Devices'});
+Device.hasMany(Signal, {as: 'Signals',foreignKey:'devId'});
+
 
 
 sequelize.sync({ force: false }).then(function() {
@@ -76,6 +79,7 @@ function serial (net){
       let item = {
         lkImuSerialId: parms.lkImuSerialId,
         name:parms.name,
+        pointer: parms.pointer,
         discription:parms.discription,
         timeout:parms.timeout,  
         address:parms.address,  
@@ -97,11 +101,55 @@ function serial (net){
       callback(error);
     }
   }
+  this.saveSignal = async function(parms,callback){
+    try { 
+      if(parms.id){
+        let res = await Signal.update(parms,{where:{id:parms.id}}); 
+        callback({flag:"success"});
+      }else{
+        let res = await Signal.create(parms); 
+        callback({flag:"success",data:res.dataValues});
+      } 
+    } catch (error) {
+      console.log(error);
+      callback(error);
+    }
+  }
   this.deleteDevice = async function(id,callback){
     try {
       let res = await Device.destroy({where:{id:id}});
       callback("success");
     } catch (error) {
+      callback(error);
+    }
+  }
+  this.deleteSignal = async function(id,callback){
+    try {
+      let res = await Signal.destroy({where:{id:id}});
+      callback("success");
+    } catch (error) {
+      callback(error);
+    }
+  }
+  this.findSignals = async function(devId,callback){
+    try {
+      let res = null;
+      let records = await Signal.findAll({where:{devId:devId}});
+      if(records.length>0){
+        res = {};
+        for(let i=0;i<records.length;i++){
+          let record = records[i];
+          let functionCode = record.functionCode;
+          if(res[functionCode]){
+            res[functionCode].push(record.dataValues);
+          }else{
+            res[functionCode] = [record.dataValues];
+          }
+        }
+      } 
+      callback({flag:"success",data:res});
+    } catch (error) {
+      console.log(error);
       callback(error);
     }
   }

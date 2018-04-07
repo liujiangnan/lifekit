@@ -39,19 +39,38 @@
           serialProp: net.data.treeData[0],  //串口属性
           deviceProp: {},  //设备属性
           devList: net.data.treeData[0].children,  //设备列表
+          choseDevTab:"deviceProp", //默认设备的属性页打开
+          signalProp: {},  //点号属性
+
+          signalData: {1:[]},  //功能码:[点号列表]
 
           addDeviceFlag: false,  //设备标识
+
+          addSignalFlag: false,  //点号标识
 
         }
       },
       methods: {
         handleNodeClick(data) {
+          let _this = this;
           if(data.type==="serial"){
             this.type = "serial";
             this.serialProp = data;
           }else if(data.type==="device"){
             this.type = "device";
             this.deviceProp = data;
+            this.choseDevTab = "deviceProp";
+            net.call("findSignals",data.id,function(res){
+              if(res.flag==="success"){
+                if(res.data){
+                  _this.signalData = res.data;
+                }else{
+                  _this.signalData = {1:[]};
+                }
+              }else{
+                _this.$message.error({ showClose: true, message: res, duration: 2000 });
+              }
+            });
           } 
         },
         handleTabClick(tab, event) {
@@ -60,6 +79,11 @@
         handleDevRowClick(row){
           this.deviceProp = row;
           this.addDeviceFlag = true; 
+        },
+        handleSignalRowClick(row,index){
+          this.signalProp = row;
+          this.signalIndex = index;
+          this.addSignalFlag = true; 
         },
         handleDevRowDel(id,index){
           let _this = this;
@@ -78,13 +102,41 @@
             _this.$message.error({ showClose: true, message: _, duration: 2000 });
           });
         },
+        handleSignalRowDel(id,index,key){
+          let _this = this;
+          this.$confirm('确认删除？')
+          .then(_ => {
+            net.call("deleteSignal",id,function(flag){
+              if(flag==="success"){
+                _this.signalData[key].splice(index,1);
+                if(_this.signalData[key].length===0){
+                  delete _this.signalData[key];
+                  _this.choseDevTab = "deviceProp";
+                }
+                _this.$message.success({ showClose: true, message: "操作成功", duration: 2000 });
+              }else{
+                _this.$message.error({ showClose: true, message: flag, duration: 2000 });
+              }
+            });
+          })
+          .catch(_ => {
+            _this.$message.error({ showClose: true, message: _, duration: 2000 });
+          });
+        },
         addDevice(){
           this.addDeviceFlag = true;
+        },
+        addSignal(functionCode){
+          this.addSignalFlag = true;
+          this.signalProp.functionCode = functionCode;
         },
         cancel(flag){
           if(flag==='device'){
             this.deviceProp = {};
             this.addDeviceFlag = false;
+          }else if(flag==='signal'){
+            this.signalProp = {};
+            this.addSignalFlag = false;
           }
         },
         saveSerial(){
@@ -110,8 +162,50 @@
               _this.$alert('保存成功', '设备', {
                 confirmButtonText: '确定',
                 callback: action => {
-                  _this.deviceProp = {};
-                  _this.addDeviceFlag = false;
+                  if(_this.type==="serial"){
+                    _this.deviceProp = {};
+                    _this.addDeviceFlag = false;
+                  } 
+                }
+              });
+            }else{
+              _this.$message.error({ showClose: true, message: res, duration: 2000 });
+            }
+          });
+        },
+        saveSignal(key){
+          let _this = this;
+          let signalInfo = this.signalProp;
+          signalInfo.devId = this.deviceProp.id;
+          signalInfo.serialId = this.deviceProp.lkImuSerialId;
+          net.call("saveSignal",signalInfo,function(res){
+            if(res.flag==="success"){
+              //返回数据说明是新增，否则是修改
+              if(res.data){
+                if(_this.signalData[res.data.functionCode]){ 
+                  _this.signalData[res.data.functionCode].push(res.data);
+                }else{
+                  _this.signalData[res.data.functionCode] = [res.data];
+                }
+              }else{
+                if(signalInfo.functionCode!==key){ //说明修改到另一个功能码下面去了
+                  _this.signalData[key].splice(_this.signalIndex,1);
+                  if(_this.signalData[signalInfo.functionCode]){
+                    _this.signalData[signalInfo.functionCode].push(signalInfo);
+                  }else{
+                    _this.signalData[signalInfo.functionCode] = [signalInfo];
+                  }
+                  if(_this.signalData[key].length===0){
+                    delete _this.signalData[key];
+                    _this.choseDevTab = "deviceProp";
+                  } 
+                }
+              }
+              _this.$alert('保存成功', '设备', {
+                confirmButtonText: '确定',
+                callback: action => {
+                  _this.signalProp = {};
+                  _this.addSignalFlag = false;
                 }
               });
             }else{

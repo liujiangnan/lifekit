@@ -1,12 +1,13 @@
-<el-tabs value="deviceProp" type="border-card" @tab-click="handleTabClick">
+<el-tabs v-model="choseDevTab" type="border-card" @tab-click="handleTabClick">
   <el-tab-pane label="属性" name="deviceProp"> 
     <el-col :span="24" align="right" style="margin-bottom:10px;">
       <el-button @click="saveDevice()" size="small" >保存</el-button> 
     </el-col> 
     <el-col :span="24">
-      <el-form label-position="right" ref="deviceProp" :model="deviceProp" label-width="150px" disabled="true">
+      <el-form label-position="right" :inline="true" ref="deviceProp" :model="deviceProp" label-width="150px" disabled="true">
         <el-form-item label="设备名称"><el-input v-model="deviceProp.name"></el-input></el-form-item>
         <el-form-item label="描述"><el-input v-model="deviceProp.discription"></el-input></el-form-item>
+        <el-form-item label="空间坐标"><el-input v-model="deviceProp.pointer"></el-input></el-form-item>
         <el-form-item label="通讯状态"><el-input v-model="deviceProp.status" disabled></el-input></el-form-item>
         <el-form-item label="设备超时"><el-input v-model="deviceProp.timeout" ></el-input></el-form-item>
         <el-form-item label="设备地址"><el-input v-model="deviceProp.address" ></el-input></el-form-item>
@@ -18,19 +19,45 @@
       </el-form>  
     </el-col> 
   </el-tab-pane>
-  <el-tab-pane label="功能码" name="devList">
-    <el-button @click="addDevice()" size="small" style="float: right; margin-bottom:10px;">添加设备</el-button>  
-    <el-table :data="devList" border style="width: 100%;">
-      <el-table-column prop="name" label="设备名称" width="180"></el-table-column>
-      <el-table-column prop="status" label="通讯状态" width="180"></el-table-column>
-      <el-table-column prop="address" label="设备地址"></el-table-column>
-      <el-table-column label="操作">
-        <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-          <el-button type="text" size="small">编辑</el-button>
-          <el-button type="text" size="small">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+  <el-tab-pane v-for="(val, key, index) in signalData" :label="'功能码 '+key" :name="'func_'+key" >
+    <template v-if="addSignalFlag">
+      <el-col :span="24" align="right" style="margin-bottom:10px;"> 
+        <el-button @click="saveSignal(key)" size="small">保存</el-button>
+        <el-button @click="cancel('signal')" size="small">取消</el-button> 
+      </el-col>  
+      <el-col :span="24">
+        <el-form label-position="right" :inline="true" ref="signalProp" :model="signalProp" label-width="150px" >
+          <el-form-item label="名称"><el-input v-model="signalProp.name"></el-input></el-form-item>
+          <el-form-item label="点号"><el-input v-model="signalProp.pointName"></el-input></el-form-item>
+          <el-form-item label="描述"><el-input v-model="signalProp.discription"></el-input></el-form-item>
+          <el-form-item label="编号"><el-input v-model="signalProp.pNumber" ></el-input></el-form-item>
+          <el-form-item label="是否是虚拟量"><el-input v-model="signalProp.invented" ></el-input></el-form-item>
+          <el-form-item label="功能码"><el-input v-model="signalProp.functionCode"></el-input></el-form-item>
+          <el-form-item label="寄存器地址"><el-input v-model="signalProp.address"></el-input></el-form-item>
+          <el-form-item label="寄存器个数"><el-input v-model="signalProp.storageCount"></el-input></el-form-item>
+          <el-form-item label="数据类型"><el-input v-model="signalProp.dataType"></el-input></el-form-item>
+          <el-form-item label="系数"><el-input v-model="signalProp.coefficient"></el-input></el-form-item>
+          <el-form-item label="基数"><el-input v-model="signalProp.cardinalNumber"></el-input></el-form-item>
+          <el-form-item label="扫描周期"><el-input v-model="signalProp.scanningPeriod"></el-input></el-form-item>
+          <el-form-item label="偏移量"><el-input v-model="signalProp.offset"></el-input></el-form-item>
+          <el-form-item label="位长度"><el-input v-model="signalProp.bitLength"></el-input></el-form-item>
+        </el-form>  
+      </el-col>
+    </template> 
+    <template v-else>
+      <el-button @click="addSignal(key)" size="small" style="float: right; margin-bottom:10px;">添加采集点</el-button>  
+      <el-table :data="val" border style="width: 100%;">
+        <el-table-column prop="name" label="名称" width="180"></el-table-column>
+        <el-table-column prop="pointName" label="点号"></el-table-column>
+        <el-table-column prop="address" label="寄存器地址"></el-table-column>
+        <el-table-column prop="dataType" label="数据类型"></el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope"> 
+            <el-button @click="handleSignalRowClick(scope.row,scope.$index)" type="text" size="small">编辑</el-button>
+            <el-button @click="handleSignalRowDel(scope.row.id,scope.$index,key)" type="text" size="small">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </template> 
   </el-tab-pane>
 </el-tabs>

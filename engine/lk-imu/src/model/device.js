@@ -9,6 +9,9 @@ module.exports = function (sequelize, DataTypes) {
 		name: { //名称
 			type: DataTypes.STRING
 		},
+		pointer: { //空间坐标
+			type: DataTypes.STRING
+		},
 		status: { //通讯状态
 			type: DataTypes.STRING
 		},
