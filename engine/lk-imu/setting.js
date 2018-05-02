@@ -37,5 +37,8 @@ module.exports = {
   "/serial":{
     header:'/lk-imu/web/header.ejs',
     title:'串口维护'
+  },
+  "/realtime":{
+    title:"实时监控"
   }
 }
